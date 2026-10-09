@@ -46,6 +46,9 @@ Este é o equivalente no Windows ao comando `curl -sSL desktop.setupvibe.dev | b
 
 A URL canônica do instalador Windows é `https://windows.setupvibe.dev`.
 
+É importante clicar no menu iniciar, digitar "UAC" e desativar os alertas, você tbm pode baixar na loja o app "wintoys" e ter mais controle sobre sua máquina, mas a desativação do alertas no UAC,
+ja fará o comando funcionar melhor.
+
 1. Abra o menu Iniciar.
 2. Procure por **Windows PowerShell** e abra-o. Executar como administrador é opcional, pois o script solicita elevação pelo UAC automaticamente.
 3. Revise o [`desktop.ps1`](../../../desktop.ps1) do repositório antes de executar código remoto.
