@@ -35,7 +35,7 @@ The script shows an interactive roadmap and asks for confirmation before startin
 
 ## What Gets Installed
 
-**14 steps, fully automated.**
+**15 steps, fully automated.**
 
 ### Step 1 — Base System & Build Tools
 
@@ -172,7 +172,17 @@ Installs npm packages globally, and Herdr and Antigravity CLI from their officia
 
 Every listed CLI is validated after installation. [Herdr](https://github.com/herdrdev/herdr) is installed in `~/.local/bin` for the detected operating system and architecture; see the [Herdr guide](../../en/HERDR.md) for sessions, shortcuts, updates, and troubleshooting. Antigravity CLI is installed to `~/.local/bin` as `agy`: the versioned manifest and SHA-512 checksum from Google's own release feed are resolved and verified directly (the official Unix bootstrapper does not forward `--skip-aliases`/`--skip-path` to its bundled `agy install` step), then `agy install --skip-aliases --skip-path` is run explicitly so shell profiles stay untouched. **Spec-Kit** is installed via `uv tool install specify-cli`. See [SPECKIT.md](SPECKIT.md) for the full Spec-Driven Development guide and aliases.
 
-### Step 14 — Finalization & Cleanup
+### Step 14 — Browser Automation
+
+Installs `agent-browser` globally through npm, its native CLI, Chrome/Chromium,
+and the official global skill for Codex and Claude Code. Linux installs browser
+libraries, fonts, Xvfb/Xauth and Vulkan through APT with compatible `t64` names;
+ARM64 downloads Chromium through Playwright without a global Playwright install
+or a test project. macOS requires 13+ for current Chrome. A real headless launch
+and bundled instructions are validated before reporting success. See the
+[agent-browser guide](../../en/AGENT_BROWSER.md).
+
+### Step 15 — Finalization & Cleanup
 
 **macOS:** `brew cleanup --prune=all`, `brew autoremove`, and removes only SetupVibe temporary files.
 

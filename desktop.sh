@@ -258,6 +258,7 @@ STEPS=(
     "Shell (ZSH & Starship Config)"
     "Tmux & Plugins"
     "AI CLI Tools"
+    "Browser Automation (agent-browser)"
     "Finalization & Cleanup"
 )
 
@@ -1691,7 +1692,125 @@ step_13() {
 }
 
 
+install_agent_browser_linux_dependencies() {
+    local package
+    local -a browser_packages=(
+        libxcb-shm0 libx11-xcb1 libx11-6 libxcb1 libxext6 libxrandr2
+        libxcomposite1 libxcursor1 libxdamage1 libxfixes3 libxi6
+        libgtk-3-0 libpangocairo-1.0-0 libpango-1.0-0 libatk1.0-0
+        libcairo-gobject2 libcairo2 libgdk-pixbuf-2.0-0 libxrender1
+        libasound2 libfreetype6 libfontconfig1 libdbus-1-3 libnss3
+        libnss3-tools libnspr4 libatk-bridge2.0-0 libdrm2 libxkbcommon0
+        libatspi2.0-0 libcups2 libxshmfence1 libgbm1
+        fonts-noto-color-emoji fonts-noto-cjk fonts-freefont-ttf
+        xvfb xauth libvulkan1 mesa-vulkan-drivers
+    )
+    local -a resolved_packages=()
+
+    # Mirror the upstream browser libraries, resolving the Debian/Ubuntu t64
+    # transition after refreshing APT. Keep privilege handling in sys_do rather
+    # than the CLI's internal sudo, and never allow dependency removals.
+    sys_do apt-get update
+    for package in "${browser_packages[@]}"; do
+        if apt-cache show "${package}t64" >/dev/null 2>&1; then
+            resolved_packages+=("${package}t64")
+        else
+            resolved_packages+=("$package")
+        fi
+    done
+    sys_do apt-get install -y --no-remove "${resolved_packages[@]}"
+}
+
+
 step_14() {
+    local npm_bin
+    local npm_prefix
+    local npm_path
+    local macos_version
+
+    if $IS_MACOS; then
+        macos_version=$(sw_vers -productVersion)
+        if (( ${macos_version%%.*} < 13 )); then
+            echo -e "${RED}✘ agent-browser requires macOS 13+ for the current Chrome browser.${NC}" >&2
+            return 1
+        fi
+    fi
+
+    case "$ARCH_RAW" in
+        x86_64|amd64|arm64|aarch64) ;;
+        *)
+            echo -e "${RED}✘ agent-browser does not support architecture: $ARCH_RAW${NC}" >&2
+            return 1
+            ;;
+    esac
+
+    npm_bin=$(command -v npm)
+    npm_prefix=$(user_do "$npm_bin" config get prefix)
+    [[ -n "$npm_prefix" && "$npm_prefix" == /* ]] || {
+        echo "Error: npm did not return an absolute global prefix." >&2
+        return 1
+    }
+    npm_path="$npm_prefix/bin:$PATH"
+
+    echo "Installing agent-browser and its native CLI..."
+    user_do env PATH="$npm_path" "$npm_bin" install -g \
+        --allow-scripts=agent-browser agent-browser@latest
+    user_do env PATH="$npm_path" agent-browser --version
+
+    if $IS_LINUX; then
+        install_agent_browser_linux_dependencies
+    fi
+
+    if $IS_LINUX && [[ "$ARCH_RAW" == arm64 || "$ARCH_RAW" == aarch64 ]]; then
+        # The upstream installer rejects Linux ARM64. Use Playwright only as
+        # a browser downloader and link its reported executable directory into
+        # the native cache, without replacing any user configuration. The latest
+        # Playwright cache layout is not yet recognized by the CLI's fallback.
+        echo "Installing Chromium for Linux ARM64 via the Playwright browser downloader..."
+        user_do mkdir -p "$REAL_HOME/.setupvibe/tmp"
+        (
+            local browser_tmp_dir
+            local browser_cache
+            local browser_link
+            local browser_executable
+            browser_tmp_dir=$(user_do mktemp -d "$REAL_HOME/.setupvibe/tmp/agent-browser.XXXXXX")
+            trap 'user_do rm -rf -- "$browser_tmp_dir"' EXIT
+            browser_cache="$REAL_HOME/.cache/ms-playwright"
+            browser_link="$REAL_HOME/.agent-browser/browsers/chrome-setupvibe-arm64"
+            user_do env PATH="$npm_path" "$npm_bin" install \
+                --prefix "$browser_tmp_dir" --ignore-scripts --no-audit --no-fund playwright@latest
+            user_do env PATH="$npm_path" PLAYWRIGHT_BROWSERS_PATH="$browser_cache" \
+                "$browser_tmp_dir/node_modules/.bin/playwright" install --no-shell chromium
+            browser_executable=$(user_do env PATH="$npm_path" \
+                PLAYWRIGHT_BROWSERS_PATH="$browser_cache" \
+                PLAYWRIGHT_MODULE="$browser_tmp_dir/node_modules/playwright" \
+                node -e 'process.stdout.write(require(process.env.PLAYWRIGHT_MODULE).chromium.executablePath());')
+            user_do test -x "$browser_executable"
+            if [[ -e "$browser_link" && ! -L "$browser_link" ]]; then
+                echo "Error: refusing to replace a non-symlink browser cache: $browser_link" >&2
+                exit 1
+            fi
+            user_do mkdir -p "$REAL_HOME/.agent-browser/browsers"
+            user_do ln -sfn -- "$(dirname "$browser_executable")" "$browser_link"
+        )
+    else
+        echo "Installing Chrome for Testing for the target user..."
+        user_do env PATH="$npm_path" agent-browser install
+    fi
+
+    echo "Installing the official agent-browser skill for Codex and Claude Code..."
+    user_do env PATH="$npm_path" skills add vercel-labs/agent-browser \
+        --skill agent-browser --global --agent codex claude-code --yes
+    user_do env PATH="$npm_path" agent-browser skills get core >/dev/null
+
+    # Doctor uses a scratch session and closes it afterwards; --offline avoids
+    # external services while verifying that headless Chrome actually launches.
+    user_do env PATH="$npm_path" agent-browser doctor --offline
+    echo -e "${GREEN}✔ agent-browser, browser dependencies, and agent skill validated.${NC}"
+}
+
+
+step_15() {
     local pm2_bin
     local pm2_override
     local pm2_override_dir
@@ -1843,6 +1962,7 @@ run_section 10 step_11
 run_section 11 step_12
 run_section 12 step_13
 run_section 13 step_14
+run_section 14 step_15
 
 
 # --- FINALIZATION ---

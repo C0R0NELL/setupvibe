@@ -65,7 +65,7 @@ Both `desktop.sh` and `server.sh` follow a numbered-step pattern (functions pref
 
 While the Windows Edition is in Beta, every SetupVibe repository URL in Windows-specific scripts and documentation must target the `windows` branch. Align all of these URLs with the primary branch only after the Windows work is merged.
 
-### `desktop.sh` Steps (14)
+### `desktop.sh` Steps (15)
 
 1. Base system & build tools
 2. Homebrew
@@ -80,7 +80,31 @@ While the Windows Edition is in Beta, every SetupVibe repository URL in Windows-
 11. ZSH, Oh-My-Zsh, Starship
 12. Tmux & TPM plugins
 13. AI CLI tools
-14. Finalization & cleanup
+14. Browser automation (agent-browser, Chrome/Chromium, Linux dependencies and the official Codex/Claude skill)
+15. Finalization & cleanup
+
+Browser automation is included in both Desktop installers. Install `agent-browser`
+through npm, approve only its own installation script, and validate the native
+CLI, `agent-browser skills get core`, and a real headless launch with
+`agent-browser doctor --offline`. Browser files must belong to the target user.
+Install the official discovery skill globally through Skills CLI for Codex and
+Claude Code; do not copy the usage guide from `node_modules`.
+
+On Linux, install the upstream browser libraries through `sys_do`, resolve
+available `t64` package names after `apt-get update`, and use `--no-remove`.
+Include fonts, Xvfb/Xauth and the Vulkan runtime. Linux ARM64 must download
+Chromium through Playwright's browser downloader because the upstream
+`agent-browser install` rejects Linux ARM64. Link the executable directory
+reported by Playwright into the managed native browser cache; do not guess its
+version-dependent directory layout. Playwright is not installed globally or
+added to a project. Other platforms use `agent-browser install`. Current Chrome
+requires macOS 13+ even though the other Desktop steps support macOS 12.
+
+On Windows, use the execution-policy-safe `agent-browser.cmd` launcher and
+track its npm user `PATH` through the existing ownership mechanism.
+`-Uninstall` removes the CLI before Node.js while preserving browser caches,
+user sessions, credentials, and installed skills. No PowerShell profile or
+execution-policy changes are needed for browser automation.
 
 ### `server.sh` Steps (9)
 
@@ -102,11 +126,12 @@ commands.
 | Path                        | Content                                                           |
 | --------------------------- | ----------------------------------------------------------------- |
 | `docs/README.md`            | Overview and comparison table of all editions                     |
-| `docs/desktop/en/README.md` | Full desktop edition documentation (14 steps)                     |
+| `docs/desktop/en/README.md` | Full desktop edition documentation (15 steps)                     |
 | `docs/server/en/README.md`  | Server edition documentation (9 steps)                            |
 | `docs/windows/en/README.md` | Windows edition (Beta) documentation                              |
 | `docs/omarchy/README.md`    | Omarchy 4 additive edition documentation                          |
 | `docs/en/EXECUTABLES.md`    | Executable helper script documentation (shared by Unix editions) |
+| `docs/en/AGENT_BROWSER.md`  | Desktop browser automation, OS dependencies, and agent integration |
 | `docs/desktop/en/tmux.md`   | Tmux plugin and keybinding reference (shared by Unix editions)   |
 | `docs/desktop/en/pm2.md`    | PM2 command and configuration reference (shared by Unix editions)|
 

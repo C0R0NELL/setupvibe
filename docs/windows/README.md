@@ -2,7 +2,7 @@
 
 > Native Windows development environment guides — v0.41.11
 
-The Windows Edition includes the Vercel Labs Skills CLI alongside its native utilities and selected AI CLIs.
+The Windows Edition includes the Vercel Labs Skills CLI and [agent-browser with Chrome for Testing](../en/AGENT_BROWSER.md) alongside its native utilities and selected AI CLIs. The official browser skill is installed globally for Codex and Claude Code.
 
 Choose your language:
 

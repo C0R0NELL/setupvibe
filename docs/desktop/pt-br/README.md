@@ -41,7 +41,7 @@ cada projeto com `npx skills add <origem>`.
 
 ## O Que é Instalado
 
-**14 etapas, totalmente automatizadas.**
+**15 etapas, totalmente automatizadas.**
 
 ### Etapa 1 — Sistema Base e Ferramentas de Build
 
@@ -179,7 +179,17 @@ manifestos oficiais de releases:
 
 Cada CLI listado é validado após a instalação. O [Herdr](https://github.com/herdrdev/herdr) é instalado em `~/.local/bin` conforme o sistema operacional e a arquitetura detectados. Consulte o [guia do Herdr](../../pt-br/HERDR.md) para entender sessões, atalhos, atualizações e diagnóstico. O Antigravity CLI é instalado em `~/.local/bin` como `agy`: o manifesto versionado e o checksum SHA-512 do próprio feed de releases do Google são resolvidos e verificados diretamente (o bootstrapper oficial Unix não repassa `--skip-aliases`/`--skip-path` ao seu passo interno `agy install`), e então `agy install --skip-aliases --skip-path` é executado explicitamente para não alterar perfis de shell. O **Spec-Kit** é instalado via `uv tool install specify-cli`. Veja o [SPECKIT.md](SPECKIT.md) para o guia completo de Spec-Driven Development e aliases.
 
-### Passo 14 — Finalização e Limpeza
+### Passo 14 — Automação de Navegador
+
+Instala `agent-browser` globalmente pelo npm, sua CLI nativa, Chrome/Chromium
+e a skill oficial global para Codex e Claude Code. No Linux, instala bibliotecas
+do navegador, fontes, Xvfb/Xauth e Vulkan pelo APT, resolvendo nomes `t64`;
+em ARM64, baixa Chromium pelo Playwright sem instalar Playwright globalmente
+nem criar projeto de testes. O Chrome atual exige macOS 13+. Valida a abertura
+real do navegador sem interface gráfica e as instruções incluídas antes de
+informar sucesso. Consulte o [guia do agent-browser](../../pt-br/AGENT_BROWSER.md).
+
+### Passo 15 — Finalização e Limpeza
 
 **macOS:** `brew cleanup --prune=all`, `brew autoremove` e remove somente arquivos temporários do SetupVibe.
 

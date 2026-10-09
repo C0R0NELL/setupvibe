@@ -4,6 +4,15 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- Local fork: added a dedicated browser automation step to Unix Desktop and Windows, installing `agent-browser`, Chrome/Chromium, browser dependencies, and the official global skill for Codex and Claude Code. Linux ARM64 uses Playwright's Chromium downloader because the upstream browser installer rejects this platform; current Chrome requires macOS 13+.
+- Added browser setup and usage guides in English, Portuguese, Spanish, and French, including headless launch validation and the Windows uninstall behavior.
+
+---
+
 ## [v0.41.11] - 2026-08-21
 
 ### Added

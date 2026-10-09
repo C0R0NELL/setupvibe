@@ -21,6 +21,7 @@ L'Édition Windows (Beta) configure des utilitaires Windows natifs, Python, Node
 - Claude Code via l'installateur Windows natif recommandé d'Anthropic, avec son paquet npm officiel comme solution de récupération, Codex CLI via l'installateur autonome Windows officiel d'OpenAI et Google Antigravity CLI sous la commande `agy` via son installateur natif officiel
 - [CLI Skills de Vercel Labs](https://github.com/vercel-labs/skills) via son paquet npm officiel, avec un lanceur `skills.cmd` compatible avec les stratégies d'exécution restreintes
 - Système WSL de base sans distribution Linux, avec WSL 2 par défaut
+- [agent-browser](../../fr/AGENT_BROWSER.md) via npm, Chrome for Testing et la skill officielle globale pour Codex et Claude Code ; valide un lancement réel avec `doctor --offline`
 - Réseau WSL en mode miroir avec accès VPN/LAN, tunneling DNS, intégration du proxy Windows, trafic entrant autorisé dans le pare-feu Hyper-V, récupération automatique de la mémoire et disques virtuels épars
 - Git, 7-Zip, Wget, FFmpeg, ImageMagick et GitHub CLI (`gh`)
 - bat, eza, zoxide, fzf, ripgrep, fd, lazygit, Neovim, Glow, tldr, Fastfetch, duf et jq
@@ -93,8 +94,9 @@ Pendant l'exécution, le programme :
 10. Télécharge Python 3.14 depuis `python.org` et résout Node.js 24 LTS directement via le canal officiel `latest-v24.x` de `nodejs.org`, sans l'API d'index des releases, WinGet ni Chocolatey. Il utilise le `curl.exe` de Windows avec des redirections HTTPS uniquement et des tentatives supplémentaires, valide Authenticode et le SHA-256 officiel de Node.js, répare les fonctionnalités Python ou MSI Node.js manquantes, supprime les shims redondants `npm.ps1` et `npx.ps1` qui échouent avec une stratégie d'exécution restreinte, place les répertoires x64 natifs des runtimes au début du `PATH` de la machine et valide `python`, `pip`, `node`, `npm` et `npx` exactement comme l'utilisateur les appelle.
 11. Installe chaque utilitaire Windows restant indépendamment, exécute chaque CLI WinGet et Chocolatey prévisible depuis le `PATH` actualisé, valide `gh.exe` et l'alias `wt.exe` de Windows Terminal et continue après les échecs isolés de paquet ou de commande.
 12. Installe et valide Skills CLI, Claude Code, Codex CLI et Antigravity CLI depuis leurs sources officielles tout en préservant tous les fichiers de profil PowerShell de l'utilisateur. Skills utilise son paquet npm officiel et un lanceur CMD compatible avec les stratégies d'exécution restreintes ; Claude utilise l'installateur natif recommandé indépendamment de npm et ne recourt au paquet npm officiel d'Anthropic que si nécessaire ; Codex utilise l'installateur autonome officiel d'OpenAI au lieu de npm.
-13. Supprime uniquement les anciens blocs SetupVibe reconnus pour Starship et zoxide sans réencoder le contenu sans rapport, et conserve les octets d'origine des profils PowerShell, la configuration Starship de l'utilisateur et la stratégie d'exécution.
-14. Affiche un résumé final et l'emplacement du journal complet.
+13. Installe `agent-browser`, Chrome for Testing et la skill officielle globale Codex/Claude, puis valide le CLI, les instructions incluses et le lancement réel du navigateur sans interface graphique.
+14. Supprime uniquement les anciens blocs SetupVibe reconnus pour Starship et zoxide sans réencoder le contenu sans rapport, et conserve les octets d'origine des profils PowerShell, la configuration Starship de l'utilisateur et la stratégie d'exécution.
+15. Affiche un résumé final et l'emplacement du journal complet.
 
 Le processus peut prendre du temps, car les gestionnaires de paquets téléchargent et installent chaque utilitaire séparément.
 
@@ -123,6 +125,8 @@ node --version
 npm --version
 npx --version
 skills --version
+agent-browser --version
+agent-browser doctor --offline
 claude --version
 codex --version
 Get-Command agy
@@ -186,6 +190,10 @@ Le mode de désinstallation supprime le client et le serveur OpenSSH, Python et 
 **Avertissement de désinstallation :** la version Beta actuelle ne détermine pas si le client et le serveur OpenSSH ou un paquet géré existaient avant SetupVibe. Par conséquent, `-Uninstall` supprime le produit MSI OpenSSH et tous les paquets de ses listes gérées, y compris les composants qui ont pu être installés séparément avant SetupVibe.
 
 Associez `-Uninstall` à `-Restart` pour redémarrer automatiquement lorsque Windows indique qu'un redémarrage est nécessaire.
+
+L'étape navigateur utilise `agent-browser.cmd`, compatible avec les stratégies
+PowerShell restrictives. `-Uninstall` supprime le CLI npm avant Node.js et
+conserve les caches du navigateur, les sessions, les identifiants et les skills.
 
 ## Portée Et Limites
 

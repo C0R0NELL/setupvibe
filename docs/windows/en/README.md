@@ -20,6 +20,7 @@ The Windows Edition (Beta) configures native Windows utilities, Python, Node.js,
 - Python 3.14 directly from the official `python.org` installer and Node.js 24 LTS from the official `latest-v24.x` channel on `nodejs.org`, with `python`, `pip`, `node`, `npm`, and `npx` in the machine `PATH` for Claude and Codex
 - Claude Code through Anthropic's recommended native Windows installer with its official npm package as a recovery path, Codex CLI through OpenAI's official standalone Windows installer, and Google Antigravity CLI as `agy` through its official native installer
 - [Vercel Labs Skills CLI](https://github.com/vercel-labs/skills) through its official npm package, with an execution-policy-safe `skills.cmd` launcher
+- [agent-browser](../../en/AGENT_BROWSER.md) through npm, Chrome for Testing, and the official global skill for Codex and Claude Code; validates a real headless launch with `doctor --offline`
 - WSL base without a Linux distribution, with WSL 2 as the default
 - Mirrored WSL networking with VPN/LAN access, DNS tunneling, Windows proxy integration, Hyper-V firewall inbound access, automatic memory reclaim, and sparse virtual disks
 - Git, 7-Zip, Wget, FFmpeg, ImageMagick, and GitHub CLI (`gh`)
@@ -93,8 +94,9 @@ During execution, the installer:
 10. Downloads Python 3.14 from `python.org` and resolves Node.js 24 LTS directly through the official `latest-v24.x` channel on `nodejs.org` without the release-index API, WinGet, or Chocolatey. It uses Windows `curl.exe` with HTTPS-only redirects and retries, validates Authenticode and the official Node.js SHA-256, repairs missing Python or Node.js MSI features, removes the redundant `npm.ps1` and `npx.ps1` shims that fail under a restricted execution policy, prepends the native x64 runtime directories to the machine `PATH`, and verifies `python`, `pip`, `node`, `npm`, and `npx` exactly as users invoke them.
 11. Installs each remaining Windows utility independently, executes every predictable WinGet and Chocolatey CLI from the refreshed `PATH`, validates `gh.exe` and the Windows Terminal `wt.exe` alias, and continues after isolated package or command failures.
 12. Installs and validates the Skills CLI, Claude Code, Codex CLI, and Antigravity CLI from their official sources while preserving every user PowerShell profile file. Skills uses its official npm package and an execution-policy-safe CMD launcher; Claude uses the recommended native installer independently of npm and falls back to Anthropic's official npm package only when necessary; Codex uses OpenAI's official standalone installer instead of npm.
-13. Removes only recognized legacy SetupVibe Starship/zoxide profile blocks without re-encoding unrelated content, preserving the original PowerShell profile bytes, user Starship configuration, and execution policy.
-14. Displays a final summary and the transcript log location.
+13. Installs `agent-browser`, Chrome for Testing and the official global Codex/Claude skill, then validates the CLI, bundled instructions and a real headless browser launch.
+14. Removes only recognized legacy SetupVibe Starship/zoxide profile blocks without re-encoding unrelated content, preserving the original PowerShell profile bytes, user Starship configuration, and execution policy.
+15. Displays a final summary and the transcript log location.
 
 The process can take a while because package managers download and install each utility independently.
 
@@ -123,6 +125,8 @@ node --version
 npm --version
 npx --version
 skills --version
+agent-browser --version
+agent-browser doctor --offline
 claude --version
 codex --version
 Get-Command agy
@@ -186,6 +190,10 @@ The uninstall mode removes OpenSSH Client and Server, Python and Node.js through
 **Uninstall warning:** the current Beta does not track whether OpenSSH Client and Server or a managed package existed before SetupVibe. `-Uninstall` therefore removes the OpenSSH MSI product and every package in its managed lists, including components that may have been installed separately before SetupVibe.
 
 Combine `-Uninstall` with `-Restart` to restart automatically when Windows reports that a restart is required.
+
+The browser automation step uses the execution-policy-safe `agent-browser.cmd`
+launcher. `-Uninstall` removes its npm CLI before Node.js and preserves browser
+caches, user sessions, credentials, and installed skills.
 
 ## Scope and Limitations
 

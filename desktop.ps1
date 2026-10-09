@@ -2118,6 +2118,54 @@ function Install-SkillsCli {
     Write-Success 'Skills CLI is installed and available from the user PATH.'
 }
 
+function Install-AgentBrowser {
+    $npmPath = Get-NpmCommandPath
+    Invoke-NativeCommand -FilePath $npmPath -ArgumentList @(
+        'install', '--global', '--allow-scripts=agent-browser', 'agent-browser@latest', '--no-audit', '--no-fund'
+    )
+
+    $prefixOutput = @(& $npmPath 'config' 'get' 'prefix')
+    if ($LASTEXITCODE -ne 0 -or $prefixOutput.Count -eq 0) {
+        throw 'npm did not return its global prefix after installing agent-browser.'
+    }
+    $npmPrefix = ([string]$prefixOutput[0]).Trim()
+    if ([string]::IsNullOrWhiteSpace($npmPrefix) -or -not [IO.Path]::IsPathRooted($npmPrefix)) {
+        throw 'npm did not return an absolute global prefix after installing agent-browser.'
+    }
+
+    $pathWasPresent = Test-PathEntry -Path $npmPrefix -Scope 'User'
+    Add-PathEntry -Path $npmPrefix -Scope 'User' -Prepend
+    Register-AiCliPath -Path $npmPrefix -WasPresent $pathWasPresent
+    Remove-Item -Path (Join-Path $npmPrefix 'agent-browser.ps1') -Force -ErrorAction SilentlyContinue
+    Import-EnvironmentPath
+
+    $browserPath = Join-Path $npmPrefix 'agent-browser.cmd'
+    $skillsPath = Join-Path $npmPrefix 'skills.cmd'
+    if (-not (Test-Path $browserPath -PathType Leaf) -or -not (Test-Path $skillsPath -PathType Leaf)) {
+        throw 'The execution-policy-safe agent-browser.cmd and skills.cmd launchers are required.'
+    }
+    Invoke-NativeCommand -FilePath $browserPath -ArgumentList @('--version')
+    Assert-CommandResolvesToPath -Name 'agent-browser' -ExpectedPath $browserPath
+
+    # Chrome for Testing includes the Windows runtime dependencies. Downloads
+    # belong to the signed-in user's profile, preserved by the UAC SID check.
+    Invoke-NativeCommand -FilePath $browserPath -ArgumentList @('install')
+    Invoke-NativeCommand -FilePath $skillsPath -ArgumentList @(
+        'add', 'vercel-labs/agent-browser', '--skill', 'agent-browser', '--global', '--agent', 'codex', 'claude-code', '--yes'
+    )
+    Invoke-NativeCommand -FilePath $browserPath -ArgumentList @('skills', 'get', 'core')
+    Invoke-NativeCommand -FilePath $browserPath -ArgumentList @('doctor', '--offline')
+    Write-Success 'agent-browser, Chrome for Testing, and the official Codex/Claude skill were installed and validated.'
+}
+
+function Uninstall-AgentBrowser {
+    $npmCommand = Get-Command 'npm.cmd' -ErrorAction SilentlyContinue
+    if ($npmCommand) {
+        Invoke-NativeCommand -FilePath $npmCommand.Source -ArgumentList @('uninstall', '--global', 'agent-browser')
+    }
+    Write-Success 'agent-browser CLI was removed; browser cache, user sessions, credentials, and installed skills were preserved.'
+}
+
 function Install-AntigravityCli {
     $antigravityDirectory = Join-Path $env:LOCALAPPDATA 'agy\bin'
     $pathWasPresent = Test-PathEntry -Path $antigravityDirectory -Scope 'User'
@@ -2424,6 +2472,7 @@ if ($Uninstall) {
     Invoke-SetupStep -Name 'Claude Code' -Action { Uninstall-ClaudeCode }
     Invoke-SetupStep -Name 'Codex CLI' -Action { Uninstall-CodexCli }
     Invoke-SetupStep -Name 'Skills CLI' -Action { Uninstall-SkillsCli }
+    Invoke-SetupStep -Name 'agent-browser' -Action { Uninstall-AgentBrowser }
     Invoke-SetupStep -Name 'OpenCode CLI' -Action { Uninstall-OpenCodeCli }
     Invoke-SetupStep -Name 'Antigravity CLI' -Action { Uninstall-AntigravityCli }
     Invoke-SetupStep -Name 'AI CLI PATH entries' -Action { Uninstall-AiCliPaths }
@@ -2499,6 +2548,7 @@ else {
     Invoke-SetupStep -Name 'Claude Code native CLI' -Action { Install-ClaudeCode }
     Invoke-SetupStep -Name 'Codex CLI' -Action { Install-CodexCli }
     Invoke-SetupStep -Name 'Antigravity CLI (agy)' -Action { Install-AntigravityCli }
+    Invoke-SetupStep -Name 'Browser automation (agent-browser)' -Action { Install-AgentBrowser }
 
     if ($script:ChocolateyPath) {
         foreach ($package in $script:ChocolateyPackages) {

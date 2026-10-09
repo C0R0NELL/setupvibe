@@ -81,12 +81,20 @@ installation and never executes package-removal commands.
 | Tmux + TPM plugins                    | ✔              | ✗               | ✔       |
 | AI CLI tools                          | ✔              | ✔ (selected)    | ✔       |
 | Vercel Labs Skills CLI                | ✔              | ✔               | ✔       |
+| agent-browser + Chrome/Chromium       | ✔ (macOS 13+)  | ✔               | ✗       |
 | Herdr agent multiplexer               | ✔              | ✗               | ✔       |
 | Antigravity CLI (`agy`)               | ✔              | ✔               | ✗       |
 | PM2 auto-startup                      | ✔              | ✗               | ✗       |
 | Docker Swarm Manager (`--manager`)    | ✗              | ✗               | ✔       |
 
 ## Specialized Guides
+
+### Agent Browser
+
+- [English](en/AGENT_BROWSER.md)
+- [Portuguese](pt-br/AGENT_BROWSER.md)
+- [French](fr/AGENT_BROWSER.md)
+- [Spanish](es/AGENT_BROWSER.md)
 
 ### Tmux
 

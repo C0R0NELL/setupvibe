@@ -25,7 +25,7 @@ um terceiro agente.
 
 O SetupVibe oferece duas edições Unix executáveis em Debian:
 
-- `desktop.sh`: instalador interativo de 14 etapas para desktop, WSL e
+- `desktop.sh`: instalador interativo de 15 etapas para desktop, WSL e
   ambientes completos de desenvolvimento.
 - `server.sh`: instalador de 9 etapas, com opção não interativa `--yes`,
   concentrado em operações, Docker, shell, monitoramento e CLIs de IA.
@@ -99,6 +99,28 @@ via `user_do`, porque ele é `~/.local/bin` no Linux e
 `~/Library/Python/X.Y/bin` no macOS. Adicione esse diretório ao `PATH`, valide o
 import do pacote e execute a validação do CLI com a identidade e o `HOME` do
 usuário-alvo.
+
+### Navegador para agentes no Desktop
+
+A etapa 14 instala `agent-browser`, navegador e skill oficial global para Codex
+e Claude. Instale bibliotecas Linux usando `sys_do`, após atualizar os índices
+APT, e selecione variantes `t64` disponíveis. Use `apt-get install --no-remove`
+para evitar que a transição de nomes remova pacotes existentes. Inclua fontes,
+`libnss3-tools`, Xvfb/Xauth e Vulkan além das bibliotecas de GTK, X11 e áudio.
+
+O instalador oficial `agent-browser install` rejeita Linux ARM64. Nessa
+arquitetura, baixe Chromium por um pacote Playwright temporário do usuário;
+obtenha o caminho com `chromium.executablePath()` e ligue seu diretório a
+`~/.agent-browser/browsers/chrome-setupvibe-arm64`. Não dependa apenas do fallback
+de cache do agent-browser: versões recentes do Playwright usam
+`chrome-linux-arm64`, que o fallback atual não reconhece. Preserve arquivos de
+configuração e remova o pacote temporário em caso de sucesso ou falha.
+
+Downloads e validações devem executar como `REAL_USER`, nunca como root por
+conveniência. Valide as instruções com `agent-browser skills get core` e a
+abertura real com `agent-browser doctor --offline`; esse comando usa uma sessão
+temporária em `about:blank` e a fecha. Um retorno de `--version` sozinho não
+comprova que o navegador funciona. Não aplique `--no-sandbox` por padrão.
 
 ## APT e repositórios
 
@@ -361,3 +383,22 @@ efetivo do serviço ficou sem caminhos duplicados. Também passaram as
 validações de versões dos ecossistemas, CLIs de IA, `tldr` via `tlrc`, checksum
 e propriedade do `ctop`, binding SQLite do Agentlytics e saída antecipada do
 Desktop sem TTY.
+
+## Validação do navegador para agentes em outubro de 2026
+
+A etapa de navegador foi executada isoladamente em containers ARM64 de Debian
+12 e Ubuntu 24.04, com Node.js 24, agent-browser 0.38.2 e Playwright 1.64.0.
+Passaram instalação limpa, reexecução, dependências APT, descoberta do Chromium,
+skill oficial global e verificação da propriedade dos arquivos do usuário.
+Também passaram abertura real, snapshot, preenchimento, clique, leitura do DOM
+e captura de tela. Os dois containers encerraram com código zero.
+
+Os testes usaram `seccomp=unconfined` e `apparmor=unconfined` apenas nos
+containers isolados para permitir o sandbox nativo do navegador. O instalador
+não aplica essas opções nem `--no-sandbox` ao ambiente do usuário. O checkout
+ficou montado somente para leitura e nenhum container de teste publicou portas.
+Essa validação cobriu a nova etapa, não uma execução integral do Desktop.
+
+O diagnóstico avisou que faltava FFmpeg nos containers que executaram apenas a
+nova etapa. FFmpeg já é instalado nas etapas base do Desktop Unix e nas
+utilidades do Windows; é necessário para `agent-browser record`.
