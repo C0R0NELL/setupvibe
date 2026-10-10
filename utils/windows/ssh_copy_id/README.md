@@ -130,7 +130,7 @@ Baixe o núcleo e o lançador da branch `windows`:
 ```powershell
 $destino = "$env:USERPROFILE\Downloads\ssh_copy_id"
 New-Item -ItemType Directory -Force -Path $destino | Out-Null
-$base = 'https://raw.githubusercontent.com/promovaweb/setupvibe/windows/utils/windows/ssh_copy_id'
+$base = 'https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/windows/ssh_copy_id'
 Invoke-WebRequest -Uri "$base/ssh_copy_id.ps1" -OutFile "$destino\ssh_copy_id.ps1"
 Invoke-WebRequest -Uri "$base/ssh_copy_id.cmd" -OutFile "$destino\ssh_copy_id.cmd"
 Set-Location $destino

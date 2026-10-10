@@ -12,7 +12,8 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'Continue'
 
 $script:Version = '0.41.11'
-$script:InstallUrl = 'https://windows.setupvibe.dev'
+$script:SetupVibeRawUrl = 'https://raw.githubusercontent.com/C0R0NELL/setupvibe/main'
+$script:InstallUrl = "$script:SetupVibeRawUrl/desktop.ps1"
 $script:RestartRequired = $false
 $script:RestartBeforeRetryRequired = $false
 $script:SystemFileCheckerCompleted = $false
@@ -37,6 +38,7 @@ $script:InvokerUserSid = $null
 $script:WindowsUtilities = @(
     @{ Path = 'utils/windows/ssh_copy_id/ssh_copy_id.ps1'; Name = 'ssh_copy_id_core.ps1' }
     @{ Path = 'utils/windows/ssh_copy_id/ssh_copy_id.cmd'; Name = 'ssh_copy_id.cmd' }
+    @{ Path = 'utils/configure_lazy_ui.py'; Name = 'configure_lazy_ui.py' }
 )
 $script:LegacyWindowsUtilityFiles = @('ssh_copy_id.bat', 'ssh_copy_id.ps1', 'codex.cmd')
 
@@ -2276,6 +2278,18 @@ function Uninstall-AntigravityCli {
     Write-Success 'Antigravity CLI was removed; user credentials and configuration were preserved.'
 }
 
+function Set-LazyToolAppearance {
+    $helperPath = Join-Path $script:WindowsUtilitiesDirectory 'configure_lazy_ui.py'
+    if (-not (Test-Path $helperPath -PathType Leaf)) {
+        throw "Lazy UI configuration helper was not installed: $helperPath"
+    }
+    $pythonPath = Find-RuntimeExecutable -Name 'python.exe' -PreferredPaths @(
+        (Join-Path (Get-NativeProgramFilesDirectory) 'Python314\python.exe')
+        (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python314\python.exe')
+    )
+    Invoke-NativeCommand -FilePath $pythonPath -ArgumentList @($helperPath)
+}
+
 function Install-WindowsUtilities {
     New-Item -Path $script:WindowsUtilitiesDirectory -ItemType Directory -Force | Out-Null
     $installedFiles = New-Object System.Collections.Generic.List[string]
@@ -2303,7 +2317,7 @@ function Install-WindowsUtilities {
             }
             else {
                 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-                $downloadUrl = "https://raw.githubusercontent.com/promovaweb/setupvibe/windows/{0}" -f $utility.Path
+                $downloadUrl = "{0}/{1}" -f $script:SetupVibeRawUrl, $utility.Path
                 $webClient = New-Object Net.WebClient
                 try {
                     $webClient.DownloadFile($downloadUrl, $temporaryPath)
@@ -2543,6 +2557,7 @@ else {
         Invoke-SetupStep -Name 'Windows Terminal command (wt)' -Action { Test-WindowsTerminal }
     }
     Invoke-SetupStep -Name 'Python and Node.js PATH for Claude and Codex' -Action { Install-DevelopmentRuntimePaths }
+    Invoke-SetupStep -Name 'Lazygit and Lazydocker appearance' -Action { Set-LazyToolAppearance }
     Invoke-SetupStep -Name 'Skills CLI' -Action { Install-SkillsCli }
     Invoke-SetupStep -Name 'OpenCode CLI' -Action { Install-OpenCodeCli }
     Invoke-SetupStep -Name 'Claude Code native CLI' -Action { Install-ClaudeCode }

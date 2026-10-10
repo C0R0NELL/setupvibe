@@ -19,7 +19,7 @@ alias ssh_copy_id="$HOME/.setupvibe/bin/ssh_copy_id"
 Los instaladores descargan el archivo desde:
 
 ```text
-https://raw.githubusercontent.com/promovaweb/setupvibe/main/bin/ssh_copy_id
+https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/bin/ssh_copy_id
 ```
 
 ## `ssh_copy_id`

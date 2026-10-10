@@ -18,7 +18,7 @@ Um script de configuração focado em servidores Linux. Sem Homebrew, ecossistem
 ## Instalação
 
 ```bash
-curl -sSL server.setupvibe.dev | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh | bash
 ```
 
 Ou localmente:
@@ -30,7 +30,7 @@ bash server.sh
 Para inicializar o Docker Swarm automaticamente após o setup, passe `--manager`:
 
 ```bash
-curl -sSL server.setupvibe.dev | bash -s -- --manager
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh | bash -s -- --manager
 ```
 
 ```bash

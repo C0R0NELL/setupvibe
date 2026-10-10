@@ -20,7 +20,7 @@ Instala e configura um stack de desenvolvedor completo em um comando. Suporta ma
 ## Instalação
 
 ```bash
-curl -sSL desktop.setupvibe.dev | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash
 ```
 
 Ou localmente:
@@ -125,6 +125,15 @@ Instaladas via Homebrew em ambas as plataformas.
 | `fastfetch`  | Ferramenta de informações do sistema  |
 | `duf`        | `df` moderno                          |
 | `mise`       | Gerenciador de versões de runtime     |
+
+Após a instalação, o Python da etapa 5 ativa `nerdFontsVersion: "3"` e
+`showFileIcons: true` no Lazygit. O Lazydocker recebe
+`containerStatusHealthStyle: "icon"`, `border: "rounded"` e
+`expandFocusedSidePanel: true`. O helper compartilhado respeita os caminhos
+nativos de configuração, incluindo XDG e diretórios legados, preserva as demais
+opções e o primeiro `config.yml.bak`, e ignora YAML não convencional ou listas
+personalizadas `LG_CONFIG_FILE` do Lazygit. Selecione uma Nerd Font no terminal;
+no WSL ou SSH, selecione-a no terminal do host ou da máquina que se conecta.
 
 ### Etapa 9 — Rede, Monitoramento e Tailscale
 

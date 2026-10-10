@@ -18,10 +18,10 @@ conferir um ambiente que já usa o SetupVibe.
 3. Execute somente o comando canônico da edição:
 
    ```bash
-   curl -sSL desktop.setupvibe.dev | bash
+   curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash
    ```
 
-   Para servidor, troque o endereço por `server.setupvibe.dev`. No Windows,
+   Para servidor, troque o endereço por `https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh`. No Windows,
    siga o comando PowerShell publicado na documentação da edição.
 4. Confira os comandos e ferramentas instalados com `node --version`,
    `npm --version`, `npx --version`, `git --version` e as CLIs esperadas pela

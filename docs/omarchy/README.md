@@ -27,10 +27,10 @@ bash omarchy.sh
 bash omarchy.sh --yes
 
 # Execução remota pela branch principal
-curl -fsSL https://raw.githubusercontent.com/promovaweb/setupvibe/main/omarchy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/omarchy.sh | bash
 
 # Execução remota sem confirmação
-curl -fsSL https://raw.githubusercontent.com/promovaweb/setupvibe/main/omarchy.sh | bash -s -- --yes
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/omarchy.sh | bash -s -- --yes
 
 # Ver ajuda sem executar a instalação
 bash omarchy.sh --help

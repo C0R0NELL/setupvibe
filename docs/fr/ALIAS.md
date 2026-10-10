@@ -16,7 +16,7 @@ Voici la liste exhaustive de todos os aliases configurados por SetupVibe sur tou
 
 - **`setupvibe`**
   - Disponibilité : 🌐 Les deux
-  - Commande : `curl -sSL desktop.setupvibe.dev | bash` (Desktop) / `curl -sSL server.setupvibe.dev | bash` (Server)
+  - Commande : `curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash` (Desktop) / `curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh | bash` (Server)
   - Description : Réinstalle ou met à jour SetupVibe.
   - Exemple : `setupvibe`
 

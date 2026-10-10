@@ -91,10 +91,11 @@ du navigateur, les sessions, les identifiants et les skills.
 
 ## Exécuter ce fork
 
-Exécutez `bash desktop.sh` depuis ce checkout Unix ou
+Les commandes du [README du projet](../../README.md#quick-start) téléchargent
+directement depuis `C0R0NELL/setupvibe`, branche `main`. Pour tester des changements
+locaux, exécutez `bash desktop.sh` depuis ce checkout Unix ou
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1` depuis
-ce checkout Windows. Les URL canoniques upstream n'incluent pas les changements
-locaux non publiés de votre fork.
+ce checkout Windows. Les commandes distantes incluent les changements après le push.
 
 ## Références officielles
 

@@ -12,6 +12,7 @@ Installs and configures a development environment in one command, supporting Win
 - **Native Package Management:** Uses WinGet and Chocolatey on Windows, with Homebrew or APT on Unix systems.
 - **Native Windows Shell:** Keeps Windows PowerShell and PowerShell 7 profiles unchanged, without Starship, ZSH, automatic zoxide initialization, or persistent execution-policy changes; Unix editions retain ZSH, Oh My Zsh, and Starship.
 - **Optimized Terminals:** Installs Windows Terminal on Windows and configures Tmux + TPM on Unix systems.
+- **Lazy Tool Appearance:** Desktop installers enable Lazygit file icons and Nerd Fonts v3; installed Lazydocker also receives status icons, rounded borders, and an expanding focused side panel. Other settings and the first `config.yml.bak` are preserved. Select a Nerd Font in the terminal that displays the session.
 - **Global Helper Scripts:** Installs Windows helper scripts in `%USERPROFILE%\.setupvibe\bin` and adds the directory to the user's `PATH`.
 - **AI Runtime Foundation:** Installs and validates Python 3.14 directly from `python.org` and Node.js 24 LTS from the official `latest-v24.x` channel on `nodejs.org`, automatically repairs missing runtime files, and exposes `python`, `pip`, `node`, `npm`, and `npx` in the Windows machine `PATH` for Claude and Codex.
 - **Native Windows AI CLIs:** Installs Claude Code through Anthropic's recommended native installer with its official npm package as a recovery path, Codex CLI through OpenAI's official standalone Windows installer, OpenCode CLI, and Google Antigravity CLI as `agy`, while preserving PowerShell profiles and restricted execution policies.
@@ -51,18 +52,22 @@ creating public material.
 
 ## Quick Start
 
+The commands below download published files from
+[`C0R0NELL/setupvibe`](https://github.com/C0R0NELL/setupvibe), branch `main`.
+Run scripts from the local checkout to test changes before publishing them.
+
 ### Desktop (macOS, Linux & WSL)
 
 ```bash
-curl -sSL desktop.setupvibe.dev | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash
 ```
 
 ### Windows Desktop (Beta)
 
-Run the Windows utility installer from the canonical SetupVibe URL. It requests administrator access through the standard UAC prompt without changing the UAC policy.
+Run the Windows utility installer directly from this fork's `main` branch. It requests administrator access through the standard UAC prompt without changing the UAC policy.
 
 ```powershell
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://windows.setupvibe.dev | iex
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1 | iex
 ```
 
 See the [Windows installation guide](docs/windows/README.md) for local installation, verification, logs, restart options, and the `-Uninstall` mode.
@@ -70,13 +75,13 @@ See the [Windows installation guide](docs/windows/README.md) for local installat
 ### Server (Linux only)
 
 ```bash
-curl -sSL server.setupvibe.dev | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh | bash
 ```
 
 To initialize Docker Swarm automatically after setup:
 
 ```bash
-curl -sSL server.setupvibe.dev | bash -s -- --manager
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh | bash -s -- --manager
 ```
 
 Add `--yes` for unattended installation or `--advertise-addr ADDRESS` to choose the Swarm address or interface explicitly.
@@ -84,7 +89,7 @@ Add `--yes` for unattended installation or `--advertise-addr ADDRESS` to choose 
 ### Omarchy 4
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/promovaweb/setupvibe/main/omarchy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/omarchy.sh | bash
 ```
 
 Use `bash omarchy.sh --yes` for an unattended local run. See the [Omarchy

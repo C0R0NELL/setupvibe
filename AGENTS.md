@@ -23,13 +23,13 @@ bash desktop.sh
 bash server.sh
 bash omarchy.sh
 
-# Or via curl (canonical usage)
-curl -sSL desktop.setupvibe.dev | bash
+# Or via curl from this fork
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash
 ```
 
 ```powershell
-# Run from the canonical Windows setup URL; it requests standard UAC elevation without changing the UAC policy
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://windows.setupvibe.dev | iex
+# Run directly from this fork; it requests standard UAC elevation without changing the UAC policy
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1 | iex
 
 # Or run a local copy
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1
@@ -63,7 +63,11 @@ Both `desktop.sh` and `server.sh` follow a numbered-step pattern (functions pref
 
 `desktop.ps1` contains native Windows utility, Python, Node.js, selected AI CLI, and WSL base logic. It supports local and remote execution, requests standard UAC elevation without changing the UAC policy, requires x64 Windows 11 22H2 build 22621 or later, rejects Windows Server, 32-bit Windows, Windows on ARM, and elevation with credentials for a different administrator account, detects installed components for idempotent reruns, and logs to `C:\ProgramData\SetupVibe\Logs`. Before installation or removal, it lists competing installer processes and asks before stopping them; when accepted, it tries `Stop-Process` normally, forces processes that remain, and always runs `sfc.exe /scannow` afterward. When declined, it waits for ENTER and exits. It also rejects pending CBS or Windows Update restarts, starts required services, checks WSUS policy, validates the component store, and writes dedicated logs. OpenSSH must bypass Windows Features on Demand and the GitHub releases API: resolve the latest release through the official `PowerShell/Win32-OpenSSH` `releases/latest` page, inspect its expanded assets, download only `OpenSSH-Win64-*.msi`, validate its Authenticode signature, install `ADDLOCAL=Client,Server`, force-repair all installed OpenSSH files, prepend its directory to the machine `PATH`, verify `ssh.exe -V`, set `sshd` to automatic startup, start it, and enable the inbound TCP/22 firewall rule while preserving its prior state for removal. Windows helper scripts listed in the installer are copied to `%USERPROFILE%\.setupvibe\bin`, registered in the user `PATH`, and tracked for safe removal. The `ssh_copy_id` helper uses a PowerShell core with a minimal CMD launcher and requires the signed OpenSSH MSI installed by SetupVibe instead of using Windows Features on Demand. Python 3.14 is downloaded directly from `python.org` and installed for all users; Node.js 24 LTS is resolved directly from the official `latest-v24.x` channel on `nodejs.org`, using `curl.exe` with HTTPS-only redirects and retries instead of the release-index API. Neither runtime may use WinGet or Chocolatey. Both installers require valid Authenticode signatures, the Node.js MSI must match the official `SHASUMS256.txt`, their executable directories are prepended to the machine `PATH`, and `python`, `pip`, `node`, `npm`, and `npx` are verified for Claude and Codex. Claude Code must use Anthropic's official native Windows installer, Codex CLI must use OpenAI's official standalone Windows installer, and Antigravity CLI must use Google's official native installer with `--skip-aliases` and `--skip-path`; all three commands are validated after installation. Persistent `PATH` changes must be normalized, deduplicated, broadcast to Windows, and validated against the intended executable. The Windows shell must remain original: do not install Starship or ZSH, do not write PowerShell profile initialization, do not persist execution-policy changes, preserve user PowerShell profile bytes around third-party installers, remove only recognized SetupVibe profile blocks left by earlier Beta versions without re-encoding unrelated content, preserve the user's Starship configuration, and keep zoxide as an uninitialized CLI utility only. Windows Terminal is installed through `Microsoft.WindowsTerminal`, `wt.exe` availability is validated, and its default profile is never changed. It installs WSL without a Linux distribution, makes WSL 2 the default, and configures mirrored VPN/LAN networking, Hyper-V firewall inbound access, DNS tunneling, Windows proxy integration, automatic memory reclaim, and sparse VHDs. Existing `.wslconfig`, optional-feature, and firewall states are backed up before changes; legacy numeric optional-feature state files must also restore safely. The `-Uninstall` mode removes all managed utilities and configurations, restores the previous WSL and OpenSSH firewall states, cleans language ecosystems left by earlier Windows Beta versions, and removes only stale legacy toolchain `PATH` entries whose directories no longer exist while preserving Linux distribution data, active user-managed paths, AI CLI user configuration and credentials, WinGet, Chocolatey, and logs. Python and Node.js are the only installed programming runtimes; it must not install frameworks, runtime managers, other programming languages, other AI CLIs, or a Linux distribution. Installed WSL distributions are configured separately by `desktop.sh`.
 
-While the Windows Edition is in Beta, every SetupVibe repository URL in Windows-specific scripts and documentation must target the `windows` branch. Align all of these URLs with the primary branch only after the Windows work is merged.
+This fork is maintained in `C0R0NELL/setupvibe` on `main`. Installation commands,
+configuration downloads, helper scripts, Windows elevation handoff, restart,
+uninstall, and setup aliases must use direct GitHub raw URLs from this fork's
+`main` branch. Use another branch only when explicitly testing that branch.
+Keep the Codex and Claude skills aligned with this source policy.
 
 ### `desktop.sh` Steps (15)
 
@@ -74,7 +78,7 @@ While the Windows Edition is in Beta, every SetupVibe repository URL in Windows-
 5. Go 1.26.5, Rust, Python (uv, user-global `qrcode` via pip; Python 3.14 on macOS)
 6. JavaScript (Node, Bun, PNPM)
 7. DevOps (Docker, Ansible, GitHub CLI)
-8. Modern Unix tools via Homebrew
+8. Modern Unix tools via Homebrew, followed by Lazygit/Lazydocker appearance configuration
 9. Network, monitoring & Tailscale
 10. SSH server (Linux only)
 11. ZSH, Oh-My-Zsh, Starship
@@ -105,6 +109,17 @@ track its npm user `PATH` through the existing ownership mechanism.
 `-Uninstall` removes the CLI before Node.js while preserving browser caches,
 user sessions, credentials, and installed skills. No PowerShell profile or
 execution-policy changes are needed for browser automation.
+
+### Lazy tool appearance
+
+Both Desktop installers run `utils/configure_lazy_ui.py` with the installed
+Python after modern tools are available. The helper uses only the standard
+library and configures installed Lazygit/Lazydocker under the target user's
+native configuration paths. Preserve unrelated settings, UTF-8 BOMs, line
+endings, and the first `config.yml.bak`; skip unconventional YAML and Lazygit
+custom `LG_CONFIG_FILE` lists. Windows installs only Lazygit and configures
+Lazydocker only when already present. Select a Nerd Font in the displaying
+terminal, including the host terminal for WSL or SSH.
 
 ### `server.sh` Steps (9)
 

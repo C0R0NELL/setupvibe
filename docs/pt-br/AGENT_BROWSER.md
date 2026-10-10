@@ -98,10 +98,11 @@ cache de navegadores, sessões, credenciais e skills instaladas.
 
 ## Executando este fork
 
-Esta é uma adição local. Execute `bash desktop.sh` neste checkout no Unix ou
+Os comandos do [README do projeto](../../README.md#quick-start) baixam os scripts
+diretamente de `C0R0NELL/setupvibe`, branch `main`. Para testar alterações locais,
+execute `bash desktop.sh` neste checkout no Unix ou
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1` neste
-checkout no Windows. As URLs canônicas do upstream não incluem alterações
-do seu fork que ainda não foram publicadas.
+checkout no Windows. Os comandos remotos incluem as alterações após o push.
 
 ## Referências oficiais
 

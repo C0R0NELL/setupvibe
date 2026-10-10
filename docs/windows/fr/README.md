@@ -30,6 +30,15 @@ L'Édition Windows (Beta) configure des utilitaires Windows natifs, Python, Node
 
 Le programme d'installation est idempotent : les paquets WinGet installés sont détectés et ignorés, Chocolatey garantit la présence de ses paquets et les installateurs officiels de Python et Node.js sont réappliqués en toute sécurité. Les échecs sont enregistrés par paquet afin que les autres installations puissent continuer. Un journal complet est enregistré dans `C:\ProgramData\SetupVibe\Logs`.
 
+Après l'installation des utilitaires et de Python, le script partagé active
+`nerdFontsVersion: "3"` et `showFileIcons: true` dans Lazygit. Si Lazydocker est
+déjà installé, il reçoit aussi `containerStatusHealthStyle: "icon"`,
+`border: "rounded"` et `expandFocusedSidePanel: true`. Les chemins natifs,
+les autres options et le premier `config.yml.bak` sont conservés ; le YAML non
+conventionnel et les listes personnalisées `LG_CONFIG_FILE` de Lazygit sont
+ignorés. Sélectionnez une Nerd Font dans Windows Terminal. `-Uninstall`
+supprime le script auxiliaire et conserve ces configurations et sauvegardes.
+
 Les profils d'origine de Windows PowerShell et PowerShell 7, ainsi que leurs stratégies d'exécution persistantes, sont conservés. Starship et ZSH ne sont pas installés ; zoxide reste disponible uniquement comme utilitaire CLI, sans initialisation automatique.
 
 Python et Node.js sont les seuls runtimes de programmation installés par ce script. Claude Code, Codex CLI et Antigravity CLI sont ses seuls CLI d'IA. Il n'installe aucune distribution Linux, aucun framework, gestionnaire de runtime, autre CLI d'IA ou autre écosystème de langage. Après avoir installé une distribution séparément, utilisez `desktop.sh` dans celle-ci pour configurer un environnement de développement complet.
@@ -42,9 +51,9 @@ Docker Desktop est volontairement exclu. SetupVibe prépare WSL 2, mais n'instal
 
 ## Installation En Une Commande
 
-Il s'agit de l'équivalent Windows de `curl -sSL desktop.setupvibe.dev | bash`.
+Il s'agit de l'équivalent Windows de `curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash`.
 
-L'URL canonique du programme d'installation Windows est `https://windows.setupvibe.dev`.
+L'URL canonique du programme d'installation Windows est `https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1`.
 
 1. Ouvrez le menu Démarrer.
 2. Recherchez **Windows PowerShell** et ouvrez-le. Le démarrage en tant qu'administrateur est facultatif, car le script demande automatiquement une élévation via l'UAC.
@@ -52,14 +61,14 @@ L'URL canonique du programme d'installation Windows est `https://windows.setupvi
 4. Collez la commande suivante et appuyez sur `Entrée` :
 
    ```powershell
-   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://windows.setupvibe.dev | iex
+   [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1 | iex
    ```
 
 5. Acceptez la demande UAC de Windows.
 6. Gardez les fenêtres PowerShell ouvertes jusqu'à l'affichage du résumé.
 7. Redémarrez Windows si cela est demandé pour appliquer les modifications de composants ou de paquets en attente.
 
-La commande télécharge `desktop.ps1` depuis le dépôt officiel de SetupVibe et l'exécute dans la session PowerShell actuelle. Lorsqu'une élévation est nécessaire, le programme télécharge une copie temporaire et continue dans une session administrateur.
+La commande télécharge `desktop.ps1` depuis `C0R0NELL/setupvibe`, branche `main`, et l'exécute dans la session PowerShell actuelle. Lorsqu'une élévation est nécessaire, le programme télécharge une copie temporaire depuis le même fork et continue dans une session administrateur. Les scripts auxiliaires sont aussi téléchargés depuis la branche `main` de ce fork.
 
 ## Installation Locale
 
@@ -67,7 +76,7 @@ Pour télécharger le script avant de l'exécuter :
 
 ```powershell
 $scriptPath = Join-Path $HOME 'Downloads\desktop.ps1'
-Invoke-WebRequest -UseBasicParsing -Uri https://windows.setupvibe.dev -OutFile $scriptPath
+Invoke-WebRequest -UseBasicParsing -Uri https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1 -OutFile $scriptPath
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File $scriptPath
 ```
 
@@ -166,7 +175,7 @@ OpenSSH n'utilise pas les fonctionnalités à la demande de Windows ni l'API des
 Redémarrez automatiquement Windows après une installation entièrement réussie lorsque le système indique qu'un redémarrage est nécessaire :
 
 ```powershell
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; & ([scriptblock]::Create((irm https://windows.setupvibe.dev))) -Restart
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; & ([scriptblock]::Create((irm https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1))) -Restart
 ```
 
 Sans `-Restart`, le programme ne redémarre jamais Windows automatiquement.
@@ -182,7 +191,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1 -Uninstall
 Ou exécutez le programme de désinstallation depuis l'URL canonique de SetupVibe pour Windows :
 
 ```powershell
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; & ([scriptblock]::Create((irm https://windows.setupvibe.dev))) -Uninstall
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; & ([scriptblock]::Create((irm https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1))) -Uninstall
 ```
 
 Le mode de désinstallation supprime le client et le serveur OpenSSH, Python et Node.js via leurs programmes de désinstallation officiels, Skills CLI, Claude Code, Codex CLI, Antigravity CLI, les fichiers gérés par SetupVibe dans `%USERPROFILE%\.setupvibe\bin` et leurs entrées dans le `PATH` utilisateur, restaure les états précédents des fonctionnalités facultatives WSL, du pare-feu WSL et de la règle de pare-feu OpenSSH, supprime la configuration WSL appliquée par SetupVibe, supprime tous les utilitaires WinGet et Chocolatey gérés par SetupVibe et supprime les entrées de paquets et de runtimes ajoutées par SetupVibe au `PATH` de la machine ainsi que les anciens blocs SetupVibe reconnus pour Starship et zoxide. Les skills d'agents installées sont conservées. Il supprime également les anciens outils de frameworks, les chemins absents des gestionnaires de runtimes et les paquets npm installés par les versions Beta Windows précédentes. Les répertoires actifs gérés par l'utilisateur dans le `PATH`, la configuration Starship, les distributions Linux, les configurations et identifiants utilisateur des CLI d'IA, WinGet, Chocolatey, les journaux et les fichiers sans rapport dans `%USERPROFILE%\.setupvibe` sont conservés.

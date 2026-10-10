@@ -106,10 +106,11 @@ browser caches, user sessions, credentials, and installed skills.
 
 ## Running this fork
 
-This is a local fork addition. Run `bash desktop.sh` from this checkout on Unix,
-or `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1` from
-this checkout on Windows. The upstream canonical setup URLs do not include
-unpublished changes from your fork.
+The installation commands in the [project README](../../README.md#quick-start)
+download directly from `C0R0NELL/setupvibe`, branch `main`. To test unpublished
+changes, run `bash desktop.sh` from this checkout on Unix, or
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1` from
+this checkout on Windows. Remote commands include changes after they are pushed.
 
 ## Official references
 

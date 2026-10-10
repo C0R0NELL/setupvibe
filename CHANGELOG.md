@@ -8,8 +8,13 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ### Added
 
+- Local fork: added a shared standard-library Python helper to configure Lazygit and installed Lazydocker after Desktop tool installation on Unix and Windows. It respects native configuration paths, preserves unrelated settings and the first backup, and skips unconventional YAML. Windows continues to install only Lazygit.
 - Local fork: added a dedicated browser automation step to Unix Desktop and Windows, installing `agent-browser`, Chrome/Chromium, browser dependencies, and the official global skill for Codex and Claude Code. Linux ARM64 uses Playwright's Chromium downloader because the upstream browser installer rejects this platform; current Chrome requires macOS 13+.
 - Added browser setup and usage guides in English, Portuguese, Spanish, and French, including headless launch validation and the Windows uninstall behavior.
+
+### Changed
+
+- Local fork: all installer commands, configuration and helper downloads, shell aliases, documentation, and Codex/Claude skill references now use `C0R0NELL/setupvibe`. All four editions use direct raw GitHub URLs on `main`, including Windows elevation, restart, and uninstall.
 
 ---
 
@@ -94,7 +99,7 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ### Changed
 
-- Switched the canonical Windows installer, elevation handoff, restart, and uninstall URL to `https://windows.setupvibe.dev`.
+- Unified the Windows installer, elevation handoff, restart, and uninstall URL.
 - Added explicit post-install validation for GitHub CLI and Windows Terminal so SetupVibe confirms that `gh.exe` and the `wt.exe` app execution alias are available in the refreshed Windows environment without changing the Terminal default profile.
 - Kept direct Windows-specific SetupVibe repository URLs, including `ssh_copy_id`, on the `windows` development branch until the Windows work is merged.
 - Expanded the Windows Edition (Beta) guides with one-command remote installation, local installation, execution stages, verification commands, logs, rerun behavior, restart options, and scope limitations.

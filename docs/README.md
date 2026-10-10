@@ -16,25 +16,25 @@ SetupVibe transforms a machine into a configured development workspace in one co
 ### Desktop (macOS, Linux & WSL)
 
 ```bash
-curl -sSL desktop.setupvibe.dev | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash
 ```
 
 ### Windows Desktop (Beta)
 
 ```powershell
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://windows.setupvibe.dev | iex
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; irm https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.ps1 | iex
 ```
 
 ### Server (Linux only)
 
 ```bash
-curl -sSL server.setupvibe.dev | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh | bash
 ```
 
 To initialize Docker Swarm automatically after setup:
 
 ```bash
-curl -sSL server.setupvibe.dev | bash -s -- --manager
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/server.sh | bash -s -- --manager
 ```
 
 Add `--yes` for unattended installation or `--advertise-addr ADDRESS` to choose the Swarm address or interface explicitly.
@@ -51,7 +51,7 @@ Run it from the SetupVibe repository or through the raw script URL:
 
 ```bash
 bash omarchy.sh
-curl -fsSL https://raw.githubusercontent.com/promovaweb/setupvibe/main/omarchy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/omarchy.sh | bash
 ```
 
 Use `--yes` for an unattended run. The script requires an existing Omarchy 4

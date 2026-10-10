@@ -90,10 +90,11 @@ navegador, sesiones, credenciales y skills.
 
 ## Ejecutar este fork
 
-Ejecute `bash desktop.sh` desde este checkout Unix o
+Los comandos del [README del proyecto](../../README.md#quick-start) descargan
+directamente desde `C0R0NELL/setupvibe`, rama `main`. Para probar cambios locales,
+ejecute `bash desktop.sh` desde este checkout Unix o
 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1` desde
-este checkout Windows. Las URL canónicas del upstream no incluyen cambios
-locales no publicados de su fork.
+este checkout Windows. Los comandos remotos incluyen los cambios tras el push.
 
 ## Referencias oficiales
 

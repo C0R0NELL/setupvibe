@@ -1,13 +1,13 @@
 ---
 name: fix-issue
-description: Workflow completo para investigar, corrigir e fechar issues do repositório promovaweb/setupvibe. Lê a issue no GitHub, cria a branch fix/issue-N, identifica a causa raiz nos scripts, aplica as correções, faz commit e push, e pode postar um comentário na issue com o comando de teste apontando para a branch.
+description: Workflow completo para investigar, corrigir e fechar issues do repositório C0R0NELL/setupvibe. Lê a issue no GitHub, cria a branch fix/issue-N, identifica a causa raiz nos scripts, aplica as correções, faz commit e push, e pode postar um comentário na issue com o comando de teste apontando para a branch.
 metadata:
   short-description: Corrige issues do SetupVibe no GitHub
 ---
 
 # Fix Issue — SetupVibe
 
-Workflow para corrigir issues reportadas em `promovaweb/setupvibe`.
+Workflow para corrigir issues reportadas em `C0R0NELL/setupvibe`.
 
 ## Plataforma
 
@@ -33,7 +33,7 @@ Esta é a versão Claude Code da skill.
 1. Leia a issue no GitHub:
 
 ```bash
-gh issue view <número> --repo promovaweb/setupvibe
+gh issue view <número> --repo C0R0NELL/setupvibe
 ```
 
 1. Anote o autor da issue (campo `author:`) — será usado no comentário final.
@@ -155,7 +155,7 @@ Quando invocado com o argumento `comment`, poste um comentário na issue via `gh
 ### Para desktop.sh
 
 ```bash
-gh issue comment <número> --repo promovaweb/setupvibe --body "$(cat <<'EOF'
+gh issue comment <número> --repo C0R0NELL/setupvibe --body "$(cat <<'EOF'
 Olá @<autor>! 👋
 
 Identificamos e corrigimos o problema relatado. A correção está disponível na branch `fix/issue-<número>` para testes.
@@ -164,12 +164,12 @@ Para testar, execute o comando abaixo no terminal:
 
 **macOS:**
 \`\`\`bash
-curl -sSL https://raw.githubusercontent.com/promovaweb/setupvibe/fix/issue-<número>/desktop.sh | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/fix/issue-<número>/desktop.sh | bash
 \`\`\`
 
 **Linux Desktop:**
 \`\`\`bash
-curl -sSL https://raw.githubusercontent.com/promovaweb/setupvibe/fix/issue-<número>/desktop.sh | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/fix/issue-<número>/desktop.sh | bash
 \`\`\`
 
 Se o problema for resolvido, confirme aqui nos comentários. Caso contrário, descreva o erro que ainda aparece.
@@ -182,7 +182,7 @@ EOF
 ### Para server.sh
 
 ```bash
-gh issue comment <número> --repo promovaweb/setupvibe --body "$(cat <<'EOF'
+gh issue comment <número> --repo C0R0NELL/setupvibe --body "$(cat <<'EOF'
 Olá @<autor>! 👋
 
 Identificamos e corrigimos o problema relatado. A correção está disponível na branch `fix/issue-<número>` para testes.
@@ -190,7 +190,7 @@ Identificamos e corrigimos o problema relatado. A correção está disponível n
 Para testar, execute o comando abaixo no terminal:
 
 \`\`\`bash
-curl -sSL https://raw.githubusercontent.com/promovaweb/setupvibe/fix/issue-<número>/server.sh | bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/fix/issue-<número>/server.sh | bash
 \`\`\`
 
 Se o problema for resolvido, confirme aqui nos comentários. Caso contrário, descreva o erro que ainda aparece.

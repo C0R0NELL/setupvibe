@@ -8,7 +8,7 @@ set -o pipefail
 # ==============================================================================
 # Maintainer:    promovaweb.com
 # Contact:       contato@promovaweb.com
-# Contributing:  https://github.com/promovaweb/setupvibe/blob/main/CONTRIBUTING.md
+# Contributing:  https://github.com/C0R0NELL/setupvibe/blob/main/CONTRIBUTING.md
 # ------------------------------------------------------------------------------
 # Compatibility: macOS 12+, Zorin OS 18+, Ubuntu 24.04+, Debian 12+
 # Architectures: x86_64 (amd64) & ARM64 (aarch64/arm64)
@@ -658,7 +658,7 @@ install_setupvibe_bin() {
     echo "Installing SetupVibe helper scripts..."
     user_do mkdir -p "$REAL_HOME/.setupvibe/bin"
     user_do rm -f "$REAL_HOME/.setupvibe/bin/sshcopykey"
-    if ! safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/bin/ssh_copy_id "$REAL_HOME/.setupvibe/bin/ssh_copy_id" 500; then
+    if ! safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/bin/ssh_copy_id "$REAL_HOME/.setupvibe/bin/ssh_copy_id" 500; then
         return 1
     fi
     user_do chmod +x "$REAL_HOME/.setupvibe/bin/ssh_copy_id"
@@ -1342,7 +1342,7 @@ step_7() {
     # Portainer Setup (Both macOS & Linux)
     echo "Configuring Portainer..."
     user_do mkdir -p "$REAL_HOME/.setupvibe/portainer_data"
-    safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/portainer-compose.yml "$REAL_HOME/.setupvibe/portainer-compose.yml"
+    safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/portainer-compose.yml "$REAL_HOME/.setupvibe/portainer-compose.yml"
     if $IS_LINUX; then
         sys_do chown -R "$REAL_USER:$REAL_GROUP" "$REAL_HOME/.setupvibe"
     fi
@@ -1362,6 +1362,25 @@ step_7() {
     fi
 }
 
+
+configure_lazy_ui() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/configure_lazy_ui.py"
+    local source_path="" python_path="/usr/bin/python3"
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        source_path="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/configure_lazy_ui.py"
+    fi
+    if [[ -f "$source_path" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$source_path" "$helper_path"
+    else
+        safe_download "https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/configure_lazy_ui.py" "$helper_path"
+    fi
+    if $IS_MACOS; then
+        python_path="$(brew_cmd --prefix "python@$PYTHON_VERSION")/bin/python$PYTHON_VERSION"
+    fi
+    user_do env PATH="$BREW_PREFIX/bin:$PATH" "$python_path" "$helper_path"
+}
 
 step_8() {
     echo "Installing Modern Unix Tools via Homebrew..."
@@ -1396,6 +1415,8 @@ step_8() {
         fi
 
     fi
+
+    configure_lazy_ui
 }
 
 
@@ -1538,7 +1559,7 @@ step_11() {
         perl -i -pe 's/╭/┌/g; s/╰/└/g; s/\x{e0b6}/\x{e0b2}/g; s/\x{e0b4}/\x{e0b0}/g' "$REAL_HOME/.config/starship.toml"
 
         # macOS ZSHRC
-        safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/zshrc-macos.zsh "$REAL_HOME/.zshrc"
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/zshrc-macos.zsh "$REAL_HOME/.zshrc"
         if [ ! -f "$REAL_HOME/.zshrc.local" ]; then
             user_do touch "$REAL_HOME/.zshrc.local"
         fi
@@ -1575,7 +1596,7 @@ step_11() {
         perl -i -pe 's/╭/┌/g; s/╰/└/g; s/\x{e0b6}/\x{e0b2}/g; s/\x{e0b4}/\x{e0b0}/g' "$REAL_HOME/.config/starship.toml"
 
         # Linux ZSHRC
-        safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/zshrc-linux.zsh "$REAL_HOME/.zshrc"
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/zshrc-linux.zsh "$REAL_HOME/.zshrc"
         if [ ! -f "$REAL_HOME/.zshrc.local" ]; then
             user_do touch "$REAL_HOME/.zshrc.local"
         fi
@@ -1598,7 +1619,7 @@ step_12() {
     git_ensure "https://github.com/tmux-plugins/tpm" "$REAL_HOME/.tmux/plugins/tpm"
 
     echo "Downloading tmux-desktop.conf..."
-    safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/tmux-desktop.conf "$REAL_HOME/.tmux.conf"
+    safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/tmux-desktop.conf "$REAL_HOME/.tmux.conf"
 
     # Also install to /root if running as root with a different REAL_HOME
     if [[ "$(id -u)" -eq 0 && "$REAL_HOME" != "/root" ]]; then
@@ -1921,7 +1942,7 @@ EOF
         user_do "$pm2_bin" set pm2:log_date_format "YYYY-MM-DD HH:mm:ss"
 
         echo "Downloading PM2 ecosystem configuration..."
-        safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/ecosystem.config.js "$REAL_HOME/ecosystem.config.js"
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/ecosystem.config.js "$REAL_HOME/ecosystem.config.js"
         if $IS_LINUX; then
             sys_do chown "$REAL_USER:$REAL_GROUP" "$REAL_HOME/ecosystem.config.js"
         fi

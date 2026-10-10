@@ -7,7 +7,7 @@ IFS=$'\n\t'
 # ==============================================================================
 # Maintainer:    promovaweb.com
 # Contact:       contato@promovaweb.com
-# Contributing:  https://github.com/promovaweb/setupvibe/blob/main/CONTRIBUTING.md
+# Contributing:  https://github.com/C0R0NELL/setupvibe/blob/main/CONTRIBUTING.md
 # ------------------------------------------------------------------------------
 # Compatibility: Zorin OS 18+, Ubuntu 24.04+, Debian 12+
 # Architectures: x86_64 (amd64) & ARM64 (aarch64/arm64)
@@ -559,7 +559,7 @@ install_setupvibe_bin() {
         "$REAL_HOME/.setupvibe" \
         "$REAL_HOME/.setupvibe/bin"
     user_do rm -f "$REAL_HOME/.setupvibe/bin/sshcopykey"
-    if ! safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/bin/ssh_copy_id "$REAL_HOME/.setupvibe/bin/ssh_copy_id" 500; then
+    if ! safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/bin/ssh_copy_id "$REAL_HOME/.setupvibe/bin/ssh_copy_id" 500; then
         return 1
     fi
     user_do chmod +x "$REAL_HOME/.setupvibe/bin/ssh_copy_id"
@@ -737,7 +737,7 @@ step_2() {
     sys_do install -d -o "$REAL_USER" -g "$REAL_GROUP" -m 0755 \
         "$REAL_HOME/.setupvibe" \
         "$REAL_HOME/.setupvibe/portainer_data"
-    safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/portainer-compose.yml "$REAL_HOME/.setupvibe/portainer-compose.yml"
+    safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/portainer-compose.yml "$REAL_HOME/.setupvibe/portainer-compose.yml"
 
     if sys_do docker info >/dev/null 2>&1; then
         echo "Starting Portainer..."
@@ -836,7 +836,7 @@ step_5() {
     user_do sed -i 's/╭/┌/g; s/╰/└/g' "$REAL_HOME/.config/starship.toml"
 
     backup_file_once "$REAL_HOME/.zshrc"
-    safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/zshrc-server.zsh "$REAL_HOME/.zshrc"
+    safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/zshrc-server.zsh "$REAL_HOME/.zshrc"
     if [ ! -f "$REAL_HOME/.zshrc.local" ]; then
         user_do touch "$REAL_HOME/.zshrc.local"
     fi
@@ -866,7 +866,7 @@ step_6() {
 
     echo "Downloading tmux-server.conf..."
     backup_file_once "$REAL_HOME/.tmux.conf"
-    safe_download https://raw.githubusercontent.com/promovaweb/setupvibe/main/conf/tmux-server.conf "$REAL_HOME/.tmux.conf"
+    safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/tmux-server.conf "$REAL_HOME/.tmux.conf"
 
     if [[ "$(id -u)" -eq 0 && "$REAL_HOME" != "/root" ]]; then
         sys_do mkdir -p /root/.tmux/plugins
