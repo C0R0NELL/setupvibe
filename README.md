@@ -91,6 +91,46 @@ Use `bash omarchy.sh --yes` for an unattended local run. See the [Omarchy
 installation guide](docs/omarchy/README.md) for the preserved components and
 the added layer.
 
+## General Notes
+
+### Herdr Plugins
+
+After SetupVibe finishes, install the desired Herdr plugins manually from your
+user terminal. This fork keeps the following list as a post-installation
+reference for Linux, macOS, and WSL:
+
+| Plugin | Purpose | Main requirements |
+| --- | --- | --- |
+| [Account Hub](https://github.com/C0R0NELL/herdr-account-hub) | Switch Codex/Claude accounts and check usage; Claude support is in beta. | Python 3.11+ and the relevant agent CLI. |
+| [Herdr Plus](https://github.com/cloudmanic/herdr-plus) | Workspace templates and quick actions. | Herdr 0.7.0+; Go is optional on Linux/macOS. |
+| [Herdr Web UI](https://github.com/devswha/herdr-web-ui) | Access agent chats and terminals from a browser or phone. | Herdr 0.9.0+, Bun 1.4+, and Node.js 18+ on Linux/macOS. |
+| [Herdr Board](https://github.com/nelsonPires5/herdr-board) | Kanban cards that dispatch prompts to agents. | Herdr 0.9.0+ with socket protocol 22, Git, and Rust/Cargo. |
+| [Herdr Shepherd](https://github.com/mikedclarke/herdr-shepherd) | Scheduled agent sessions, heartbeats, and scripts. | Herdr 0.8.0+ on Linux/macOS; Go is optional. |
+| [Herdr Plugin Manager](https://github.com/speardragon/herdr-plugin-manager) | Browse, install, update, and manage plugins from a popup. | Herdr 0.7.4+, Bash, and Python 3. |
+| [TTT](https://github.com/eugenioenko/ttt) | Terminal editor integrated into Herdr panes. | Herdr 0.7.0+, Git, and ripgrep for the full feature set. |
+
+Check the linked READMEs for configuration, keybindings, and current
+compatibility, then run the commands for the plugins you want:
+
+```bash
+herdr --version
+herdr plugin install C0R0NELL/herdr-account-hub
+herdr plugin install cloudmanic/herdr-plus
+herdr plugin install devswha/herdr-web-ui
+herdr plugin install nelsonPires5/herdr-board --ref v0.19.0
+herdr plugin install mikedclarke/herdr-shepherd
+herdr plugin install speardragon/herdr-plugin-manager
+herdr plugin install eugenioenko/ttt/herdr-plugin
+herdr plugin list
+```
+
+The TTT plugin lives in the repository's `herdr-plugin` subdirectory and
+installs the editor binary if it is missing from `PATH`. Web UI's repository
+also provides an installer for missing prerequisites. Shepherd requires its
+scheduler daemon to be started after the first installation; follow its
+README's first-run instructions. See the [SetupVibe Herdr guide](docs/en/HERDR.md)
+for sessions and shortcuts.
+
 ## Contributing
 
 We welcome contributions of all sizes! Please read our [Contribution Guide](CONTRIBUTING.md) to get started.
