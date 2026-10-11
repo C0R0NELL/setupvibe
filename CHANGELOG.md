@@ -17,6 +17,7 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ### Changed
 
+- Local fork: commented out automatic demonstration cron job creation in Unix Desktop on macOS, Linux, and WSL, preserving existing schedules and cron service activation. Server, native Windows, and Omarchy already do not create these jobs; Server keeps its existing legacy-example cleanup.
 - Local fork: replaced Herdr Shepherd with `C0R0NELL/herdr-agents-sidebar` in the manual plugin notes, including its Linux requirements, installation command, and activation through **Apply sidebar**.
 - Local fork: all installer commands, configuration and helper downloads, shell aliases, documentation, and Codex/Claude skill references now use `C0R0NELL/setupvibe`. All four editions use direct raw GitHub URLs on `main`, including Windows elevation, restart, and uninstall.
 

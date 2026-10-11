@@ -130,6 +130,7 @@ connecter à des serveurs par SSH. Il utilise le service existant `cron`/`cronta
 Linux installe cron à l'étape de base et macOS fournit `crontab`. WSL utilise
 cette installation Linux ; Windows natif n'est pas inclus. Le setup valide
 l'application Python sans ouvrir l'interface ni modifier le crontab.
+Aucune tâche de démonstration n'est créée ; les tâches existantes sont conservées.
 
 Après l'installation, Python de l'étape 5 active `nerdFontsVersion: "3"` et
 `showFileIcons: true` dans Lazygit. Lazydocker reçoit

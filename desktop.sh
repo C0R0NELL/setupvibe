@@ -136,48 +136,44 @@ brew_cmd() {
     fi
 }
 
-# Ensure cron is active and has example tasks
+# Ensure cron is active without creating demonstration jobs.
 cron_ensure() {
-    echo "Ensuring cron service is active and configured..."
+    echo "Ensuring cron service is active..."
     if [[ "$(uname -s)" == "Linux" ]]; then
         sys_do systemctl enable --now cron 2>/dev/null || true
     fi
 
-    # Add example tasks to crontab if they don't exist
-    # 1. A simple heartbeat to /tmp/cron-heartbeat.log every hour
-    # 2. A disk usage snapshot to ~/cron-disk-usage.log every day at midnight
-    
-    local CRON_HEARTBEAT="0 * * * * echo \"Cron heartbeat: \$(date)\" >> /tmp/cron-heartbeat.log"
-    local CRON_DISK="0 0 * * * df -h > \$HOME/cron-disk-usage.log"
-
-    # Get current crontab
-    local CURRENT_CRON
-    CURRENT_CRON=$(user_do crontab -l 2>/dev/null || echo "")
-
-    local NEW_CRON="$CURRENT_CRON"
-    local CHANGED=false
-
-    if [[ ! "$CURRENT_CRON" == *"/tmp/cron-heartbeat.log"* ]]; then
-        echo "Adding example cron task: hourly heartbeat"
-        NEW_CRON="${NEW_CRON}
-${CRON_HEARTBEAT}"
-        CHANGED=true
-    fi
-
-    if [[ ! "$CURRENT_CRON" == *"cron-disk-usage.log"* ]]; then
-        echo "Adding example cron task: daily disk usage snapshot"
-        NEW_CRON="${NEW_CRON}
-${CRON_DISK}"
-        CHANGED=true
-    fi
-
-    if [ "$CHANGED" = true ]; then
-        # Filter empty lines and install new crontab
-        echo "$NEW_CRON" | grep -v '^$' | user_do crontab -
-        echo -e "${GREEN}✔ Crontab updated with example tasks.${NC}"
-    else
-        echo "Crontab already has example tasks."
-    fi
+    # Disabled: these examples are not required by Cronboard or other tools.
+    # Keep the user's crontab unchanged on macOS, Linux, and WSL.
+    # local CRON_HEARTBEAT="0 * * * * echo \"Cron heartbeat: \$(date)\" >> /tmp/cron-heartbeat.log"
+    # local CRON_DISK="0 0 * * * df -h > \$HOME/cron-disk-usage.log"
+    #
+    # local CURRENT_CRON
+    # CURRENT_CRON=$(user_do crontab -l 2>/dev/null || echo "")
+    #
+    # local NEW_CRON="$CURRENT_CRON"
+    # local CHANGED=false
+    #
+    # if [[ ! "$CURRENT_CRON" == *"/tmp/cron-heartbeat.log"* ]]; then
+    #     echo "Adding example cron task: hourly heartbeat"
+    #     NEW_CRON="${NEW_CRON}
+    # ${CRON_HEARTBEAT}"
+    #     CHANGED=true
+    # fi
+    #
+    # if [[ ! "$CURRENT_CRON" == *"cron-disk-usage.log"* ]]; then
+    #     echo "Adding example cron task: daily disk usage snapshot"
+    #     NEW_CRON="${NEW_CRON}
+    # ${CRON_DISK}"
+    #     CHANGED=true
+    # fi
+    #
+    # if [ "$CHANGED" = true ]; then
+    #     echo "$NEW_CRON" | grep -v '^$' | user_do crontab -
+    #     echo -e "${GREEN}✔ Crontab updated with example tasks.${NC}"
+    # else
+    #     echo "Crontab already has example tasks."
+    # fi
 }
 
 if ! tty >/dev/null 2>&1 </dev/tty; then
