@@ -76,6 +76,7 @@ installation and never executes package-removal commands.
 | Network & monitoring tools            | ✔              | ✔               | ✔       |
 | Cronboard cron dashboard              | ✔              | ✗ (use WSL)     | ✔       |
 | Chafa terminal image previews         | ✔              | ✔               | ✔       |
+| SetupVibe environment skill           | ✔              | ✔               | ✔       |
 | Tailscale                             | ✔              | ✔               | ✔       |
 | SSH server                            | ✔ (Linux only) | ✔               | ✔       |
 | ZSH + Oh My Zsh + Starship            | ✔              | ✗               | ✔       |
@@ -90,6 +91,10 @@ installation and never executes package-removal commands.
 | Docker Swarm Manager (`--manager`)    | ✗              | ✗               | ✔       |
 
 ## Specialized Guides
+
+### Environment Skill
+
+- [Installation, supported harnesses, and skill locations](en/ENVIRONMENT_SKILL.md)
 
 ### Agent Browser
 

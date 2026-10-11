@@ -8,6 +8,7 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ### Added
 
+- Local fork: added `setupvibe-environment` with installed-tool tables, commands, uses, and availability by edition. It prefers the user's existing Herdr workspace within their request and authorization, preserving running processes and user focus. Unix Desktop, Windows Desktop, and Server install it globally for ten supported harnesses through Skills CLI, using copies without symlinks, documented native roots, and failure reporting for partial installations.
 - Local fork: added Chafa for terminal image previews to Unix Desktop and Server through APT/Homebrew and to Windows through `hpjansson.Chafa` on WinGet, with command validation and managed Windows removal. Documented normal previews and the portable `--format symbols` mode.
 - Local fork: standardized Cronboard in Unix Desktop step 8 through Homebrew instead of separate language-step installations, and restored it to Server step 3 with private uv and Python 3.14 dependencies. Server exposes the dashboard command and `cronb` alias, preserves installations from other managers, updates its own installation on reruns, and leaves existing crontabs and system Python unchanged.
 - Local fork: added a shared standard-library Python helper to configure Lazygit and installed Lazydocker after Desktop tool installation on Unix and Windows. It respects native configuration paths, preserves unrelated settings and the first backup, and skips unconventional YAML. Windows continues to install only Lazygit.

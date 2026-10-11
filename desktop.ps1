@@ -39,6 +39,7 @@ $script:WindowsUtilities = @(
     @{ Path = 'utils/windows/ssh_copy_id/ssh_copy_id.ps1'; Name = 'ssh_copy_id_core.ps1' }
     @{ Path = 'utils/windows/ssh_copy_id/ssh_copy_id.cmd'; Name = 'ssh_copy_id.cmd' }
     @{ Path = 'utils/configure_lazy_ui.py'; Name = 'configure_lazy_ui.py' }
+    @{ Path = 'utils/install_environment_skill.mjs'; Name = 'install_environment_skill.mjs' }
 )
 $script:LegacyWindowsUtilityFiles = @('ssh_copy_id.bat', 'ssh_copy_id.ps1', 'codex.cmd')
 
@@ -2122,6 +2123,31 @@ function Install-SkillsCli {
     Write-Success 'Skills CLI is installed and available from the user PATH.'
 }
 
+function Install-EnvironmentSkill {
+    $helperPath = Join-Path $script:WindowsUtilitiesDirectory 'install_environment_skill.mjs'
+    if (-not (Test-Path $helperPath -PathType Leaf)) {
+        throw "Environment skill installation helper was not installed: $helperPath"
+    }
+    $skillSource = "$script:SetupVibeRawUrl/skills/setupvibe-environment/SKILL.md"
+    if ($PSScriptRoot) {
+        $localSkill = Join-Path $PSScriptRoot 'skills/setupvibe-environment'
+        if (Test-Path (Join-Path $localSkill 'SKILL.md') -PathType Leaf) {
+            $skillSource = $localSkill
+        }
+    }
+
+    $npmPath = Find-RuntimeExecutable -Name 'npm.cmd' -PreferredPaths @((Join-Path (Get-NativeProgramFilesDirectory) 'nodejs\npm.cmd'))
+    $npmPrefix = (& $npmPath prefix --global | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $npmPrefix -or -not [IO.Path]::IsPathRooted($npmPrefix)) {
+        throw 'npm did not return an absolute global prefix for Skills CLI.'
+    }
+    $nodePath = Find-RuntimeExecutable -Name 'node.exe' -PreferredPaths @((Join-Path (Get-NativeProgramFilesDirectory) 'nodejs\node.exe'))
+    Invoke-NativeCommand -FilePath $nodePath -ArgumentList @(
+        $helperPath, '--skills-package', (Join-Path $npmPrefix 'node_modules\skills'), '--source', $skillSource
+    )
+    Write-Success 'SetupVibe environment skill was installed for supported agents.'
+}
+
 function Install-AgentBrowser {
     $npmPath = Get-NpmCommandPath
     Invoke-NativeCommand -FilePath $npmPath -ArgumentList @(
@@ -2561,6 +2587,7 @@ else {
     Invoke-SetupStep -Name 'Python and Node.js PATH for Claude and Codex' -Action { Install-DevelopmentRuntimePaths }
     Invoke-SetupStep -Name 'Lazygit and Lazydocker appearance' -Action { Set-LazyToolAppearance }
     Invoke-SetupStep -Name 'Skills CLI' -Action { Install-SkillsCli }
+    Invoke-SetupStep -Name 'SetupVibe environment skill' -Action { Install-EnvironmentSkill }
     Invoke-SetupStep -Name 'OpenCode CLI' -Action { Install-OpenCodeCli }
     Invoke-SetupStep -Name 'Claude Code native CLI' -Action { Install-ClaudeCode }
     Invoke-SetupStep -Name 'Codex CLI' -Action { Install-CodexCli }

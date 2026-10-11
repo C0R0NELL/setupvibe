@@ -30,6 +30,13 @@ L'Édition Windows (Beta) configure des utilitaires Windows natifs, Python, Node
 
 Le programme d'installation est idempotent : les paquets WinGet installés sont détectés et ignorés, Chocolatey garantit la présence de ses paquets et les installateurs officiels de Python et Node.js sont réappliqués en toute sécurité. Les échecs sont enregistrés par paquet afin que les autres installations puissent continuer. Un journal complet est enregistré dans `C:\ProgramData\SetupVibe\Logs`.
 
+Skills CLI installe également la skill partagée `setupvibe-environment`
+pour dix harnesses compatibles au niveau utilisateur et crée les répertoires
+nécessaires. Les tableaux présentent les outils installés, des exemples de
+commandes, leurs usages et leur disponibilité par édition pour aider les agents
+à répondre aux demandes de l'utilisateur.
+Voir [les chemins et le comportement de mise à jour](../../en/ENVIRONMENT_SKILL.md).
+
 Chafa utilise le paquet WinGet `hpjansson.Chafa`, est validé avec
 `chafa --version` et est supprimé par `-Uninstall`. Affichez les images avec
 `chafa image.png` ou `chafa --format symbols image.png`.

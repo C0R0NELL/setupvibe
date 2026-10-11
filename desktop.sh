@@ -1639,6 +1639,34 @@ step_12() {
 }
 
 
+install_environment_skill() {
+    local npm_path=$1
+    local npm_root=$2
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_environment_skill.mjs"
+    local skill_source="https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/skills/setupvibe-environment/SKILL.md"
+    local helper_source=""
+    local repo_root
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+        helper_source="$repo_root/utils/install_environment_skill.mjs"
+        if [[ -f "$repo_root/skills/setupvibe-environment/SKILL.md" ]]; then
+            skill_source="$repo_root/skills/setupvibe-environment"
+        fi
+    fi
+
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download "https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/install_environment_skill.mjs" "$helper_path"
+    fi
+    echo "Installing the SetupVibe environment skill for supported agents..."
+    user_do env PATH="$npm_path" node "$helper_path" \
+        --skills-package "$npm_root/skills" --source "$skill_source"
+}
+
+
 step_13() {
     local npm_bin
     local npm_path
@@ -1697,6 +1725,8 @@ step_13() {
             user_do env PATH="$npm_path" "$command_name" --version >/dev/null
         fi
     done
+
+    install_environment_skill "$npm_path" "$npm_root"
 
     echo "Installing Herdr..."
     install_herdr

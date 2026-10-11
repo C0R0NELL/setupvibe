@@ -437,3 +437,20 @@ arquivo inexistente. Os testes usaram os helpers do Server em containers
 descartáveis com o checkout somente para leitura, sem publicar portas ou
 executar os instaladores completos. A renderização em caracteres permite
 validar imagens sem depender de um protocolo gráfico ou de um terminal GUI.
+
+## Distribuição da skill de ambiente em outubro de 2026
+
+Skills CLI 1.7.1 trata agentes com raiz de projeto `.agents/skills` como
+universais e instala suas skills globais nessa mesma raiz compartilhada,
+mesmo quando o registro informa uma raiz nativa diferente. O helper
+`utils/install_environment_skill.mjs` também publica o arquivo da skill nos
+caminhos nativos documentados. Use `--json` com `--yes` para propagar falhas de
+qualquer destino; a saída comum do CLI pode apenas listar falhas parciais.
+
+A instalação local e a reexecução da nova função do Server passaram em
+Debian 12 ARM64 com Node.js 24 e Skills CLI 1.7.1, num container sem rede ou
+portas publicadas, com checkout somente para leitura. A execução começou
+como root e usou `user_do` para instalar no usuário `node`; os nove caminhos
+compartilhados/nativos e o helper ficaram com o proprietário correto. A
+reexecução como usuário comum também passou. O teste não executou o
+instalador completo nem alterou serviços da VPS.

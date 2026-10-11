@@ -132,6 +132,33 @@ system Python and crontabs unchanged, preserve installations from other
 managers, and update the managed tool on reruns. Cronboard has no `--help` or
 `--version`; validate by importing its application with its own interpreter.
 
+### Distributed environment skill
+
+`skills/setupvibe-environment/SKILL.md` is the single source for the product
+skill installed in Unix Desktop step 13, Server step 7, and Windows after Skills
+CLI installation. Its description identifies already-installed tools for
+fulfilling user requests. Maintain tables of executable commands, practical
+uses, and availability by edition from the installers and documentation;
+omit ordinary language runtimes. Keep executable names distinct from shell
+aliases and interactive interfaces. It is separate from this repository's
+Codex/Claude maintenance skills; do not duplicate it into those folders.
+
+The product skill prefers the user's existing Herdr workspace for persistent
+sessions within their request and authorization. Pane control requires
+`HERDR_ENV=1` and explicit targets. Preserve running processes and user focus;
+use Tmux when requested, already in use, or Herdr is unavailable.
+
+Install through Skills CLI with explicit targets: Codex, Claude Code, OpenCode,
+Grok Build, Kimi Code CLI, Gemini CLI, Cursor, GitHub Copilot, Antigravity CLI,
+and Amp. Use `--global --copy --yes --json`; JSON mode must propagate partial
+installation failures. Run as the target user, including when invoked through
+sudo. Use the local skill directory when running a checkout; remote execution
+must use its direct raw URL from this fork's `main` branch. Keep unrelated
+skills and agent configuration unchanged; Windows uninstall preserves skills.
+The shared Node helper also publishes the skill file to documented native
+roots, because Skills CLI routes several harnesses to `.agents/skills`.
+See [the distribution guide](docs/en/ENVIRONMENT_SKILL.md) for paths and sources.
+
 ### Terminal image previews
 
 Desktop and Server install Chafa through existing package managers: APT in
@@ -163,6 +190,7 @@ commands.
 | `docs/omarchy/README.md`    | Omarchy 4 additive edition documentation                          |
 | `docs/en/EXECUTABLES.md`    | Executable helper script documentation (shared by Unix editions) |
 | `docs/en/AGENT_BROWSER.md`  | Desktop browser automation, OS dependencies, and agent integration |
+| `docs/en/ENVIRONMENT_SKILL.md` | Product environment skill, supported harnesses, and user skill roots |
 | `docs/desktop/en/tmux.md`   | Tmux plugin and keybinding reference (shared by Unix editions)   |
 | `docs/desktop/en/pm2.md`    | PM2 command and configuration reference (shared by Unix editions)|
 

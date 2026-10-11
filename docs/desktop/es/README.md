@@ -193,6 +193,13 @@ manifiestos oficiales de releases:
 
 Cada CLI de la lista se valida después de la instalación. [Herdr](https://github.com/herdrdev/herdr) se instala en `~/.local/bin` según el sistema operativo y la arquitectura detectados; consulta la [guía de Herdr](../../es/HERDR.md) para conocer las sesiones, los atajos, las actualizaciones y el diagnóstico. Antigravity CLI se instala en `~/.local/bin` como `agy`: se resuelve y verifica directamente el manifiesto versionado y el checksum SHA-512 del propio feed de releases de Google (el bootstrapper oficial de Unix no reenvía `--skip-aliases`/`--skip-path` a su paso interno `agy install`), y luego se ejecuta `agy install --skip-aliases --skip-path` explícitamente para no modificar los perfiles de shell. **Spec-Kit** se instala a través de `uv tool install specify-cli`. Consulte [SPECKIT.md](SPECKIT.md) para obtener la guía completa de Spec-Driven Development y los aliases.
 
+Skills CLI también instala globalmente la skill compartida
+`setupvibe-environment` para diez harnesses compatibles y crea sus directorios
+de skills de usuario cuando es necesario. Sus tablas incluyen herramientas
+instaladas, ejemplos de comandos, usos prácticos y disponibilidad por edición
+para ayudar a los agentes a atender las solicitudes del usuario.
+Consulta [las rutas y el comportamiento de actualización](../../en/ENVIRONMENT_SKILL.md).
+
 ### Paso 14 — Automatización del Navegador
 
 Instala `agent-browser` globalmente con npm, su CLI nativa, Chrome/Chromium

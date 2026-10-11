@@ -167,6 +167,13 @@ Installe **Node.js 24** depuis le dépôt APT NodeSource, installe les paquets n
 
 Le [CLI Skills de Vercel Labs](https://github.com/vercel-labs/skills), [Herdr](https://github.com/herdrdev/herdr) et chaque commande CLI d'IA sont validés après l'installation. Herdr est installé dans `~/.local/bin` selon l'architecture détectée ; consultez le [guide Herdr](../../fr/HERDR.md) pour les sessions, les raccourcis, les mises à jour et le dépannage. Le paquet obsolète `@githubnext/github-copilot-cli` est supprimé. Les paquets globaux npm sont installés dans `~/.npm-global` chaque fois que l'utilisateur cible n'est pas root, y compris lorsque l'installateur est exécuté avec `sudo`.
 
+Skills CLI installe également la skill partagée `setupvibe-environment`
+pour dix harnesses compatibles au niveau utilisateur et crée les répertoires
+nécessaires. Les tableaux présentent les outils installés, des exemples de
+commandes, leurs usages et leur disponibilité par édition pour aider les agents
+à répondre aux demandes de l'utilisateur.
+Voir [les chemins et le comportement de mise à jour](../../en/ENVIRONMENT_SKILL.md).
+
 ### Étape 8 — Finalisation & Nettoyage
 
 - Exécute `autoclean` et `clean` d'APT
