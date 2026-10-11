@@ -39,14 +39,18 @@ The script shows an interactive roadmap and asks for confirmation before startin
 
 ### Step 1 — Base System & Build Tools
 
-**Linux:** installs via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, SSL/compression libs, and the Charmbracelet APT repo (for `glow`).
+**Linux:** installs via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, SSL/compression libs, and the Charmbracelet APT repo (for `glow`).
 
 **macOS:** relies on Xcode Command Line Tools (checks and exits if not present). Base tools are installed via Homebrew in the next step.
 
 ### Step 2 — Homebrew
 
-- **macOS:** installs Homebrew if absent, then installs base tools (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `openssl`, `readline`, etc.)
+- **macOS:** installs Homebrew if absent, then installs base tools (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, `openssl`, `readline`, etc.)
 - **Linux:** installs Linuxbrew under `/home/linuxbrew/.linuxbrew`; adds PATH entries to `~/.bashrc`, `~/.profile`, `~/.zshrc`; runs `brew upgrade` if already present
+
+[Chafa](https://hpjansson.org/chafa/download/) previews images with
+`chafa image.png`; use `chafa --format symbols image.png` for character output.
+Its command is validated after installation.
 
 ### Step 3 — PHP 8.5 Ecosystem
 

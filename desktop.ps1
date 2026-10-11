@@ -48,6 +48,7 @@ $script:WinGetPackages = @(
     @{ Id = 'JernejSimoncic.Wget'; Name = 'Wget' }
     @{ Id = 'Gyan.FFmpeg'; Name = 'FFmpeg' }
     @{ Id = 'ImageMagick.ImageMagick'; Name = 'ImageMagick' }
+    @{ Id = 'hpjansson.Chafa'; Name = 'Chafa' }
     @{ Id = 'GitHub.cli'; Name = 'GitHub CLI (gh)' }
     @{ Id = 'sharkdp.bat'; Name = 'bat' }
     @{ Id = 'eza-community.eza'; Name = 'eza' }
@@ -83,6 +84,7 @@ $script:WinGetCommandChecks = @(
     @{ Name = 'Wget'; Command = 'wget.exe'; Arguments = @('--version') }
     @{ Name = 'FFmpeg'; Command = 'ffmpeg.exe'; Arguments = @('-version') }
     @{ Name = 'ImageMagick'; Command = 'magick.exe'; Arguments = @('-version') }
+    @{ Name = 'Chafa'; Command = 'chafa.exe'; Arguments = @('--version') }
     @{ Name = 'bat'; Command = 'bat.exe'; Arguments = @('--version') }
     @{ Name = 'eza'; Command = 'eza.exe'; Arguments = @('--version') }
     @{ Name = 'zoxide'; Command = 'zoxide.exe'; Arguments = @('--version') }

@@ -57,6 +57,7 @@ Installs via APT:
 
 - Core utilities: `curl`, `file`, `figlet`, `fontconfig`, `fzf`, `git`, `gnupg`, `iproute2`, `jq`, `nano`, `procps`, `psmisc`, `sshpass`, `tmux`, `unzip`, `wget`
 - System services: `cron`, `logrotate`, `rsyslog`
+- **Chafa** via APT, validated with `--version`; preview with `chafa image.png` or `chafa --format symbols image.png`
 - **zoxide** via its official installer
 - Enables `cron` without creating jobs and removes only the legacy demonstration jobs added by SetupVibe v0.41.4-v0.41.6
 

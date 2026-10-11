@@ -691,9 +691,11 @@ step_1() {
 
     echo "Installing core server tools..."
     apt_do install -y \
-        ca-certificates curl file figlet fontconfig fzf git gnupg iproute2 jq \
+        ca-certificates chafa curl file figlet fontconfig fzf git gnupg iproute2 jq \
         logrotate nano procps psmisc rsyslog sshpass tmux unzip wget \
         cron
+
+    user_do /usr/bin/chafa --version >/dev/null
 
     echo "Installing or updating zoxide..."
     run_remote_script user https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh

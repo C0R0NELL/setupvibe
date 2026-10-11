@@ -23,12 +23,16 @@ The Windows Edition (Beta) configures native Windows utilities, Python, Node.js,
 - [agent-browser](../../en/AGENT_BROWSER.md) through npm, Chrome for Testing, and the official global skill for Codex and Claude Code; validates a real headless launch with `doctor --offline`
 - WSL base without a Linux distribution, with WSL 2 as the default
 - Mirrored WSL networking with VPN/LAN access, DNS tunneling, Windows proxy integration, Hyper-V firewall inbound access, automatic memory reclaim, and sparse virtual disks
-- Git, 7-Zip, Wget, FFmpeg, ImageMagick, and GitHub CLI (`gh`)
+- Git, 7-Zip, Wget, FFmpeg, ImageMagick, Chafa, and GitHub CLI (`gh`)
 - bat, eza, zoxide, fzf, ripgrep, fd, lazygit, Neovim, Glow, tldr, Fastfetch, duf, and jq
 - Nmap, Speedtest CLI, Tailscale, gping, btop4win, and trippy
 - PowerShell 7, Windows Terminal, FiraCode Nerd Font, and JetBrains Mono Nerd Font
 
 The installer is idempotent: installed WinGet packages are detected and skipped, Chocolatey safely ensures its packages are present, and the official Python and Node.js installers are reapplied safely. Failures are recorded per package so remaining installations can continue. A transcript is saved under `C:\ProgramData\SetupVibe\Logs`.
+
+Chafa uses the WinGet package `hpjansson.Chafa`, is validated with
+`chafa --version`, and is removed by `-Uninstall`. Preview images with
+`chafa image.png` or `chafa --format symbols image.png`.
 
 After the utility and Python installations, the shared helper enables
 `nerdFontsVersion: "3"` and `showFileIcons: true` in Lazygit. If Lazydocker is

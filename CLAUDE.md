@@ -132,6 +132,15 @@ system Python and crontabs unchanged, preserve installations from other
 managers, and update the managed tool on reruns. Cronboard has no `--help` or
 `--version`; validate by importing its application with its own interpreter.
 
+### Terminal image previews
+
+Desktop and Server install Chafa through existing package managers: APT in
+Linux Desktop/Server step 1, Homebrew in macOS Desktop step 2, and the WinGet
+package `hpjansson.Chafa` in Windows Desktop. Validate the managed binary with
+`--version`; Windows uses the standard command checks and uninstall list.
+Keep rendering defaults unchanged. Document `chafa image.png` and the portable
+`chafa --format symbols image.png` mode for SSH and terminal multiplexers.
+
 ### `omarchy.sh`
 
 Omarchy 4 is an existing Arch-based desktop environment and owns its shell,

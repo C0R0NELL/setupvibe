@@ -23,12 +23,16 @@ L'Édition Windows (Beta) configure des utilitaires Windows natifs, Python, Node
 - Système WSL de base sans distribution Linux, avec WSL 2 par défaut
 - [agent-browser](../../fr/AGENT_BROWSER.md) via npm, Chrome for Testing et la skill officielle globale pour Codex et Claude Code ; valide un lancement réel avec `doctor --offline`
 - Réseau WSL en mode miroir avec accès VPN/LAN, tunneling DNS, intégration du proxy Windows, trafic entrant autorisé dans le pare-feu Hyper-V, récupération automatique de la mémoire et disques virtuels épars
-- Git, 7-Zip, Wget, FFmpeg, ImageMagick et GitHub CLI (`gh`)
+- Git, 7-Zip, Wget, FFmpeg, ImageMagick, Chafa et GitHub CLI (`gh`)
 - bat, eza, zoxide, fzf, ripgrep, fd, lazygit, Neovim, Glow, tldr, Fastfetch, duf et jq
 - Nmap, Speedtest CLI, Tailscale, gping, btop4win et trippy
 - PowerShell 7, Windows Terminal, FiraCode Nerd Font et JetBrains Mono Nerd Font
 
 Le programme d'installation est idempotent : les paquets WinGet installés sont détectés et ignorés, Chocolatey garantit la présence de ses paquets et les installateurs officiels de Python et Node.js sont réappliqués en toute sécurité. Les échecs sont enregistrés par paquet afin que les autres installations puissent continuer. Un journal complet est enregistré dans `C:\ProgramData\SetupVibe\Logs`.
+
+Chafa utilise le paquet WinGet `hpjansson.Chafa`, est validé avec
+`chafa --version` et est supprimé par `-Uninstall`. Affichez les images avec
+`chafa image.png` ou `chafa --format symbols image.png`.
 
 Après l'installation des utilitaires et de Python, le script partagé active
 `nerdFontsVersion: "3"` et `showFileIcons: true` dans Lazygit. Si Lazydocker est

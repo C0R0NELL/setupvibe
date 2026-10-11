@@ -45,14 +45,18 @@ cada projeto com `npx skills add <origem>`.
 
 ### Etapa 1 — Sistema Base e Ferramentas de Build
 
-**Linux:** instalação via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, bibliotecas SSL/compressão e o repositório APT do Charmbracelet (para o `glow`).
+**Linux:** instalação via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, bibliotecas SSL/compressão e o repositório APT do Charmbracelet (para o `glow`).
 
 **macOS:** depende do Xcode Command Line Tools (verifica e encerra se não estiver presente). As ferramentas base são instaladas via Homebrew na próxima etapa.
 
 ### Etapa 2 — Homebrew
 
-- **macOS:** instala o Homebrew se ausente, depois instala ferramentas base (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `openssl`, `readline`, etc.)
+- **macOS:** instala o Homebrew se ausente, depois instala ferramentas base (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, `openssl`, `readline`, etc.)
 - **Linux:** instala o Linuxbrew em `/home/linuxbrew/.linuxbrew`. Adiciona entradas de PATH ao `~/.bashrc`, `~/.profile`, `~/.zshrc`. Executa `brew upgrade` se já presente
+
+O [Chafa](https://hpjansson.org/chafa/download/) exibe imagens com
+`chafa image.png`; use `chafa --format symbols image.png` para saída em caracteres.
+O comando é validado após a instalação.
 
 ### Etapa 3 — Ecossistema PHP 8.5
 

@@ -14,6 +14,7 @@ Installs and configures a development environment in one command, supporting Win
 - **Optimized Terminals:** Installs Windows Terminal on Windows and configures Tmux + TPM on Unix systems.
 - **Lazy Tool Appearance:** Desktop installers enable Lazygit file icons and Nerd Fonts v3; installed Lazydocker also receives status icons, rounded borders, and an expanding focused side panel. Other settings and the first `config.yml.bak` are preserved. Select a Nerd Font in the terminal that displays the session.
 - **Cron Management:** Installs [Cronboard](https://cronboard.dev/) on Unix Desktop through Homebrew and on Linux Server with an isolated Python runtime. Run `cronboard` to manage scheduled jobs locally or over SSH; Windows users can use the Unix Desktop edition inside WSL.
+- **Terminal Image Preview:** Installs [Chafa](https://hpjansson.org/chafa/download/) on Desktop and Server through APT, Homebrew, or WinGet, and validates its command after installation.
 - **Global Helper Scripts:** Installs Windows helper scripts in `%USERPROFILE%\.setupvibe\bin` and adds the directory to the user's `PATH`.
 - **AI Runtime Foundation:** Installs and validates Python 3.14 directly from `python.org` and Node.js 24 LTS from the official `latest-v24.x` channel on `nodejs.org`, automatically repairs missing runtime files, and exposes `python`, `pip`, `node`, `npm`, and `npx` in the Windows machine `PATH` for Claude and Codex.
 - **Native Windows AI CLIs:** Installs Claude Code through Anthropic's recommended native installer with its official npm package as a recovery path, Codex CLI through OpenAI's official standalone Windows installer, OpenCode CLI, and Google Antigravity CLI as `agy`, while preserving PowerShell profiles and restricted execution policies.
@@ -98,6 +99,22 @@ installation guide](docs/omarchy/README.md) for the preserved components and
 the added layer.
 
 ## General Notes
+
+### Images in the Terminal
+
+Desktop and Server install Chafa for image previews inside the terminal.
+Linux and WSL use APT, macOS uses Homebrew, and Windows uses the WinGet package
+`hpjansson.Chafa`. Windows `-Uninstall` also removes this package.
+
+```bash
+chafa "image.png"
+
+# Character output for terminals without an image protocol, SSH, or Tmux
+chafa --format symbols "image.png"
+```
+
+The default rendering depends on the terminal's supported image protocols;
+`--format symbols` uses text characters. See the [official manual](https://hpjansson.org/chafa/man/).
 
 ### Herdr Plugins
 

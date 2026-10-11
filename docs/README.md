@@ -75,6 +75,7 @@ installation and never executes package-removal commands.
 | Modern Unix tools (bat, eza, fzf…)    | ✔ via Homebrew | ✔               | ✗       |
 | Network & monitoring tools            | ✔              | ✔               | ✔       |
 | Cronboard cron dashboard              | ✔              | ✗ (use WSL)     | ✔       |
+| Chafa terminal image previews         | ✔              | ✔               | ✔       |
 | Tailscale                             | ✔              | ✔               | ✔       |
 | SSH server                            | ✔ (Linux only) | ✔               | ✔       |
 | ZSH + Oh My Zsh + Starship            | ✔              | ✗               | ✔       |

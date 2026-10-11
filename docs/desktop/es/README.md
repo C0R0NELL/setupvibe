@@ -39,14 +39,18 @@ El script muestra una hoja de ruta interactiva y solicita confirmación antes de
 
 ### Paso 1 — Sistema Base y Herramientas de Construcción
 
-**Linux:** se instala mediante APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, bibliotecas SSL/compresión y el repositorio APT de Charmbracelet (para `glow`).
+**Linux:** se instala mediante APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, bibliotecas SSL/compresión y el repositorio APT de Charmbracelet (para `glow`).
 
 **macOS:** depende de Xcode Command Line Tools (verifica y sale si no están presentes). Las herramientas base se instalan mediante Homebrew en el siguiente paso.
 
 ### Paso 2 — Homebrew
 
-- **macOS:** instala Homebrew si no está presente, luego instala herramientas base (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `openssl`, `readline`, etc.)
+- **macOS:** instala Homebrew si no está presente, luego instala herramientas base (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, `openssl`, `readline`, etc.)
 - **Linux:** instala Linuxbrew bajo `/home/linuxbrew/.linuxbrew`; agrega entradas PATH a `~/.bashrc`, `~/.profile`, `~/.zshrc`; ejecuta `brew upgrade` si ya está presente
+
+[Chafa](https://hpjansson.org/chafa/download/) muestra imágenes con
+`chafa image.png`; use `chafa --format symbols image.png` para salida en caracteres.
+El comando se valida después de la instalación.
 
 ### Paso 3 — Ecosistema PHP 8.5
 

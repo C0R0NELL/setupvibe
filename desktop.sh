@@ -871,7 +871,9 @@ step_1() {
         sys_do apt-get install -y build-essential git wget unzip fontconfig curl sshpass \
             libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev llvm \
             libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-            libyaml-dev autoconf bison procps file tmux ffmpeg imagemagick cron
+            libyaml-dev autoconf bison procps file tmux ffmpeg imagemagick chafa cron
+
+        user_do /usr/bin/chafa --version >/dev/null
 
         # Adding Charmbracelet Repo (needed for Glow)
         install_key "https://repo.charm.sh/apt/gpg.key" "/etc/apt/keyrings/charm.gpg"
@@ -903,7 +905,8 @@ step_2() {
             brew_cmd update
             
             echo "Installing base tools via Homebrew..."
-            brew_cmd install wget unzip curl tmux sshpass openssl readline sqlite3 xz zlib tcl-tk ffmpeg imagemagick
+            brew_cmd install wget unzip curl tmux sshpass openssl readline sqlite3 xz zlib tcl-tk ffmpeg imagemagick chafa
+            user_do "$BREW_PREFIX/bin/chafa" --version >/dev/null
         else
             echo -e "${RED}✘ Homebrew installation failed.${NC}"
             return 1

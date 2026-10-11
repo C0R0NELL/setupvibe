@@ -57,6 +57,7 @@ Instala mediante APT:
 
 - Utilidades principales: `curl`, `file`, `figlet`, `fontconfig`, `fzf`, `git`, `gnupg`, `iproute2`, `jq`, `nano`, `procps`, `psmisc`, `sshpass`, `tmux`, `unzip`, `wget`
 - Servicios del sistema: `cron`, `logrotate`, `rsyslog`
+- **Chafa** mediante APT, validado con `--version`; visualice con `chafa image.png` o `chafa --format symbols image.png`
 - **zoxide** mediante su instalador oficial
 - Habilita `cron` sin crear tareas y elimina únicamente las tareas de demostración antiguas añadidas por SetupVibe v0.41.4-v0.41.6
 

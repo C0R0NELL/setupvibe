@@ -423,3 +423,17 @@ usuário, abertura headless da TUI, propriedade dos arquivos, limpeza do
 bootstrap e preservação de crontab, perfil e instalação externa. O checkout
 foi montado somente para leitura, sem publicar portas ou alterar serviços da
 VPS. O teste cobriu o helper novo, não a execução integral dos instaladores.
+
+## Chafa e prévias no terminal em outubro de 2026
+
+Chafa é instalado pelo APT na etapa base de Desktop e Server. Os pacotes
+testados foram 1.12.4 no Debian 12 e 1.14.0 no Ubuntu 24.04, em ARM64. Essas
+versões diferem da versão mais recente publicada pelo projeto; mantenha os
+exemplos compatíveis com os pacotes das distribuições suportadas.
+
+Passaram instalação limpa, reexecução como usuário comum com `sudo`, validação
+de versão, renderização de PNG com `--format symbols` e retorno de erro para
+arquivo inexistente. Os testes usaram os helpers do Server em containers
+descartáveis com o checkout somente para leitura, sem publicar portas ou
+executar os instaladores completos. A renderização em caracteres permite
+validar imagens sem depender de um protocolo gráfico ou de um terminal GUI.
