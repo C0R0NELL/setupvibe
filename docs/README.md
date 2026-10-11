@@ -74,6 +74,7 @@ installation and never executes package-removal commands.
 | Docker + Ansible + GitHub CLI         | ✔              | GitHub CLI only | ✔       |
 | Modern Unix tools (bat, eza, fzf…)    | ✔ via Homebrew | ✔               | ✗       |
 | Network & monitoring tools            | ✔              | ✔               | ✔       |
+| Cronboard cron dashboard              | ✔              | ✗ (use WSL)     | ✔       |
 | Tailscale                             | ✔              | ✔               | ✔       |
 | SSH server                            | ✔ (Linux only) | ✔               | ✔       |
 | ZSH + Oh My Zsh + Starship            | ✔              | ✗               | ✔       |

@@ -83,6 +83,16 @@ APT packages:
 
 - **ctop** — binary downloaded to `~/.local/bin/ctop` (v0.7.7, architecture-aware, SHA-256 verified)
 - **Tailscale** — via official install script (`https://tailscale.com/install.sh`)
+- **Cronboard** — terminal dashboard for local cron jobs and servers over SSH
+
+Run `cronboard` or the ZSH alias `cronb` to open the dashboard. The installer uses the official
+[uv tool installation](https://cronboard.dev/installation/) with private uv,
+Python 3.14, dependencies and cache under `~/.setupvibe/cronboard`; only
+`~/.local/bin/cronboard` is exposed in the shell. It uses `crontab` from the
+base step and does not edit scheduled jobs or replace system Python. Reruns
+update this managed installation; an existing installation from another
+manager is preserved. Validation imports the application without opening its
+interface. Homebrew and Python development tooling remain outside Server scope.
 
 ### Step 4 — SSH Server
 

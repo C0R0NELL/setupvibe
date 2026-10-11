@@ -13,6 +13,7 @@ Installs and configures a development environment in one command, supporting Win
 - **Native Windows Shell:** Keeps Windows PowerShell and PowerShell 7 profiles unchanged, without Starship, ZSH, automatic zoxide initialization, or persistent execution-policy changes; Unix editions retain ZSH, Oh My Zsh, and Starship.
 - **Optimized Terminals:** Installs Windows Terminal on Windows and configures Tmux + TPM on Unix systems.
 - **Lazy Tool Appearance:** Desktop installers enable Lazygit file icons and Nerd Fonts v3; installed Lazydocker also receives status icons, rounded borders, and an expanding focused side panel. Other settings and the first `config.yml.bak` are preserved. Select a Nerd Font in the terminal that displays the session.
+- **Cron Management:** Installs [Cronboard](https://cronboard.dev/) on Unix Desktop through Homebrew and on Linux Server with an isolated Python runtime. Run `cronboard` to manage scheduled jobs locally or over SSH; Windows users can use the Unix Desktop edition inside WSL.
 - **Global Helper Scripts:** Installs Windows helper scripts in `%USERPROFILE%\.setupvibe\bin` and adds the directory to the user's `PATH`.
 - **AI Runtime Foundation:** Installs and validates Python 3.14 directly from `python.org` and Node.js 24 LTS from the official `latest-v24.x` channel on `nodejs.org`, automatically repairs missing runtime files, and exposes `python`, `pip`, `node`, `npm`, and `npx` in the Windows machine `PATH` for Claude and Codex.
 - **Native Windows AI CLIs:** Installs Claude Code through Anthropic's recommended native installer with its official npm package as a recovery path, Codex CLI through OpenAI's official standalone Windows installer, OpenCode CLI, and Google Antigravity CLI as `agy`, while preserving PowerShell profiles and restricted execution policies.
@@ -110,7 +111,7 @@ reference for Linux, macOS, and WSL:
 | [Herdr Plus](https://github.com/cloudmanic/herdr-plus) | Workspace templates and quick actions. | Herdr 0.7.0+; Go is optional on Linux/macOS. |
 | [Herdr Web UI](https://github.com/devswha/herdr-web-ui) | Access agent chats and terminals from a browser or phone. | Herdr 0.9.0+, Bun 1.4+, and Node.js 18+ on Linux/macOS. |
 | [Herdr Board](https://github.com/nelsonPires5/herdr-board) | Kanban cards that dispatch prompts to agents. | Herdr 0.9.0+ with socket protocol 22, Git, and Rust/Cargo. |
-| [Herdr Shepherd](https://github.com/mikedclarke/herdr-shepherd) | Scheduled agent sessions, heartbeats, and scripts. | Herdr 0.8.0+ on Linux/macOS; Go is optional. |
+| [Agents Sidebar](https://github.com/C0R0NELL/herdr-agents-sidebar) | Group native sidebar agents by machine and workspace. | Linux, Herdr 0.9.3+, and Python 3.11+ with curses. |
 | [Herdr Plugin Manager](https://github.com/speardragon/herdr-plugin-manager) | Browse, install, update, and manage plugins from a popup. | Herdr 0.7.4+, Bash, and Python 3. |
 | [TTT](https://github.com/eugenioenko/ttt) | Terminal editor integrated into Herdr panes. | Herdr 0.7.0+, Git, and ripgrep for the full feature set. |
 
@@ -123,7 +124,7 @@ herdr plugin install C0R0NELL/herdr-account-hub
 herdr plugin install cloudmanic/herdr-plus
 herdr plugin install devswha/herdr-web-ui
 herdr plugin install nelsonPires5/herdr-board --ref v0.19.0
-herdr plugin install mikedclarke/herdr-shepherd
+herdr plugin install C0R0NELL/herdr-agents-sidebar
 herdr plugin install speardragon/herdr-plugin-manager
 herdr plugin install eugenioenko/ttt/herdr-plugin
 herdr plugin list
@@ -131,10 +132,10 @@ herdr plugin list
 
 The TTT plugin lives in the repository's `herdr-plugin` subdirectory and
 installs the editor binary if it is missing from `PATH`. Web UI's repository
-also provides an installer for missing prerequisites. Shepherd requires its
-scheduler daemon to be started after the first installation; follow its
-README's first-run instructions. See the [SetupVibe Herdr guide](docs/en/HERDR.md)
-for sessions and shortcuts.
+also provides an installer for missing prerequisites. After installing Agents
+Sidebar, choose **Apply sidebar** in the Plugin Manager to activate it in the
+current session. See the [SetupVibe Herdr guide](docs/en/HERDR.md) for sessions
+and shortcuts.
 
 ## Contributing
 

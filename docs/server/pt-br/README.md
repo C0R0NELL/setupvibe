@@ -89,6 +89,17 @@ Pacotes APT:
 
 - **ctop** — binário baixado em `~/.local/bin/ctop` (v0.7.7, detecta arquitetura, SHA-256 verificado)
 - **Tailscale** — via script oficial de instalação (`https://tailscale.com/install.sh`)
+- **Cronboard** — painel no terminal para tarefas cron locais e servidores por SSH
+
+Execute `cronboard` ou o alias ZSH `cronb` para abrir o painel. O instalador usa a
+[instalação oficial com uv tool](https://cronboard.dev/installation/), com uv,
+Python 3.14, dependências e cache privados em `~/.setupvibe/cronboard`; apenas
+`~/.local/bin/cronboard` fica disponível no shell. Usa o `crontab` da etapa
+base, sem editar agendamentos ou substituir o Python do sistema. Novas
+execuções atualizam a instalação gerenciada; uma instalação existente de outro
+gerenciador é preservada. A validação importa a aplicação sem abrir sua
+interface. Homebrew e ferramentas de desenvolvimento Python continuam fora
+do escopo Server.
 
 ### Etapa 4 — Servidor SSH
 

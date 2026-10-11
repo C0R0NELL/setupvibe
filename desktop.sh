@@ -1162,9 +1162,6 @@ step_5() {
         fi
         export PATH="$REAL_HOME/.cargo/bin:$PATH"
 
-        echo "Installing Cronboard (Cron TUI)..."
-        brew_cmd install cronboard
-
         cron_ensure
     else
         echo "Setup Python..."
@@ -1220,11 +1217,6 @@ step_5() {
             user_do bash -c "export PATH=\$HOME/.cargo/bin:\$PATH; rustup update"
         fi
         export PATH="$REAL_HOME/.cargo/bin:$PATH"
-
-        echo "Installing Cronboard (Cron TUI)..."
-        if ! user_do bash -c "export PATH=\$HOME/.local/bin:\$PATH; command -v cronboard" &> /dev/null; then
-            user_do bash -c "export PATH=\$HOME/.local/bin:\$PATH; uv tool install git+https://github.com/antoniorodr/cronboard"
-        fi
 
         cron_ensure
     fi
@@ -1384,7 +1376,7 @@ configure_lazy_ui() {
 
 step_8() {
     echo "Installing Modern Unix Tools via Homebrew..."
-    local -a tools=(bat eza zoxide fzf ripgrep fd lazygit lazydocker neovim glow tlrc fastfetch duf jq mise)
+    local -a tools=(bat eza zoxide fzf ripgrep fd lazygit lazydocker neovim glow tlrc fastfetch duf jq mise cronboard)
 
     if brew_cmd list --formula tldr &>/dev/null; then
         echo "Migrating the disabled tldr formula to tlrc..."
@@ -1415,6 +1407,11 @@ step_8() {
         fi
 
     fi
+
+    # Cronboard has no non-interactive --help/--version; validate its environment.
+    local cronboard_python
+    cronboard_python="$(brew_cmd --prefix cronboard)/libexec/bin/python"
+    user_do "$cronboard_python" -c 'from cronboard.app import main; assert callable(main)'
 
     configure_lazy_ui
 }

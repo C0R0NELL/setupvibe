@@ -125,6 +125,14 @@ Instaladas via Homebrew em ambas as plataformas.
 | `fastfetch`  | Ferramenta de informações do sistema  |
 | `duf`        | `df` moderno                          |
 | `mise`       | Gerenciador de versões de runtime     |
+| `cronboard`  | Painel no terminal para tarefas cron  |
+
+O Homebrew instala o [Cronboard](https://cronboard.dev/installation/) e suas
+dependências Python. Execute `cronboard` para gerenciar agendamentos locais ou
+conectar a servidores por SSH. Ele usa o serviço existente `cron`/`crontab`;
+o Linux instala cron na etapa base, e o macOS fornece `crontab`. No WSL, usa-se
+esta instalação Linux; o Windows nativo não está incluído. O setup valida a
+aplicação Python sem abrir a interface nem editar o crontab.
 
 Após a instalação, o Python da etapa 5 ativa `nerdFontsVersion: "3"` e
 `showFileIcons: true` no Lazygit. O Lazydocker recebe
