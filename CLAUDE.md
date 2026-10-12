@@ -78,7 +78,7 @@ Keep the Codex and Claude skills aligned with this source policy.
 5. Go 1.26.5, Rust, Python (uv, user-global `qrcode` via pip; Python 3.14 on macOS)
 6. JavaScript (Node, Bun, PNPM)
 7. DevOps (Docker, Ansible, GitHub CLI)
-8. Modern Unix tools and Cronboard via Homebrew, followed by Lazygit/Lazydocker appearance configuration
+8. Modern Unix tools via Homebrew, followed by Lazygit/Lazydocker appearance configuration
 9. Network, monitoring & Tailscale
 10. SSH server (Linux only)
 11. ZSH, Oh-My-Zsh, Starship
@@ -124,13 +124,6 @@ terminal, including the host terminal for WSL or SSH.
 ### `server.sh` Steps (9)
 
 Subset of desktop steps — no Homebrew, no language ecosystems (PHP, Ruby, Python, Go, Rust) or desktop-specific tools. Node.js is installed via NodeSource APT repo. Focus on base tools, Docker, Ansible, shell, tmux, monitoring, and AI CLIs.
-
-Cronboard is installed in step 3 with private uv, Python 3.14, tool dependencies
-and cache under `~/.setupvibe/cronboard`. Only `~/.local/bin/cronboard` is exposed;
-these are application dependencies, not a Python development ecosystem. Keep
-system Python and crontabs unchanged, preserve installations from other
-managers, and update the managed tool on reruns. Cronboard has no `--help` or
-`--version`; validate by importing its application with its own interpreter.
 
 ### Distributed environment skill
 

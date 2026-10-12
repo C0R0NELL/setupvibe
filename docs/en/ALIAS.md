@@ -1449,12 +1449,6 @@ This is the exhaustive list of all aliases configured by SetupVibe on all platfo
 
 ### Cron & Scheduling
 
-- **`cronb`**
-  - Availability: 🌐 Both
-  - Command: `cronboard`
-  - Description: Opens the Cronboard TUI dashboard to manage cron tasks.
-  - Example: `cronb`
-
 - **`cronl`**
   - Availability: 🌐 Both
   - Command: `crontab -l`

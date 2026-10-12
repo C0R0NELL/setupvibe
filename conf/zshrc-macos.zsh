@@ -324,7 +324,6 @@ alias andiff="ansible-playbook --check --diff"  # Simula e exibe diff das mudan�
 alias anfacts="ansible all -m setup"            # Coleta facts de todos os hosts do inventário
 
 # --- Cron & Scheduling ---
-alias cronb="cronboard"                         # Abre o dashboard TUI do Cronboard para gerenciar crontab
 alias cronl="crontab -l"                        # Lista as tarefas cron do usuário atual
 alias crone="crontab -e"                        # Edita as tarefas cron do usuário atual
 alias cronr="crontab -r"                        # Remove todas as tarefas cron do usuário atual (CUIDADO)

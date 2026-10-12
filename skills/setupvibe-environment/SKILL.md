@@ -75,12 +75,10 @@ Linux ARM64 uses the Chromium prepared by the installer.
 | ctop | `ctop` (**interactive**) | Monitor container CPU, memory and network usage in a TUI. | D, S |
 | Ansible | `ansible-inventory -i hosts --list`; `ansible-playbook site.yml --syntax-check` | Inspect inventories and validate playbook syntax for infrastructure automation. | D, S |
 | PM2 | `pm2 list`; `pm2 logs APP --lines 100 --nostream` | Inspect managed application processes and recent logs. | D |
-| Cronboard | `cronboard` (**interactive**) | View and manage local cron jobs or remote crontabs through SSH. | D, S |
-| crontab | `crontab -l` | Read the current user's scheduled jobs without opening Cronboard. | D, S |
+| crontab | `crontab -l` | Read the current user's scheduled jobs. | D, S |
 | SSH helper (Unix) | `ssh_copy_id --host HOST --user USER` | Copy a local public SSH key to a remote user's authorized keys; prompts for the password. | D, S |
 | SSH helper (Windows) | `ssh_copy_id USER@HOST -NoConnect` | Copy the public key and verify key authentication without opening an interactive SSH session. | W |
 
-Cronboard has no `--help` or `--version`; those arguments still open its TUI.
 In a noninteractive Unix shell, invoke the SSH helper as
 `"$HOME/.setupvibe/bin/ssh_copy_id"` if its ZSH alias is unavailable. The
 Windows launcher is `ssh_copy_id.cmd` and works as `ssh_copy_id`.
@@ -140,9 +138,8 @@ To leave work running, detach with `Ctrl+B`, then `q`; run `herdr` to reconnect.
 | Windows Terminal / WSL | `wt`; `wsl --list --verbose` | Open a terminal or inspect WSL distributions; the Windows installer prepares WSL without installing a distribution. | W |
 
 Unix ZSH shortcuts include `tn NAME` (`tmux new -s NAME`), `ta NAME`
-(`tmux attach -t NAME`), `tl` (`tmux ls`), `d` (`docker`), `dc`
-(`docker compose`), and `cronb` (`cronboard`). They are shell aliases, not
-standalone executables.
+(`tmux attach -t NAME`), `tl` (`tmux ls`), `d` (`docker`), and `dc`
+(`docker compose`). They are shell aliases, not standalone executables.
 
 ## Source guides
 

@@ -565,50 +565,6 @@ install_setupvibe_bin() {
     user_do chmod +x "$REAL_HOME/.setupvibe/bin/ssh_copy_id"
 }
 
-install_cronboard() {
-    local runtime_dir="$REAL_HOME/.setupvibe/cronboard"
-    local uv_bin="$runtime_dir/uv/uv"
-    local existing_bin
-    local installer_path
-
-    if ! command -v crontab >/dev/null 2>&1; then
-        echo -e "${RED}✘ Cronboard requires crontab; install cron in the base step first.${NC}" >&2
-        return 1
-    fi
-
-    if existing_bin=$(user_do env PATH="$REAL_HOME/.local/bin:$PATH" sh -c 'command -v cronboard') &&
-        [[ "$(readlink -f -- "$existing_bin")" != "$runtime_dir/tools/cronboard/bin/cronboard" ]]; then
-        echo "Preserving existing Cronboard installation: $existing_bin"
-        return 0
-    fi
-
-    echo "Installing or updating Cronboard with a private Python runtime..."
-    user_do mkdir -p "$runtime_dir" "$REAL_HOME/.local/bin"
-    if [[ ! -x "$uv_bin" ]]; then
-        installer_path=$(user_do mktemp "$runtime_dir/install-uv.XXXXXX")
-        if ! safe_download https://astral.sh/uv/install.sh "$installer_path" 1000 ||
-            ! user_do env UV_UNMANAGED_INSTALL="$runtime_dir/uv" sh "$installer_path"; then
-            user_do rm -f -- "$installer_path"
-            return 1
-        fi
-        user_do rm -f -- "$installer_path"
-    fi
-
-    user_do env \
-        PATH="$REAL_HOME/.local/bin:$PATH" \
-        UV_TOOL_DIR="$runtime_dir/tools" \
-        UV_TOOL_BIN_DIR="$REAL_HOME/.local/bin" \
-        UV_PYTHON_INSTALL_DIR="$runtime_dir/python" \
-        UV_PYTHON_INSTALL_BIN=false \
-        UV_CACHE_DIR="$runtime_dir/cache" \
-        "$uv_bin" tool install --no-config --managed-python --python 3.14 --upgrade cronboard
-
-    # Import the app without starting its TUI or modifying the user's crontab.
-    user_do "$runtime_dir/tools/cronboard/bin/python" \
-        -c 'from cronboard.app import main; assert callable(main)'
-    [[ -x "$REAL_HOME/.local/bin/cronboard" ]]
-}
-
 install_herdr() {
     local herdr_arch
     local herdr_target
@@ -806,8 +762,6 @@ step_3() {
         rsync net-tools dnsutils mtr-tiny nmap tcpdump \
         iftop nload iotop sysstat whois iputils-ping \
         speedtest-cli glances htop btop
-
-    install_cronboard
 
     if [[ -x "$REAL_HOME/.local/bin/ctop" ]]; then
         ctop_bin=$REAL_HOME/.local/bin/ctop

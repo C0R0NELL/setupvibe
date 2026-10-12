@@ -257,10 +257,6 @@ configure_python_go_rust() {
         user_do uv tool install --upgrade qrcode
     fi
 
-    if ! user_do bash -lc "command -v cronboard >/dev/null 2>&1"; then
-        user_do uv tool install git+https://github.com/antoniorodr/cronboard
-    fi
-
     # O pacote do sistema continua sendo a base dos runtimes. mise só entra
     # quando o comando ainda não existe, sem substituir o que o Omarchy criou.
     ensure_mise_tool go go

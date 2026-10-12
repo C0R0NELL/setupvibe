@@ -74,7 +74,6 @@ installation and never executes package-removal commands.
 | Docker + Ansible + GitHub CLI         | ✔              | GitHub CLI only | ✔       |
 | Modern Unix tools (bat, eza, fzf…)    | ✔ via Homebrew | ✔               | ✗       |
 | Network & monitoring tools            | ✔              | ✔               | ✔       |
-| Cronboard cron dashboard              | ✔              | ✗ (use WSL)     | ✔       |
 | Chafa terminal image previews         | ✔              | ✔               | ✔       |
 | SetupVibe environment skill           | ✔              | ✔               | ✔       |
 | Tailscale                             | ✔              | ✔               | ✔       |
@@ -116,13 +115,6 @@ installation and never executes package-removal commands.
 - [Portuguese](desktop/pt-br/pm2.md)
 - [French](desktop/fr/pm2.md)
 - [Spanish](desktop/es/pm2.md)
-
-### Cronboard
-
-- [English](desktop/en/cronboard.md)
-- [Portuguese](desktop/pt-br/cronboard.md)
-- [French](desktop/fr/cronboard.md)
-- [Spanish](desktop/es/cronboard.md)
 
 ### Herdr
 

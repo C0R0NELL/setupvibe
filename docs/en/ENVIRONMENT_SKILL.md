@@ -23,10 +23,10 @@ an alternative when requested, already in use, or Herdr is unavailable.
 
 The skill distinguishes executable names from shell aliases and interactive
 interfaces. It includes platform-specific details such as `agent-browser.cmd`
-on Windows, Chafa's character mode over SSH, and Cronboard's lack of
-noninteractive help/version flags. Agents check the current executable before
-using it because edition, installation results, and later user changes affect
-availability. Discovery and automatic activation depend on the harness.
+on Windows and Chafa's character mode over SSH. Agents check the current
+executable before using it because edition, installation results, and later
+user changes affect availability. Discovery and automatic activation depend
+on the harness.
 
 ## Installation and locations
 

@@ -143,7 +143,7 @@ cron_ensure() {
         sys_do systemctl enable --now cron 2>/dev/null || true
     fi
 
-    # Disabled: these examples are not required by Cronboard or other tools.
+    # Disabled: these demonstration jobs are not required by installed tools.
     # Keep the user's crontab unchanged on macOS, Linux, and WSL.
     # local CRON_HEARTBEAT="0 * * * * echo \"Cron heartbeat: \$(date)\" >> /tmp/cron-heartbeat.log"
     # local CRON_DISK="0 0 * * * df -h > \$HOME/cron-disk-usage.log"
@@ -1375,7 +1375,7 @@ configure_lazy_ui() {
 
 step_8() {
     echo "Installing Modern Unix Tools via Homebrew..."
-    local -a tools=(bat eza zoxide fzf ripgrep fd lazygit lazydocker neovim glow tlrc fastfetch duf jq mise cronboard)
+    local -a tools=(bat eza zoxide fzf ripgrep fd lazygit lazydocker neovim glow tlrc fastfetch duf jq mise)
 
     if brew_cmd list --formula tldr &>/dev/null; then
         echo "Migrating the disabled tldr formula to tlrc..."
@@ -1406,11 +1406,6 @@ step_8() {
         fi
 
     fi
-
-    # Cronboard has no non-interactive --help/--version; validate its environment.
-    local cronboard_python
-    cronboard_python="$(brew_cmd --prefix cronboard)/libexec/bin/python"
-    user_do "$cronboard_python" -c 'from cronboard.app import main; assert callable(main)'
 
     configure_lazy_ui
 }

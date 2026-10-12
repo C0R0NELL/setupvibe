@@ -10,7 +10,6 @@ All notable changes to **SetupVibe** are documented in this file.
 
 - Local fork: added `setupvibe-environment` with installed-tool tables, commands, uses, and availability by edition. It prefers the user's existing Herdr workspace within their request and authorization, preserving running processes and user focus. Unix Desktop, Windows Desktop, and Server install it globally for ten supported harnesses through Skills CLI, using copies without symlinks, documented native roots, and failure reporting for partial installations.
 - Local fork: added Chafa for terminal image previews to Unix Desktop and Server through APT/Homebrew and to Windows through `hpjansson.Chafa` on WinGet, with command validation and managed Windows removal. Documented normal previews and the portable `--format symbols` mode.
-- Local fork: standardized Cronboard in Unix Desktop step 8 through Homebrew instead of separate language-step installations, and restored it to Server step 3 with private uv and Python 3.14 dependencies. Server exposes the dashboard command and `cronb` alias, preserves installations from other managers, updates its own installation on reruns, and leaves existing crontabs and system Python unchanged.
 - Local fork: added a shared standard-library Python helper to configure Lazygit and installed Lazydocker after Desktop tool installation on Unix and Windows. It respects native configuration paths, preserves unrelated settings and the first backup, and skips unconventional YAML. Windows continues to install only Lazygit.
 - Local fork: added a dedicated browser automation step to Unix Desktop and Windows, installing `agent-browser`, Chrome/Chromium, browser dependencies, and the official global skill for Codex and Claude Code. Linux ARM64 uses Playwright's Chromium downloader because the upstream browser installer rejects this platform; current Chrome requires macOS 13+.
 - Added browser setup and usage guides in English, Portuguese, Spanish, and French, including headless launch validation and the Windows uninstall behavior.
@@ -20,6 +19,10 @@ All notable changes to **SetupVibe** are documented in this file.
 - Local fork: commented out automatic demonstration cron job creation in Unix Desktop on macOS, Linux, and WSL, preserving existing schedules and cron service activation. Server, native Windows, and Omarchy already do not create these jobs; Server keeps its existing legacy-example cleanup.
 - Local fork: replaced Herdr Shepherd with `C0R0NELL/herdr-agents-sidebar` in the manual plugin notes, including its Linux requirements, installation command, and activation through **Apply sidebar**.
 - Local fork: all installer commands, configuration and helper downloads, shell aliases, documentation, and Codex/Claude skill references now use `C0R0NELL/setupvibe`. All four editions use direct raw GitHub URLs on `main`, including Windows elevation, restart, and uninstall.
+
+### Removed
+
+- Local fork: removed the optional terminal dashboard for scheduled jobs, including Desktop, Server and Omarchy installation, its private Server runtime, shell alias, guides, and environment-skill entries. Native cron and crontab commands remain available.
 
 ---
 
@@ -122,7 +125,7 @@ All notable changes to **SetupVibe** are documented in this file.
 - Updated Portainer CE to the `lts` channel with HTTPS-only port `9443`, and aligned the server ZSH configuration with tools the edition actually installs.
 - Updated Server Edition reruns to refresh zoxide, ctop, Tailscale, Oh My Zsh, Starship, Portainer, Git repositories, Node.js, and AI CLI packages instead of leaving managed installations stale.
 - Changed Docker Swarm address detection to use the local routing table instead of external public-IP services.
-- Removed Server Edition's explicit Python, uv, Cronboard, build-library, Homebrew, Bun, and PM2 setup to match its lean, no-language-ecosystem scope.
+- Removed Server Edition's explicit Python, uv, build-library, Homebrew, Bun, and PM2 setup to match its lean, no-language-ecosystem scope.
 - Updated the Skills CLI shell aliases to use the globally installed `skills` executable directly instead of invoking it through `npx`.
 - Updated the Desktop Edition to PHP 8.5, Ruby 3.4.10, Go 1.26.5, Python 3.14 on macOS, and Nerd Fonts 3.4.0.
 - Replaced the deprecated `@githubnext/github-copilot-cli` package with `@github/copilot` in the Desktop and Server editions.
@@ -209,16 +212,6 @@ All notable changes to **SetupVibe** are documented in this file.
 - Automated `cron` service activation and configuration for macOS and Linux
 - Pre-configured example cron tasks (hourly heartbeat and daily disk usage snapshot)
 - Robust `cron_ensure` helper function in both Desktop and Server editions
-
----
-
-## [v0.41.3] - 2026-04-01
-
-### Added
-
-- `Cronboard` (Cron TUI) added to both Desktop and Server editions
-- New `cronb` alias to quickly open the Cronboard dashboard
-- Comprehensive documentation for Cronboard in all supported languages
 
 ---
 

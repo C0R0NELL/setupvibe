@@ -1450,12 +1450,6 @@ Esta é a lista exaustiva de todos os aliases configurados pelo SetupVibe em tod
 
 ### Cron y Programación
 
-- **`cronb`**
-  - Disponibilidad: 🌐 Ambos
-  - Comando: `cronboard`
-  - Descripción: Abre el panel TUI de Cronboard para gestionar tareas cron.
-  - Ejemplo: `cronb`
-
 - **`cronl`**
   - Disponibilidad: 🌐 Ambos
   - Comando: `crontab -l`

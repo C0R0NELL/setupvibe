@@ -122,14 +122,7 @@ Instaladas mediante Homebrew en ambas plataformas.
 | `fastfetch`  | Herramienta de información del sistema   |
 | `duf`        | `df` moderno                             |
 | `mise`       | Administrador de versiones de runtime    |
-| `cronboard`  | Panel en el terminal para tareas cron    |
 
-Homebrew instala [Cronboard](https://cronboard.dev/installation/) y sus
-dependencias Python. Ejecute `cronboard` para gestionar tareas locales o
-conectarse a servidores por SSH. Utiliza el servicio existente `cron`/`crontab`;
-Linux instala cron en el paso base y macOS proporciona `crontab`. WSL utiliza
-esta instalación Linux; Windows nativo no está incluido. El setup valida la
-aplicación Python sin abrir la interfaz ni editar el crontab.
 No crea tareas de ejemplo y conserva las programaciones existentes.
 
 Después de instalar las herramientas, Python del paso 5 activa

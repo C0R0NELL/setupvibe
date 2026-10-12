@@ -403,27 +403,6 @@ O diagnóstico avisou que faltava FFmpeg nos containers que executaram apenas a
 nova etapa. FFmpeg já é instalado nas etapas base do Desktop Unix e nas
 utilidades do Windows; é necessário para `agent-browser record`.
 
-## Cronboard no Server e validação em outubro de 2026
-
-Cronboard 1.2.1 exige Python 3.13 ou superior. Não dependa da versão Python
-fornecida pelo APT em Debian 12 ou Ubuntu 24.04. No Desktop, Homebrew gerencia
-essas dependências; no Server, uv e Python 3.14 ficam privados em
-`~/.setupvibe/cronboard`, sem adicionar os comandos de runtime ao `PATH`.
-Instale como `REAL_USER`, usando caminhos absolutos para contornar o
-`secure_path` do sudo. Preserve instalações de Cronboard de outros gerenciadores.
-
-O CLI não oferece `--help` ou `--version`: esses argumentos abrem a interface.
-A validação do instalador importa `cronboard.app.main` com o interpretador do
-próprio ambiente. A instalação não deve abrir a TUI nem editar o crontab.
-
-O helper do Server foi testado em containers descartáveis ARM64 de Debian 12 e
-Ubuntu 24.04, inicialmente sem Python nem uv, com Cronboard 1.2.1, uv 0.13.0 e
-Python 3.14.8. Passaram instalação por root para usuário comum, reexecução como
-usuário, abertura headless da TUI, propriedade dos arquivos, limpeza do
-bootstrap e preservação de crontab, perfil e instalação externa. O checkout
-foi montado somente para leitura, sem publicar portas ou alterar serviços da
-VPS. O teste cobriu o helper novo, não a execução integral dos instaladores.
-
 ## Chafa e prévias no terminal em outubro de 2026
 
 Chafa é instalado pelo APT na etapa base de Desktop e Server. Os pacotes

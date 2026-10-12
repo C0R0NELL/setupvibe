@@ -62,7 +62,7 @@ executa `pacman -R`. Os itens adicionados são:
 
 - PHP, Composer, extensões PHP disponíveis no repositório, Laravel Installer e
   Rails sobre o Ruby que já existe.
-- Go, Rust, Python, `uv`, `qrcode` com o comando `qr` e Cronboard, somente
+- Go, Rust, Python, `uv` e `qrcode` com o comando `qr`, somente
   quando o comando ainda não está disponível.
 - Node e Bun por mise somente quando ainda faltam; `pnpm` e PM2 pelo npm.
 - Ansible, utilitários de rede ausentes e Tailscale quando os pacotes estão
