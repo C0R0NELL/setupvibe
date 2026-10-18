@@ -69,7 +69,7 @@ uninstall, and setup aliases must use direct GitHub raw URLs from this fork's
 `main` branch. Use another branch only when explicitly testing that branch.
 Keep the Codex and Claude skills aligned with this source policy.
 
-### `desktop.sh` Steps (15)
+### `desktop.sh` Steps (18)
 
 1. Base system & build tools
 2. Homebrew
@@ -85,7 +85,10 @@ Keep the Codex and Claude skills aligned with this source policy.
 12. Tmux & TPM plugins
 13. AI CLI tools
 14. Browser automation (agent-browser, Chrome/Chromium, Linux dependencies and the official Codex/Claude skill)
-15. Finalization & cleanup
+15. Standalone Terminal Browser
+16. Harlequin (uv, Python 3.14, PostgreSQL and MySQL adapters)
+17. Pet snippets and fzf through existing Homebrew
+18. Finalization & cleanup
 
 Browser automation is included in both Desktop installers. Install `agent-browser`
 through npm, approve only its own installation script, and validate the native
@@ -121,9 +124,52 @@ custom `LG_CONFIG_FILE` lists. Windows installs only Lazygit and configures
 Lazydocker only when already present. Select a Nerd Font in the displaying
 terminal, including the host terminal for WSL or SSH.
 
-### `server.sh` Steps (9)
+### `server.sh` Steps (12)
 
-Subset of desktop steps — no Homebrew, no language ecosystems (PHP, Ruby, Python, Go, Rust) or desktop-specific tools. Node.js is installed via NodeSource APT repo. Focus on base tools, Docker, Ansible, shell, tmux, monitoring, and AI CLIs.
+Subset of desktop steps — no Homebrew or full language ecosystems (PHP, Ruby, Go, Rust). Node.js is installed via NodeSource APT repo; Harlequin uses uv and an isolated Python 3.14 when needed, preserving the system Python. Focus on base tools, Docker, Ansible, shell, tmux, monitoring, AI CLIs, Terminal Browser, Harlequin and Pet. Steps 8–10 install those last three tools, step 11 cleans up, and optional step 12 configures Swarm.
+
+### Standalone Terminal Browser
+
+Unix Desktop step 15, Server step 8 and Omarchy share
+`utils/install_terminal_browser.sh`. Run the official installer as the target
+user with `TERMINAL_BROWSER_SKIP_SETUP=1`, without installing its Herdr plugin.
+Linux resolves available APT `t64` variants of NSS, GTK, ALSA and GBM after an
+index refresh; Server retains lock waiting and retries. Omarchy uses only
+`omarchy pkg add` for system libraries. Reuse working managed installations to
+avoid stopping active browsers. Validate the command, Linux shared libraries
+and bundled runtime without opening an interactive browser. Native Windows
+does not install it; WSL uses the Unix installer. Usage requires a terminal
+with Kitty graphics support. See [the guide](docs/en/TERMINAL_BROWSER.md).
+
+### Harlequin
+
+Unix Desktop step 16, Server step 9, Omarchy and native Windows
+install Harlequin with PostgreSQL and MySQL adapters
+using uv and Python 3.14. Unix shares `utils/install_harlequin.sh`, bootstraps uv
+if missing without changing profiles, and allows uv to download an isolated
+Python 3.14. Omarchy adds uv only through `omarchy pkg add` when missing.
+
+Windows permits uv as an explicit exception to its runtime-manager restriction,
+solely to install Harlequin using the existing signed Python 3.14, with Python
+downloads disabled. Manage uv through WinGet, keep Harlequin's tool root under
+`~/.setupvibe/harlequin-tools`, and expose its CLI through the existing managed
+user bin directory. Restore temporary environment overrides, remove Harlequin
+before Python/uv during uninstall, and preserve database profiles and unrelated
+uv tools. All platforms share `utils/validate_harlequin.py` to validate Python,
+both adapters/drivers and a local in-memory SQL query without external database
+connections. See [the guide](docs/en/HARLEQUIN.md).
+
+### Pet snippets
+
+Desktop step 17 reuses Homebrew with `brew install pet fzf`. Server step 10
+and native Windows share `utils/install_pet.mjs`, using already-installed Node
+to verify pinned official release SHA-256 values and install the native binary
+as the target user. Server reuses APT fzf without adding Homebrew. Omarchy uses
+`omarchy pkg add pet-bin fzf`. Pet is the last tool, before Unix cleanup.
+Validate with `pet version` and a temporary `PET_CONFIG_DIR`; normal version
+checks may create configuration/snippet files. Preserve saved snippets, sync
+credentials and shell bindings; Windows removal deletes only managed code.
+See [the guide](docs/en/PET.md).
 
 ### Distributed environment skill
 
@@ -177,8 +223,8 @@ commands.
 | Path                        | Content                                                           |
 | --------------------------- | ----------------------------------------------------------------- |
 | `docs/README.md`            | Overview and comparison table of all editions                     |
-| `docs/desktop/en/README.md` | Full desktop edition documentation (15 steps)                     |
-| `docs/server/en/README.md`  | Server edition documentation (9 steps)                            |
+| `docs/desktop/en/README.md` | Full desktop edition documentation (18 steps)                     |
+| `docs/server/en/README.md`  | Server edition documentation (12 steps)                           |
 | `docs/windows/en/README.md` | Windows edition (Beta) documentation                              |
 | `docs/omarchy/README.md`    | Omarchy 4 additive edition documentation                          |
 | `docs/en/EXECUTABLES.md`    | Executable helper script documentation (shared by Unix editions) |

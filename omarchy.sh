@@ -492,6 +492,60 @@ configure_ssh() {
         sys_do systemctl enable --now ssh 2>/dev/null || true
 }
 
+install_terminal_browser() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_terminal_browser.sh"
+    local helper_source=""
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_terminal_browser.sh"
+    fi
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download "$SETUPVIBE_RAW/utils/install_terminal_browser.sh" "$helper_path"
+    fi
+    # shellcheck source=utils/install_terminal_browser.sh
+    source "$helper_path"
+    setupvibe_install_terminal_browser
+}
+
+install_harlequin() {
+    local helper_dir="$REAL_HOME/.setupvibe/bin"
+    local source_dir=""
+    local helper_name
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils"
+    fi
+    user_do mkdir -p "$helper_dir"
+    for helper_name in install_harlequin.sh validate_harlequin.py; do
+        if [[ -n "$source_dir" && -f "$source_dir/$helper_name" ]]; then
+            user_do install -m 0644 "$source_dir/$helper_name" "$helper_dir/$helper_name"
+        else
+            safe_download "$SETUPVIBE_RAW/utils/$helper_name" "$helper_dir/$helper_name"
+        fi
+    done
+    # shellcheck source=utils/install_harlequin.sh
+    source "$helper_dir/install_harlequin.sh"
+    setupvibe_install_harlequin "$helper_dir/validate_harlequin.py"
+}
+
+install_pet() {
+    local pet_tmp_dir
+    local -a packages=()
+    command -v pet >/dev/null 2>&1 || packages+=(pet-bin)
+    command -v fzf >/dev/null 2>&1 || packages+=(fzf)
+    omarchy_pkg_add "${packages[@]}"
+    user_do mkdir -p "$REAL_HOME/.setupvibe/tmp"
+    pet_tmp_dir=$(user_do mktemp -d "$REAL_HOME/.setupvibe/tmp/pet.XXXXXX")
+    (
+        trap 'user_do rm -rf -- "$pet_tmp_dir"' EXIT
+        user_do env PET_CONFIG_DIR="$pet_tmp_dir" pet version
+        user_do fzf --version
+    )
+}
+
 main() {
     local arg
     for arg in "$@"; do
@@ -521,6 +575,9 @@ main() {
     configure_portainer
     configure_tailscale
     configure_ssh
+    install_terminal_browser
+    install_harlequin
+    install_pet
 
     echo ""
     echo -e "${GREEN}${BOLD}SetupVibe Omarchy ${OMARCHY_MAJOR} concluído.${NC}"

@@ -71,6 +71,12 @@ executa `pacman -R`. Os itens adicionados são:
   os CLIs já instalados pelo Omarchy.
 - `ssh_copy_id`, `ecosystem.config.js` e o compose do Portainer em
   `~/.setupvibe/`.
+- [Terminal Browser independente](../en/TERMINAL_BROWSER.md), com bibliotecas
+  via `omarchy pkg add`, sem plugin do Herdr.
+- [Harlequin](../en/HARLEQUIN.md), com os adaptadores
+  PostgreSQL e MySQL pelo uv e Python 3.14 em ambiente isolado.
+- [Pet e fzf](../en/PET.md) como última instalação, por `omarchy pkg add pet-bin fzf`,
+  preservando snippets e configurações existentes.
 
 Os arquivos de configuração adicionados ficam em `~/.config/setupvibe/`:
 

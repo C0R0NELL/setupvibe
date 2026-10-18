@@ -52,7 +52,7 @@ supprime le script auxiliaire et conserve ces configurations et sauvegardes.
 
 Les profils d'origine de Windows PowerShell et PowerShell 7, ainsi que leurs stratégies d'exécution persistantes, sont conservés. Starship et ZSH ne sont pas installés ; zoxide reste disponible uniquement comme utilitaire CLI, sans initialisation automatique.
 
-Python et Node.js sont les seuls runtimes de programmation installés par ce script. Claude Code, Codex CLI et Antigravity CLI sont ses seuls CLI d'IA. Il n'installe aucune distribution Linux, aucun framework, gestionnaire de runtime, autre CLI d'IA ou autre écosystème de langage. Après avoir installé une distribution séparément, utilisez `desktop.sh` dans celle-ci pour configurer un environnement de développement complet.
+Python et Node.js sont les seuls runtimes de programmation installés par ce script. Claude Code, Codex CLI et Antigravity CLI sont ses seuls CLI d'IA. Harlequin utilise uv avec le Python 3.14 existant. Il n'installe aucune distribution Linux, aucun framework, autre gestionnaire de runtime, autre CLI d'IA ou autre écosystème de langage. Après avoir installé une distribution séparément, utilisez `desktop.sh` dans celle-ci pour configurer un environnement de développement complet.
 
 Si `%USERPROFILE%\.wslconfig` existe déjà, SetupVibe le sauvegarde avant d'appliquer les paramètres de développement par défaut. `-Uninstall` restaure cette sauvegarde ainsi que les états précédents des fonctionnalités et du pare-feu WSL.
 
@@ -120,6 +120,24 @@ Pendant l'exécution, le programme :
 
 Le processus peut prendre du temps, car les gestionnaires de paquets téléchargent et installent chaque utilitaire séparément.
 
+## Harlequin
+
+L'installation ajoute [Harlequin](../../en/HARLEQUIN.md) avec les
+adaptateurs PostgreSQL et MySQL. uv vient de WinGet `astral-sh.uv` et utilise
+le Python 3.14 existant, sans télécharger d'autres Pythons. L'environnement
+géré se trouve dans `%USERPROFILE%\.setupvibe\harlequin-tools` ; `harlequin.exe`
+utilise le répertoire d'exécutables utilisateur, sans modifier les profils ni
+la stratégie d'exécution. `-Uninstall` le supprime avant Python et uv, en
+préservant les profils de bases de données et les autres outils uv.
+
+## Snippets Avec Pet
+
+La dernière installation ajoute [Pet](../../en/PET.md) depuis sa version
+officielle Windows, vérifie SHA-256 et réutilise `fzf` déjà installé.
+`pet.exe` utilise `%USERPROFILE%\.setupvibe\bin`. L'installation et
+`-Uninstall` préservent les snippets et la configuration de l'utilisateur,
+sans modifier les raccourcis du shell.
+
 ## Après L'installation
 
 1. Redémarrez Windows lorsque cela est demandé pour terminer les modifications de composants ou de paquets en attente.
@@ -140,6 +158,9 @@ rg --version
 fzf --version
 pwsh --version
 python --version
+uv --version
+harlequin --version
+pet version
 pip --version
 node --version
 npm --version
@@ -220,5 +241,5 @@ conserve les caches du navigateur, les sessions, les identifiants et les skills.
 - Windows 10, Windows Server, les builds de Windows 11 antérieures à 22621, Windows 32 bits et Windows sur ARM sont refusés ; seul x64 est pris en charge.
 - WSL est installé et configuré pour WSL 2, le réseau en mode miroir via VPN/LAN et les optimisations de développement courantes, mais aucune distribution Linux n'est installée.
 - Starship et ZSH ne sont pas installés, les profils PowerShell ne sont pas personnalisés et aucune modification persistante de la stratégie d'exécution n'est effectuée ; zoxide reste uniquement disponible comme utilitaire CLI.
-- Python 3.14 et Node.js 24 LTS sont installés pour l'automatisation locale ; Claude Code, Codex CLI et Antigravity CLI sont les seuls CLI d'IA installés. Les autres langages de programmation, frameworks, gestionnaires de runtimes et CLI d'IA sont exclus.
+- Python 3.14 et Node.js 24 LTS sont installés pour l'automatisation locale ; uv est inclus pour Harlequin. Claude Code, Codex CLI et Antigravity CLI sont les seuls CLI d'IA installés. Les autres langages de programmation, frameworks, gestionnaires de runtimes et CLI d'IA sont exclus.
 - Docker Desktop et un moteur Docker local ne sont pas installés.

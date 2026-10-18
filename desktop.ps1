@@ -40,6 +40,8 @@ $script:WindowsUtilities = @(
     @{ Path = 'utils/windows/ssh_copy_id/ssh_copy_id.cmd'; Name = 'ssh_copy_id.cmd' }
     @{ Path = 'utils/configure_lazy_ui.py'; Name = 'configure_lazy_ui.py' }
     @{ Path = 'utils/install_environment_skill.mjs'; Name = 'install_environment_skill.mjs' }
+    @{ Path = 'utils/validate_harlequin.py'; Name = 'validate_harlequin.py' }
+    @{ Path = 'utils/install_pet.mjs'; Name = 'install_pet.mjs' }
 )
 $script:LegacyWindowsUtilityFiles = @('ssh_copy_id.bat', 'ssh_copy_id.ps1', 'codex.cmd')
 
@@ -50,6 +52,7 @@ $script:WinGetPackages = @(
     @{ Id = 'Gyan.FFmpeg'; Name = 'FFmpeg' }
     @{ Id = 'ImageMagick.ImageMagick'; Name = 'ImageMagick' }
     @{ Id = 'hpjansson.Chafa'; Name = 'Chafa' }
+    @{ Id = 'astral-sh.uv'; Name = 'uv (Harlequin installer)' }
     @{ Id = 'GitHub.cli'; Name = 'GitHub CLI (gh)' }
     @{ Id = 'sharkdp.bat'; Name = 'bat' }
     @{ Id = 'eza-community.eza'; Name = 'eza' }
@@ -86,6 +89,7 @@ $script:WinGetCommandChecks = @(
     @{ Name = 'FFmpeg'; Command = 'ffmpeg.exe'; Arguments = @('-version') }
     @{ Name = 'ImageMagick'; Command = 'magick.exe'; Arguments = @('-version') }
     @{ Name = 'Chafa'; Command = 'chafa.exe'; Arguments = @('--version') }
+    @{ Name = 'uv'; Command = 'uv.exe'; Arguments = @('--version') }
     @{ Name = 'bat'; Command = 'bat.exe'; Arguments = @('--version') }
     @{ Name = 'eza'; Command = 'eza.exe'; Arguments = @('--version') }
     @{ Name = 'zoxide'; Command = 'zoxide.exe'; Arguments = @('--version') }
@@ -115,7 +119,6 @@ $script:LegacyWinGetPackages = @(
     @{ Id = 'PHP.PHP.8.4'; Name = 'PHP 8.4' }
     @{ Id = 'RubyInstallerTeam.RubyWithDevKit.3.3'; Name = 'Ruby 3.3 with DevKit' }
     @{ Id = 'Python.Python.3.12'; Name = 'Python 3.12' }
-    @{ Id = 'astral-sh.uv'; Name = 'uv' }
     @{ Id = 'GoLang.Go'; Name = 'Go' }
     @{ Id = 'Rustlang.Rustup'; Name = 'Rustup' }
     @{ Id = 'Oven-sh.Bun'; Name = 'Bun' }
@@ -2196,6 +2199,86 @@ function Uninstall-AgentBrowser {
     Write-Success 'agent-browser CLI was removed; browser cache, user sessions, credentials, and installed skills were preserved.'
 }
 
+function Install-Pet {
+    $helperPath = Join-Path $script:WindowsUtilitiesDirectory 'install_pet.mjs'
+    $nodePath = Find-RuntimeExecutable -Name 'node.exe' -PreferredPaths @(
+        (Join-Path (Get-NativeProgramFilesDirectory) 'nodejs\node.exe')
+    )
+    Import-EnvironmentPath
+    Invoke-NativeCommand -FilePath $nodePath -ArgumentList @($helperPath, '--bin-dir', $script:WindowsUtilitiesDirectory)
+    Assert-CommandResolvesToPath -Name 'pet' -ExpectedPath (Join-Path $script:WindowsUtilitiesDirectory 'pet.exe')
+    Write-Success 'Pet and its fzf selector are available; existing snippets and configuration were preserved.'
+}
+
+function Uninstall-Pet {
+    $petPath = Join-Path $script:WindowsUtilitiesDirectory 'pet.exe'
+    if (Test-Path -LiteralPath $petPath) {
+        Remove-Item -LiteralPath $petPath -Force
+    }
+    Write-Success 'SetupVibe Pet was removed; snippets and synchronization credentials were preserved.'
+}
+
+function Invoke-WithHarlequinEnvironment {
+    param([Parameter(Mandatory = $true)][scriptblock]$Action)
+
+    $previousToolDirectory = $env:UV_TOOL_DIR
+    $previousToolBinDirectory = $env:UV_TOOL_BIN_DIR
+    try {
+        $env:UV_TOOL_DIR = Join-Path $script:SetupVibeUserDirectory 'harlequin-tools'
+        $env:UV_TOOL_BIN_DIR = $script:WindowsUtilitiesDirectory
+        & $Action
+    }
+    finally {
+        $env:UV_TOOL_DIR = $previousToolDirectory
+        $env:UV_TOOL_BIN_DIR = $previousToolBinDirectory
+    }
+}
+
+function Install-Harlequin {
+    $uvPath = Find-RuntimeExecutable -Name 'uv.exe'
+    $pythonPath = Join-Path (Get-NativeProgramFilesDirectory) 'Python314\python.exe'
+    $validationHelper = Join-Path $script:WindowsUtilitiesDirectory 'validate_harlequin.py'
+    Invoke-WithHarlequinEnvironment -Action {
+        # Use SetupVibe's signed Python 3.14 installation, with no extra runtimes.
+        Invoke-NativeCommand -FilePath $uvPath -ArgumentList @(
+            'tool', 'install', '--python', $pythonPath, '--no-python-downloads', '--no-cache', 'harlequin[postgres,mysql]'
+        )
+        $toolPython = Join-Path $env:UV_TOOL_DIR 'harlequin\Scripts\python.exe'
+        Invoke-NativeCommand -FilePath $toolPython -ArgumentList @($validationHelper)
+    }
+    $harlequinPath = Join-Path $script:WindowsUtilitiesDirectory 'harlequin.exe'
+    Import-EnvironmentPath
+    Invoke-NativeCommand -FilePath $harlequinPath -ArgumentList @('--version')
+    Invoke-NativeCommand -FilePath $harlequinPath -ArgumentList @('--help')
+    Assert-CommandResolvesToPath -Name 'harlequin' -ExpectedPath $harlequinPath
+    $hsqlPath = Join-Path $script:WindowsUtilitiesDirectory 'hsql.exe'
+    Invoke-NativeCommand -FilePath $hsqlPath -ArgumentList @('--help')
+    Assert-CommandResolvesToPath -Name 'hsql' -ExpectedPath $hsqlPath
+    Write-Success 'Harlequin is installed with Python 3.14, PostgreSQL and MySQL adapters.'
+}
+
+function Uninstall-Harlequin {
+    $toolDirectory = Join-Path $script:SetupVibeUserDirectory 'harlequin-tools\harlequin'
+    if (Test-Path -LiteralPath $toolDirectory) {
+        $uvCommand = Get-Command 'uv.exe' -ErrorAction SilentlyContinue
+        if ($uvCommand) {
+            Invoke-WithHarlequinEnvironment -Action {
+                Invoke-NativeCommand -FilePath $uvCommand.Source -ArgumentList @('tool', 'uninstall', 'harlequin')
+            }
+        }
+        else {
+            Remove-Item -LiteralPath $toolDirectory -Recurse -Force
+        }
+    }
+    foreach ($executable in @('harlequin.exe', 'hsql.exe')) {
+        $executablePath = Join-Path $script:WindowsUtilitiesDirectory $executable
+        if (Test-Path -LiteralPath $executablePath) {
+            Remove-Item -LiteralPath $executablePath -Force
+        }
+    }
+    Write-Success 'SetupVibe Harlequin was removed; user database profiles and unrelated uv tools were preserved.'
+}
+
 function Install-AntigravityCli {
     $antigravityDirectory = Join-Path $env:LOCALAPPDATA 'agy\bin'
     $pathWasPresent = Test-PathEntry -Path $antigravityDirectory -Scope 'User'
@@ -2517,6 +2600,8 @@ if ($Uninstall) {
     Invoke-SetupStep -Name 'agent-browser' -Action { Uninstall-AgentBrowser }
     Invoke-SetupStep -Name 'OpenCode CLI' -Action { Uninstall-OpenCodeCli }
     Invoke-SetupStep -Name 'Antigravity CLI' -Action { Uninstall-AntigravityCli }
+    Invoke-SetupStep -Name 'Harlequin' -Action { Uninstall-Harlequin }
+    Invoke-SetupStep -Name 'Pet' -Action { Uninstall-Pet }
     Invoke-SetupStep -Name 'AI CLI PATH entries' -Action { Uninstall-AiCliPaths }
     Invoke-SetupStep -Name 'Legacy ecosystem tools' -Action { Uninstall-LegacyEcosystemTools }
     Invoke-SetupStep -Name 'Node.js 24 LTS official MSI' -Action { Uninstall-NodeJs }
@@ -2607,6 +2692,8 @@ else {
         }
     }
 
+    Invoke-SetupStep -Name 'Harlequin (PostgreSQL and MySQL)' -Action { Install-Harlequin }
+    Invoke-SetupStep -Name 'Pet snippets and fzf' -Action { Install-Pet }
     Import-EnvironmentPath
     Invoke-SetupStep -Name 'Original Windows PowerShell profile' -Action {
         Uninstall-PowerShellProfile

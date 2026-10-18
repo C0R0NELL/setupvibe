@@ -255,6 +255,9 @@ STEPS=(
     "Tmux & Plugins"
     "AI CLI Tools"
     "Browser Automation (agent-browser)"
+    "Terminal Browser (Standalone)"
+    "Harlequin (PostgreSQL & MySQL)"
+    "Pet Snippets (Homebrew & fzf)"
     "Finalization & Cleanup"
 )
 
@@ -1853,6 +1856,61 @@ step_14() {
 
 
 step_15() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_terminal_browser.sh"
+    local helper_source=""
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_terminal_browser.sh"
+    fi
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/install_terminal_browser.sh "$helper_path"
+    fi
+    # shellcheck source=utils/install_terminal_browser.sh
+    source "$helper_path"
+    setupvibe_install_terminal_browser
+}
+
+
+step_16() {
+    local helper_dir="$REAL_HOME/.setupvibe/bin"
+    local source_dir=""
+    local helper_name
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils"
+    fi
+    user_do mkdir -p "$helper_dir"
+    for helper_name in install_harlequin.sh validate_harlequin.py; do
+        if [[ -n "$source_dir" && -f "$source_dir/$helper_name" ]]; then
+            user_do install -m 0644 "$source_dir/$helper_name" "$helper_dir/$helper_name"
+        else
+            safe_download "https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/$helper_name" "$helper_dir/$helper_name"
+        fi
+    done
+    # shellcheck source=utils/install_harlequin.sh
+    source "$helper_dir/install_harlequin.sh"
+    setupvibe_install_harlequin "$helper_dir/validate_harlequin.py"
+}
+
+
+step_17() {
+    local pet_tmp_dir
+    user_do mkdir -p "$REAL_HOME/.setupvibe/tmp"
+    pet_tmp_dir=$(user_do mktemp -d "$REAL_HOME/.setupvibe/tmp/pet.XXXXXX")
+    (
+        trap 'user_do rm -rf -- "$pet_tmp_dir"' EXIT
+        export PET_CONFIG_DIR="$pet_tmp_dir"
+        brew_cmd install pet fzf
+        user_do env PET_CONFIG_DIR="$pet_tmp_dir" "$BREW_PREFIX/bin/pet" version
+        user_do "$BREW_PREFIX/bin/fzf" --version
+    )
+}
+
+
+step_18() {
     local pm2_bin
     local pm2_override
     local pm2_override_dir
@@ -2005,6 +2063,9 @@ run_section 11 step_12
 run_section 12 step_13
 run_section 13 step_14
 run_section 14 step_15
+run_section 15 step_16
+run_section 16 step_17
+run_section 17 step_18
 
 
 # --- FINALIZATION ---

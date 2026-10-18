@@ -51,7 +51,7 @@ preserving these application configurations and backups.
 
 Windows PowerShell and PowerShell 7 profiles remain original. Starship and ZSH are not installed, the execution policy is not changed, and zoxide remains an uninitialized CLI utility.
 
-Python and Node.js are the only programming runtimes installed by this script. Claude Code, Codex CLI, and Antigravity CLI are its only AI CLIs. It does not install a Linux distribution, frameworks, runtime managers, other AI CLIs, or other language ecosystems. After installing a distribution separately, use `desktop.sh` inside it to configure a complete development environment.
+Python and Node.js are the only programming runtimes installed by this script. Claude Code, Codex CLI, and Antigravity CLI are its only AI CLIs. Harlequin uses uv with the existing Python 3.14. It does not install a Linux distribution, frameworks, other runtime managers, other AI CLIs, or other language ecosystems. After installing a distribution separately, use `desktop.sh` inside it to configure a complete development environment.
 
 If `%USERPROFILE%\.wslconfig` already exists, SetupVibe backs it up before applying the development defaults. The backup and the previous WSL feature and firewall states are restored by `-Uninstall`.
 
@@ -119,6 +119,23 @@ During execution, the installer:
 
 The process can take a while because package managers download and install each utility independently.
 
+## Harlequin
+
+The installer adds [Harlequin](../../en/HARLEQUIN.md) with
+PostgreSQL and MySQL adapters. uv comes from WinGet `astral-sh.uv` and uses
+the existing Python 3.14, with additional Python downloads disabled. The
+managed environment is under `%USERPROFILE%\.setupvibe\harlequin-tools`;
+`harlequin.exe` uses the existing user bin directory and requires no profile
+or execution-policy changes. `-Uninstall` removes it before Python and uv,
+preserving user database profiles and unrelated uv tools.
+
+## Pet Snippets
+
+The final tool installation adds [Pet](../../en/PET.md) from its official
+Windows release, verifies SHA-256 and reuses the installed `fzf`. The managed
+`pet.exe` uses `%USERPROFILE%\.setupvibe\bin`. Installation and `-Uninstall`
+preserve user snippets and configuration; no shell bindings are changed.
+
 ## After Installation
 
 1. Restart Windows when requested so pending component or package changes can finish.
@@ -139,6 +156,9 @@ rg --version
 fzf --version
 pwsh --version
 python --version
+uv --version
+harlequin --version
+pet version
 pip --version
 node --version
 npm --version
@@ -218,6 +238,6 @@ caches, user sessions, credentials, and installed skills.
 
 - Windows 10, Windows Server, Windows 11 builds older than 22621, 32-bit Windows, and Windows on ARM are rejected; only x64 is supported.
 - WSL is installed and configured for WSL 2, mirrored VPN/LAN networking, and common development optimizations, but no Linux distribution is installed.
-- Python 3.14 and Node.js 24 LTS are installed for local automation; Claude Code, Codex CLI, and Antigravity CLI are the only AI CLIs installed. Other programming languages, frameworks, runtime managers, and AI CLIs are excluded.
+- Python 3.14 and Node.js 24 LTS are installed for local automation; uv is included for Harlequin. Claude Code, Codex CLI, and Antigravity CLI are the only AI CLIs installed. Other programming languages, frameworks, runtime managers, and AI CLIs are excluded.
 - Starship and ZSH are not installed on Windows, PowerShell profiles are not customized, and the persistent execution policy is not changed.
 - Docker Desktop and a local Docker engine are not installed.

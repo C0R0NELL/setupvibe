@@ -52,7 +52,7 @@ preservando essas configurações e backups dos aplicativos.
 
 Os perfis do Windows PowerShell e PowerShell 7 permanecem originais. Starship e ZSH não são instalados, a política de execução não é alterada e o zoxide permanece somente como utilitário CLI sem inicialização automática.
 
-Python e Node.js são os únicos runtimes de programação instalados por este script. Claude Code, Codex CLI e Antigravity CLI são suas únicas CLIs de IA. Ele não instala uma distribuição Linux, frameworks, gerenciadores de runtime, outras CLIs de IA nem outros ecossistemas de linguagens. Depois de instalar uma distribuição separadamente, use o `desktop.sh` dentro dela para configurar um ambiente completo de desenvolvimento.
+Python e Node.js são os únicos runtimes de programação instalados por este script. Claude Code, Codex CLI e Antigravity CLI são suas únicas CLIs de IA. O Harlequin usa uv com o Python 3.14 existente. Ele não instala uma distribuição Linux, frameworks, outros gerenciadores de runtime, outras CLIs de IA nem outros ecossistemas de linguagens. Depois de instalar uma distribuição separadamente, use o `desktop.sh` dentro dela para configurar um ambiente completo de desenvolvimento.
 
 Se `%USERPROFILE%\.wslconfig` já existir, o SetupVibe cria um backup antes de aplicar os padrões de desenvolvimento. O backup e os estados anteriores dos recursos e do firewall do WSL são restaurados por `-Uninstall`.
 
@@ -129,6 +129,23 @@ Durante a execução, o instalador:
 
 O processo pode demorar porque os gerenciadores de pacotes baixam e instalam cada utilitário separadamente.
 
+## Harlequin
+
+A instalação adiciona o [Harlequin](../../en/HARLEQUIN.md)
+com os adaptadores PostgreSQL e MySQL. O uv vem do WinGet `astral-sh.uv` e usa
+o Python 3.14 existente, com downloads de outros Pythons desativados. O ambiente
+gerenciado fica em `%USERPROFILE%\.setupvibe\harlequin-tools`; `harlequin.exe`
+usa o diretório de executáveis do usuário já configurado, sem alterar perfis
+ou política de execução. `-Uninstall` remove a ferramenta antes do Python e uv,
+preservando perfis de bancos do usuário e outras ferramentas do uv.
+
+## Snippets Com Pet
+
+A última instalação adiciona o [Pet](../../en/PET.md) pela versão oficial
+para Windows, verifica SHA-256 e reaproveita o `fzf` instalado. O executável
+`pet.exe` fica em `%USERPROFILE%\.setupvibe\bin`. A instalação e o `-Uninstall`
+preservam snippets e configurações do usuário, sem alterar atalhos do shell.
+
 ## Depois da Instalação
 
 1. Reinicie o Windows quando solicitado para concluir alterações pendentes de componentes ou pacotes.
@@ -149,6 +166,9 @@ rg --version
 fzf --version
 pwsh --version
 python --version
+uv --version
+harlequin --version
+pet version
 pip --version
 node --version
 npm --version
@@ -228,6 +248,6 @@ preserva caches de navegador, sessões, credenciais e skills instaladas.
 
 - Windows 10, Windows Server, builds do Windows 11 anteriores a 22621, Windows de 32 bits e Windows em ARM são recusados. Somente x64 é compatível.
 - O WSL é instalado e configurado para WSL 2, rede espelhada por VPN/LAN e otimizações comuns de desenvolvimento, mas nenhuma distribuição Linux é instalada.
-- Python 3.14 e Node.js 24 LTS são instalados para automações locais. Claude Code, Codex CLI e Antigravity CLI são as únicas CLIs de IA instaladas. Outras linguagens de programação, frameworks, gerenciadores de runtime e CLIs de IA são excluídos.
+- Python 3.14 e Node.js 24 LTS são instalados para automações locais; uv é incluído para o Harlequin. Claude Code, Codex CLI e Antigravity CLI são as únicas CLIs de IA instaladas. Outras linguagens de programação, frameworks, gerenciadores de runtime e CLIs de IA são excluídos.
 - Starship e ZSH não são instalados no Windows, os perfis do PowerShell não são personalizados e a política de execução persistente não é alterada.
 - O Docker Desktop e um mecanismo Docker local não são instalados.

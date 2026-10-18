@@ -35,6 +35,7 @@ to work in that interface; use commands that print results for agent inspection.
 | FFmpeg / FFprobe | `ffprobe "video.mp4"`; `ffmpeg -i "input.mov" "output.mp4"` | Inspect, convert or extract audio/video; support browser recordings. | D, W |
 | QR code generator | `qr --output=qr.png https://example.com` | Generate a QR image from text or a URL; `qr --help` lists output options. | D |
 | agent-browser | `agent-browser skills get core`; `agent-browser open https://example.com`; `agent-browser snapshot -i` | Automate a browser, inspect pages, fill forms and capture screenshots. | D, W; macOS 13+ |
+| Terminal Browser | `terminal-browser open https://example.com` (**interactive**); `terminal-browser open --ssh user@server http://localhost:3000` | Browse pages in a terminal with Kitty graphics support, locally or through SSH. Standalone installation. | D, S |
 
 For agent-browser, read `skills get core` for instructions matching the installed
 version, and close the session with `agent-browser close` when finished. On
@@ -46,6 +47,7 @@ Linux ARM64 uses the Chromium prepared by the installer.
 
 | Tool | Command or example | Use for | Editions |
 | --- | --- | --- | --- |
+| Pet | `pet list`; `pet new -t` (**interactive**); `pet search` (**interactive**) | Save and find shell snippets with descriptions and tags. Search prints the selection; `pet exec` executes it. | D, S, W, Omarchy |
 | Ripgrep | `rg -n "pattern" .`; `rg --files` | Search source text or list project files quickly. | D, W |
 | fd | `fd '\.png$' .` | Find files by name or extension. | D, W |
 | bat | `bat --paging=never "file.txt"` | Read files with syntax highlighting without opening a pager. | D, W |
@@ -64,6 +66,8 @@ Linux ARM64 uses the Chromium prepared by the installer.
 
 | Tool | Command or example | Use for | Editions |
 | --- | --- | --- | --- |
+| Harlequin | `harlequin --help`; `harlequin -a postgres -h HOST -U USER -d DATABASE` (**interactive**); `harlequin -a mysql -h HOST -U USER --database DATABASE` (**interactive**) | Browse database schemas, edit SQL and inspect query results; includes PostgreSQL, MySQL/MariaDB, SQLite and DuckDB adapters. | D, S, W |
+| hsql (Harlequin) | `hsql --help` | Discover commands for noninteractive SQL queries and database inspection using Harlequin adapters. | D, S, W |
 | GitHub CLI | `gh repo view`; `gh pr list`; `gh issue list` | Inspect GitHub repositories, pull requests and issues from the current project. | D, S, W |
 | Lazygit | `lazygit` (**interactive**) | Review diffs, stage changes and manage Git history in a TUI. | D, W |
 | Docker | `docker ps`; `docker logs --tail 100 CONTAINER`; `docker stats --no-stream` | Inspect containers, logs and resource usage. | D, S |
@@ -148,6 +152,9 @@ The inventory follows the [Unix Desktop](https://github.com/C0R0NELL/setupvibe/b
 and [Windows](https://github.com/C0R0NELL/setupvibe/blob/main/docs/windows/en/README.md)
 installers and documentation. For additional examples, consult the
 [browser guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/AGENT_BROWSER.md),
+[Terminal Browser guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/TERMINAL_BROWSER.md),
+[Harlequin guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/HARLEQUIN.md),
+[Pet guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/PET.md),
 [Herdr guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/HERDR.md),
 [SSH helper guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/EXECUTABLES.md)
 ([Windows syntax](https://github.com/C0R0NELL/setupvibe/blob/main/utils/windows/ssh_copy_id/README.md))

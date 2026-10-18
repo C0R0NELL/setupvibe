@@ -25,9 +25,9 @@ um terceiro agente.
 
 O SetupVibe oferece duas edições Unix executáveis em Debian:
 
-- `desktop.sh`: instalador interativo de 15 etapas para desktop, WSL e
+- `desktop.sh`: instalador interativo de 18 etapas para desktop, WSL e
   ambientes completos de desenvolvimento.
-- `server.sh`: instalador de 9 etapas, com opção não interativa `--yes`,
+- `server.sh`: instalador de 12 etapas, com opção não interativa `--yes`,
   concentrado em operações, Docker, shell, monitoramento e CLIs de IA.
 
 Debian 12 ou mais recente é suportado. A validação descrita neste arquivo foi
@@ -433,3 +433,53 @@ como root e usou `user_do` para instalar no usuário `node`; os nove caminhos
 compartilhados/nativos e o helper ficaram com o proprietário correto. A
 reexecução como usuário comum também passou. O teste não executou o
 instalador completo nem alterou serviços da VPS.
+
+## Terminal Browser em outubro de 2026
+
+A instalação isolada do Terminal Browser 0.13.4 passou em Debian 12 e Ubuntu
+24.04 ARM64, em containers descartáveis com checkout somente para leitura e
+sem portas publicadas. Foram verificadas instalação limpa pelo Server,
+reexecuções pelo Desktop como root e usuário comum com sudo, propriedade dos
+arquivos, preservação do `.bashrc`, limpeza de temporários e reutilização do
+runtime existente. No Debian foram usados `libgtk-3-0` e `libasound2`; no Ubuntu,
+`libgtk-3-0t64` e `libasound2t64`.
+
+Passaram `--version`, `--help`, verificação das bibliotecas com `ldd` e execução
+do runtime incluído com `ELECTRON_RUN_AS_NODE=1`. Isso valida o carregamento
+sem display, mas não a renderização no terminal: o cliente SSH/WSL ainda
+precisa oferecer o protocolo gráfico Kitty. Os testes não executaram os
+instaladores completos, não instalaram plugins nem alteraram serviços da VPS.
+
+## Harlequin em outubro de 2026
+
+A etapa isolada passou em Debian 12 e Ubuntu 24.04 ARM64 com Harlequin 2.16.1,
+uv 0.13.1 e Python 3.14.8. Foram verificadas instalação limpa com bootstrap do
+uv, reexecuções como root e usuário comum com sudo, propriedade dos arquivos,
+temporários removidos e preservação do Python do sistema e do `.bashrc`.
+`--no-cache` usa cache temporário sem apagar caches de outras ferramentas.
+
+Passaram carregamento dos adaptadores PostgreSQL 1.5.0 e MySQL 1.4.0, imports
+dos drivers psycopg 3.3.6 e MySQL Connector 9.7.0, consulta DuckDB em memória,
+`harlequin --version`, `harlequin --help` e `hsql --help`. Nenhum banco externo
+foi acessado. Os containers usaram checkout somente para leitura e não
+publicaram portas nem executaram os instaladores completos.
+
+A resolução de dependências binárias com Python 3.14 também passou para Linux
+x86_64/ARM64, macOS Intel/Apple Silicon e Windows x64. O fluxo PowerShell teve
+validação de sintaxe e testes simulados de instalação, falha, restauração das
+variáveis e remoção limitada ao ambiente gerenciado, inclusive sem uv. Não
+houve execução real em macOS ou Windows.
+
+## Pet em outubro de 2026
+
+As etapas isoladas do Desktop e Server passaram em Debian 12 ARM64 com Pet
+1.0.1: Homebrew existente no Desktop, binário oficial com SHA-256 no Server e
+`fzf` pelos respectivos gerenciadores. Foram verificadas reexecução, seleção
+e execução de snippet descartável, propriedade dos arquivos, limpeza de
+temporários e preservação do `.bashrc`. No Server, a reexecução também
+preservou byte a byte configurações e snippets existentes.
+
+Até `pet version` inicializa arquivos quando falta a configuração. Por isso,
+a validação usa `PET_CONFIG_DIR` temporário; nunca deve ler snippets reais ou
+credenciais de sincronização. Os testes usaram checkout somente para leitura,
+sem portas publicadas e sem executar os instaladores completos.

@@ -41,7 +41,7 @@ cada projeto com `npx skills add <origem>`.
 
 ## O Que é Instalado
 
-**15 etapas, totalmente automatizadas.**
+**18 etapas, totalmente automatizadas.**
 
 ### Etapa 1 — Sistema Base e Ferramentas de Build
 
@@ -211,7 +211,27 @@ nem criar projeto de testes. O Chrome atual exige macOS 13+. Valida a abertura
 real do navegador sem interface gráfica e as instruções incluídas antes de
 informar sucesso. Consulte o [guia do agent-browser](../../pt-br/AGENT_BROWSER.md).
 
-### Passo 15 — Finalização e Limpeza
+### Passo 15 — Terminal Browser
+
+Instala o Terminal Browser independente pelo instalador oficial, como usuário
+de destino, incluindo as bibliotecas Linux compatíveis. Valida a CLI e o
+runtime incluído sem abrir janelas. Reutiliza instalações funcionais;
+atualize com `terminal-browser upgrade`. Exige terminal com suporte ao
+protocolo gráfico Kitty. Veja o [guia de uso, SSH e zoom](../../en/TERMINAL_BROWSER.md).
+
+### Passo 16 — Harlequin
+
+Instala `harlequin[postgres,mysql]` pelo uv com Python 3.14 em ambiente isolado,
+preservando o Python do sistema. Valida os dois adaptadores, seus drivers e
+uma consulta SQL local em memória. Veja o [guia do Harlequin](../../en/HARLEQUIN.md).
+
+### Passo 17 — Snippets com Pet
+
+Executa `brew install pet fzf` pelo Homebrew existente do usuário e valida os
+comandos com configuração temporária do Pet. Preserva snippets e atalhos
+de shell existentes. Veja o [guia do Pet](../../en/PET.md).
+
+### Passo 18 — Finalização e Limpeza
 
 **macOS:** `brew cleanup --prune=all`, `brew autoremove` e remove somente arquivos temporários do SetupVibe.
 

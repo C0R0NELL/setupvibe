@@ -35,7 +35,7 @@ The script shows an interactive roadmap and asks for confirmation before startin
 
 ## What Gets Installed
 
-**15 steps, fully automated.**
+**18 steps, fully automated.**
 
 ### Step 1 — Base System & Build Tools
 
@@ -203,7 +203,27 @@ or a test project. macOS requires 13+ for current Chrome. A real headless launch
 and bundled instructions are validated before reporting success. See the
 [agent-browser guide](../../en/AGENT_BROWSER.md).
 
-### Step 15 — Finalization & Cleanup
+### Step 15 — Terminal Browser
+
+Installs standalone Terminal Browser through its official installer for the
+target user, including compatible Linux libraries. Validates the CLI and
+bundled runtime without opening a window. Working installations are reused;
+update with `terminal-browser upgrade`. Requires a terminal with Kitty graphics
+support. See the [usage, SSH and zoom guide](../../en/TERMINAL_BROWSER.md).
+
+### Step 16 — Harlequin
+
+Installs `harlequin[postgres,mysql]` through uv with Python 3.14 in an isolated
+environment, preserving the system Python. Validates both adapters, their
+drivers and a local in-memory SQL query. See the [Harlequin guide](../../en/HARLEQUIN.md).
+
+### Step 17 — Pet Snippets
+
+Runs `brew install pet fzf` through the existing user Homebrew, then validates
+both commands with temporary Pet configuration. Existing snippets and shell
+bindings are preserved. See the [Pet guide](../../en/PET.md).
+
+### Step 18 — Finalization & Cleanup
 
 **macOS:** `brew cleanup --prune=all`, `brew autoremove`, and removes only SetupVibe temporary files.
 

@@ -2,7 +2,7 @@
 
 > Linux server setup — v0.41.11
 
-A lean, focused setup script for Linux servers. No Homebrew, no language ecosystems, no desktop tools. Installs only what a production server needs: Docker, Ansible, networking, shell, tmux, and AI CLI tools.
+A lean setup script for Linux servers. No Homebrew or language ecosystems. Installs Docker, Ansible, networking, shell, tmux, AI CLI tools, and Terminal Browser for interactive terminal browsing.
 
 ## System Requirements
 
@@ -45,7 +45,7 @@ The script validates the operating system, version, architecture, target user, a
 
 ## What Gets Installed
 
-**9 steps fully automated (Steps 0–8), plus an optional Step 9 for Docker Swarm Manager setup.**
+**12 steps fully automated (Steps 0–11), plus an optional Step 12 for Docker Swarm Manager setup.**
 
 ### Step 0 — Prerequisites & Architecture Check
 
@@ -162,13 +162,34 @@ Its tables list installed tools, command examples, practical uses, and
 availability by edition to help agents fulfill user requests.
 See [locations and update behavior](../../en/ENVIRONMENT_SKILL.md).
 
-### Step 8 — Finalization & Cleanup
+### Step 8 — Terminal Browser
+
+Installs standalone Terminal Browser before Harlequin, with Linux libraries
+selected for the distribution, including `t64` variants when available.
+Runs as the target user, validates the CLI and bundled runtime without opening
+a window, and reuses working installations. The connecting terminal must
+support Kitty graphics. See the [usage, SSH and zoom guide](../../en/TERMINAL_BROWSER.md).
+
+### Step 9 — Harlequin
+
+Installs `harlequin[postgres,mysql]` with uv and an isolated Python 3.14,
+bootstrapping uv when missing. Preserves the system Python and shell profiles,
+and validates both adapters, their drivers and a local SQL query. See the
+[Harlequin guide](../../en/HARLEQUIN.md).
+
+### Step 10 — Pet Snippets
+
+Installs the official Pet binary with SHA-256 verification for the target user
+and reuses APT's existing `fzf`. Validation preserves snippets and configuration;
+no Homebrew is added. See the [Pet guide](../../en/PET.md).
+
+### Step 11 — Finalization & Cleanup
 
 - Runs APT `autoclean` and `clean`
 - Removes downloaded APT package lists
 - Preserves installed packages, system journals, and user caches
 
-### Step 9 — Docker Swarm Manager (optional)
+### Step 12 — Docker Swarm Manager (optional)
 
 Activated by passing `--manager` or by answering **yes** to the interactive prompt shown at the end of setup.
 

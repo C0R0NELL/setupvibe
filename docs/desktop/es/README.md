@@ -35,7 +35,7 @@ El script muestra una hoja de ruta interactiva y solicita confirmación antes de
 
 ## Qué se instala
 
-**15 pasos, totalmente automatizados.**
+**18 pasos, totalmente automatizados.**
 
 ### Paso 1 — Sistema Base y Herramientas de Construcción
 
@@ -204,7 +204,27 @@ Playwright globalmente ni crear un proyecto de pruebas. Chrome actual requiere
 macOS 13+. Valida un inicio real del navegador sin interfaz gráfica y las
 instrucciones incluidas. Consulta la [guía](../../es/AGENT_BROWSER.md).
 
-### Paso 15 — Finalización y Limpieza
+### Paso 15 — Terminal Browser
+
+Instala Terminal Browser independiente mediante el instalador oficial para
+el usuario de destino, con bibliotecas Linux compatibles. Valida la CLI y el
+runtime incluido sin abrir ventanas. Reutiliza instalaciones funcionales;
+actualiza con `terminal-browser upgrade`. Requiere un terminal compatible con
+el protocolo gráfico Kitty. Consulta la [guía de uso, SSH y zoom](../../en/TERMINAL_BROWSER.md).
+
+### Paso 16 — Harlequin
+
+Instala `harlequin[postgres,mysql]` mediante uv con Python 3.14 en un entorno
+aislado, conservando el Python del sistema. Valida ambos adaptadores, sus
+drivers y una consulta SQL local en memoria. Consulta la [guía](../../en/HARLEQUIN.md).
+
+### Paso 17 — Snippets con Pet
+
+Ejecuta `brew install pet fzf` con el Homebrew existente del usuario y valida
+ambos comandos con configuración temporal de Pet. Conserva los snippets y
+atajos del shell. Consulta la [guía de Pet](../../en/PET.md).
+
+### Paso 18 — Finalización y Limpieza
 
 **macOS:** `brew cleanup --prune=all`, `brew autoremove` y elimina solo los archivos temporales de SetupVibe.
 

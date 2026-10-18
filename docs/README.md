@@ -84,6 +84,9 @@ installation and never executes package-removal commands.
 | AI CLI tools                          | ✔              | ✔ (selected)    | ✔       |
 | Vercel Labs Skills CLI                | ✔              | ✔               | ✔       |
 | agent-browser + Chrome/Chromium       | ✔ (macOS 13+)  | ✔               | ✗       |
+| Standalone Terminal Browser           | ✔              | WSL only        | ✔       |
+| Harlequin (PostgreSQL + MySQL)         | ✔              | ✔               | ✔       |
+| Pet snippets + fzf                    | ✔              | ✔               | ✔       |
 | Herdr agent multiplexer               | ✔              | ✗               | ✔       |
 | Antigravity CLI (`agy`)               | ✔              | ✔               | ✗       |
 | PM2 auto-startup                      | ✔              | ✗               | ✗       |
@@ -101,6 +104,18 @@ installation and never executes package-removal commands.
 - [Portuguese](pt-br/AGENT_BROWSER.md)
 - [French](fr/AGENT_BROWSER.md)
 - [Spanish](es/AGENT_BROWSER.md)
+
+### Terminal Browser
+
+- [Standalone installation, SSH and zoom](en/TERMINAL_BROWSER.md)
+
+### Harlequin
+
+- [Installation, supported platforms and database adapters](en/HARLEQUIN.md)
+
+### Pet
+
+- [Installation, snippet commands and synchronization](en/PET.md)
 
 ### Tmux
 

@@ -361,6 +361,9 @@ STEPS=(
     "Shell (ZSH & Starship Config)"
     "Tmux & Plugins"
     "AI CLI Tools"
+    "Terminal Browser (Standalone)"
+    "Harlequin (PostgreSQL & MySQL)"
+    "Pet Snippets & fzf"
     "Finalization & Cleanup"
 )
 
@@ -1013,6 +1016,66 @@ step_7() {
 
 
 step_8() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_terminal_browser.sh"
+    local helper_source=""
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_terminal_browser.sh"
+    fi
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/install_terminal_browser.sh "$helper_path"
+    fi
+    # shellcheck source=utils/install_terminal_browser.sh
+    source "$helper_path"
+    setupvibe_install_terminal_browser
+}
+
+
+step_9() {
+    local helper_dir="$REAL_HOME/.setupvibe/bin"
+    local source_dir=""
+    local helper_name
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils"
+    fi
+    user_do mkdir -p "$helper_dir"
+    for helper_name in install_harlequin.sh validate_harlequin.py; do
+        if [[ -n "$source_dir" && -f "$source_dir/$helper_name" ]]; then
+            user_do install -m 0644 "$source_dir/$helper_name" "$helper_dir/$helper_name"
+        else
+            safe_download "https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/$helper_name" "$helper_dir/$helper_name"
+        fi
+    done
+    # shellcheck source=utils/install_harlequin.sh
+    source "$helper_dir/install_harlequin.sh"
+    setupvibe_install_harlequin "$helper_dir/validate_harlequin.py"
+}
+
+
+step_10() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_pet.mjs"
+    local helper_source=""
+    local node_bin
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_pet.mjs"
+    fi
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/install_pet.mjs "$helper_path"
+    fi
+    node_bin=$(command -v node)
+    user_do env PATH="$REAL_HOME/.local/bin:$PATH" "$node_bin" "$helper_path" --bin-dir "$REAL_HOME/.local/bin"
+}
+
+
+step_11() {
     echo "Cleaning APT caches..."
     apt_do autoclean -qq
     apt_do clean -qq
@@ -1086,6 +1149,9 @@ STEP_FUNCTIONS=(
     step_6
     step_7
     step_8
+    step_9
+    step_10
+    step_11
 )
 [[ "$SWARM_MANAGER" == "true" ]] && STEP_FUNCTIONS+=(step_swarm)
 
@@ -1117,7 +1183,7 @@ if [[ "$INSTALL_FAILED" == "false" && "$SWARM_MANAGER" == "false" && "$ASSUME_YE
     if [[ "$SWARM_ANSWER" =~ ^[yYsS]$ ]]; then
         SWARM_MANAGER=true
         STEPS+=("Docker Swarm Manager Setup")
-        run_section 9 step_swarm
+        run_section 12 step_swarm
         [[ "$LAST_STEP_OK" == "true" ]] || INSTALL_FAILED=true
     else
         echo -e "${YELLOW}Skipping Docker Swarm setup.${NC}"

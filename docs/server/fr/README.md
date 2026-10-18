@@ -2,7 +2,7 @@
 
 > Configuration de serveur Linux — v0.41.11
 
-Un script de configuration léger et ciblé pour les serveurs Linux. Pas de Homebrew, pas d'écosystèmes de langages, pas d'outils de bureau. Installe uniquement ce dont un serveur de production a besoin : Docker, Ansible, réseau, shell, tmux et outils AI CLI.
+Un script de configuration léger pour les serveurs Linux, sans Homebrew ni écosystèmes de langages. Installe Docker, Ansible, réseau, shell, tmux, outils AI CLI et Terminal Browser pour naviguer de manière interactive dans le terminal.
 
 ## Configuration Requise
 
@@ -45,7 +45,7 @@ Le script valide le système d'exploitation, la version, l'architecture, l'utili
 
 ## Ce qui est installé
 
-**9 étapes entièrement automatisées (Étapes 0–8), plus une Étape 9 optionnelle pour la configuration du Docker Swarm Manager.**
+**12 étapes entièrement automatisées (Étapes 0–11), plus une Étape 12 optionnelle pour la configuration du Docker Swarm Manager.**
 
 ### Étape 0 — Prérequis et Vérification de l'Architecture
 
@@ -163,13 +163,35 @@ commandes, leurs usages et leur disponibilité par édition pour aider les agent
 à répondre aux demandes de l'utilisateur.
 Voir [les chemins et le comportement de mise à jour](../../en/ENVIRONMENT_SKILL.md).
 
-### Étape 8 — Finalisation & Nettoyage
+### Étape 8 — Terminal Browser
+
+Installe Terminal Browser indépendant avant Harlequin, avec les bibliothèques Linux
+adaptées à la distribution et les variantes `t64` disponibles. S'exécute comme
+l'utilisateur cible, valide le CLI et le runtime inclus sans ouvrir de fenêtre
+et réutilise les installations fonctionnelles. Le terminal de connexion doit
+prendre en charge les graphiques Kitty. Voir le
+[guide d'utilisation, SSH et zoom](../../en/TERMINAL_BROWSER.md).
+
+### Étape 9 — Harlequin
+
+Installe `harlequin[postgres,mysql]` avec uv et Python 3.14 isolé, en installant uv
+si nécessaire. Préserve le Python du système et les profils shell, et valide
+les deux adaptateurs, leurs pilotes et une requête SQL locale. Voir le
+[guide Harlequin](../../en/HARLEQUIN.md).
+
+### Étape 10 — Snippets avec Pet
+
+Installe le binaire officiel Pet avec vérification SHA-256 pour l'utilisateur
+cible et réutilise `fzf` d'APT. Préserve snippets et configuration sans ajouter
+Homebrew. Voir le [guide Pet](../../en/PET.md).
+
+### Étape 11 — Finalisation & Nettoyage
 
 - Exécute `autoclean` et `clean` d'APT
 - Supprime les listes de paquets téléchargées par APT
 - Préserve les paquets installés, les journaux système et les caches utilisateur
 
-### Étape 9 — Docker Swarm Manager (optionnel)
+### Étape 12 — Docker Swarm Manager (optionnel)
 
 Activé en passant `--manager` ou en répondant **oui** au prompt interactif affiché en fin de setup.
 
