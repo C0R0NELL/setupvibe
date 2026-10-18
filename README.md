@@ -141,6 +141,7 @@ reference for Linux, macOS, and WSL:
 | --- | --- | --- |
 | [Account Hub](https://github.com/C0R0NELL/herdr-account-hub) | Switch Codex/Claude accounts and check usage; Claude support is in beta. | Python 3.11+ and the relevant agent CLI. |
 | [Herdr Plus](https://github.com/cloudmanic/herdr-plus) | Workspace templates and quick actions. | Herdr 0.7.0+; Go is optional on Linux/macOS. |
+| [Prompt Library](https://github.com/jwkicklighter/herdr-prompt-library) | Browse, manage, and insert Markdown prompts into the focused pane without submitting them. | Herdr 0.7.5+ and Go 1.25+. |
 | [Herdr Web UI](https://github.com/devswha/herdr-web-ui) | Access agent chats and terminals from a browser or phone. | Herdr 0.9.0+, Bun 1.4+, and Node.js 18+ on Linux/macOS. |
 | [Herdr Board](https://github.com/nelsonPires5/herdr-board) | Kanban cards that dispatch prompts to agents. | Herdr 0.9.0+ with socket protocol 22, Git, and Rust/Cargo. |
 | [Agents Sidebar](https://github.com/C0R0NELL/herdr-agents-sidebar) | Group native sidebar agents by machine and workspace. | Linux, Herdr 0.9.3+, and Python 3.11+ with curses. |
@@ -154,6 +155,7 @@ compatibility, then run the commands for the plugins you want:
 herdr --version
 herdr plugin install C0R0NELL/herdr-account-hub
 herdr plugin install cloudmanic/herdr-plus
+herdr plugin install jwkicklighter/herdr-prompt-library
 herdr plugin install devswha/herdr-web-ui
 herdr plugin install nelsonPires5/herdr-board --ref v0.19.0
 herdr plugin install C0R0NELL/herdr-agents-sidebar
