@@ -13,7 +13,6 @@ Installs and configures a development environment in one command, supporting Win
 - **Native Windows Shell:** Keeps Windows PowerShell and PowerShell 7 profiles unchanged, without Starship, ZSH, automatic zoxide initialization, or persistent execution-policy changes; Unix editions retain ZSH, Oh My Zsh, and Starship.
 - **Optimized Terminals:** Installs Windows Terminal on Windows and configures Tmux + TPM on Unix systems.
 - **Lazy Tool Appearance:** Desktop installers enable Lazygit file icons and Nerd Fonts v3; installed Lazydocker also receives status icons, rounded borders, and an expanding focused side panel. Other settings and the first `config.yml.bak` are preserved. Select a Nerd Font in the terminal that displays the session.
-- **Terminal Image Preview:** Installs [Chafa](https://hpjansson.org/chafa/download/) on Desktop and Server through APT, Homebrew, or WinGet, and validates its command after installation.
 - **Environment Skill:** Desktop and Server distribute the shared `setupvibe-environment` skill to ten supported agent harnesses through Skills CLI. It helps agents choose installed tools for user requests, with commands, practical uses, and availability by edition.
 - **Global Helper Scripts:** Installs Windows helper scripts in `%USERPROFILE%\.setupvibe\bin` and adds the directory to the user's `PATH`.
 - **AI Runtime Foundation:** Installs and validates Python 3.14 directly from `python.org` and Node.js 24 LTS from the official `latest-v24.x` channel on `nodejs.org`, automatically repairs missing runtime files, and exposes `python`, `pip`, `node`, `npm`, and `npx` in the Windows machine `PATH` for Claude and Codex.
@@ -24,12 +23,14 @@ Installs and configures a development environment in one command, supporting Win
 - **Terminal Browser:** Installs the standalone [Terminal Browser](docs/en/TERMINAL_BROWSER.md) on Unix Desktop (macOS, Linux and WSL), Server and Omarchy, including Linux libraries and command validation.
 - **Terminal SQL Client:** Installs [Harlequin](docs/en/HARLEQUIN.md) with PostgreSQL and MySQL adapters through uv and Python 3.14 on all editions, validating its isolated environment without connecting to external databases.
 - **Command Snippets:** Installs [Pet and fzf](docs/en/PET.md) on all editions, reusing Homebrew on Desktop/macOS/Linux/WSL and preserving saved snippets and configuration.
+- **Redis Client:** Installs standalone [Redis TUI](docs/en/REDIS_TUI.md) on all editions, with official native binaries, checksum verification and preserved connection settings.
+- **Terminal File Manager:** Installs [Yazi and ya](docs/en/YAZI.md), reusing Homebrew on Unix Desktop and the native package managers on Server, Windows and Omarchy. Existing settings and plugins are preserved.
 - **Unix Antigravity CLI:** Installs Google's Antigravity CLI as `agy` on the Unix Desktop edition, resolving and SHA-512-verifying its versioned release manifest directly (the official Unix bootstrapper does not forward `--skip-aliases`/`--skip-path` to its own `agy install` step) and running `agy install --skip-aliases --skip-path` explicitly so shell profiles stay untouched.
 - **WSL 2 Ready:** Installs the WSL base without a Linux distribution and configures mirrored VPN/LAN networking and development optimizations on Windows 11.
 - **Smart Privilege Elevation:** Uses `sudo` only where strictly necessary on macOS and Linux; most tools are installed in `$HOME/.local/bin`.
 - **Global QR Code Generator:** Installs the PyPI `qrcode` package for the target user on macOS and Linux, exposing its `qr` command in the shell.
 - **Auto-Update:** Automatically upgrades existing Homebrew packages during setup.
-- **Modern Shell:** ZSH + Oh My Zsh + Starship with a curated set of plugins and aliases.
+- **Modern Shell:** ZSH + Oh My Zsh + Starship with a curated set of plugins and aliases. The [shared Gruvbox Rainbow configuration](conf/starship.toml) shows `user@hostname` over SSH.
 - **Optimized Tmux:** Pre-configured with TPM, intuitive keybindings, and window/pane numbering starting at 1.
 - **Current Runtimes:** PHP 8.5, Ruby 3.4.10, Go 1.26.5, Python 3.14 on macOS, and Node.js 24 LTS.
 - **AI-Ready Unix Editions:** Includes the latest AI CLI tools for developers on macOS, Linux, and WSL.
@@ -114,22 +115,6 @@ Its tables cover installed utilities for images, browser automation, files,
 containers, diagnostics, sessions, and agent tooling, with practical commands
 and availability by edition. Ordinary language runtimes are omitted.
 See [installation, locations, and update behavior](docs/en/ENVIRONMENT_SKILL.md).
-
-### Images in the Terminal
-
-Desktop and Server install Chafa for image previews inside the terminal.
-Linux and WSL use APT, macOS uses Homebrew, and Windows uses the WinGet package
-`hpjansson.Chafa`. Windows `-Uninstall` also removes this package.
-
-```bash
-chafa "image.png"
-
-# Character output for terminals without an image protocol, SSH, or Tmux
-chafa --format symbols "image.png"
-```
-
-The default rendering depends on the terminal's supported image protocols;
-`--format symbols` uses text characters. See the [official manual](https://hpjansson.org/chafa/man/).
 
 ### Herdr Plugins
 

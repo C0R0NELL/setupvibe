@@ -364,10 +364,18 @@ install_antigravity() {
 write_starship_config() {
     local setupvibe_dir="$REAL_HOME/.config/setupvibe"
     local starship_config="$setupvibe_dir/starship.toml"
+    local config_source=""
 
     user_do mkdir -p "$setupvibe_dir"
     if [[ ! -f "$starship_config" ]]; then
-        user_do starship preset gruvbox-rainbow --force -o "$starship_config"
+        if [[ -f "${BASH_SOURCE[0]}" ]]; then
+            config_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/conf/starship.toml"
+        fi
+        if [[ -f "$config_source" ]]; then
+            user_do install -m 0644 "$config_source" "$starship_config"
+        else
+            safe_download "$SETUPVIBE_RAW/conf/starship.toml" "$starship_config"
+        fi
         user_do sed -i 's/╭/┌/g; s/╰/└/g; s///g; s///g' "$starship_config"
     else
         echo "Configuração Starship do SetupVibe já existe; mantendo personalizações."
@@ -546,6 +554,32 @@ install_pet() {
     )
 }
 
+install_redis_tui() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_redis_tui.sh"
+    local helper_source=""
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_redis_tui.sh"
+    fi
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download "$SETUPVIBE_RAW/utils/install_redis_tui.sh" "$helper_path"
+    fi
+    # shellcheck source=utils/install_redis_tui.sh
+    source "$helper_path"
+    setupvibe_install_redis_tui
+}
+
+install_yazi() {
+    if ! command -v yazi >/dev/null 2>&1 || ! command -v ya >/dev/null 2>&1; then
+        omarchy_pkg_add yazi
+    fi
+    user_do env PATH="$PATH" yazi --version
+    user_do env PATH="$PATH" ya --version
+}
+
 main() {
     local arg
     for arg in "$@"; do
@@ -578,6 +612,8 @@ main() {
     install_terminal_browser
     install_harlequin
     install_pet
+    install_redis_tui
+    install_yazi
 
     echo ""
     echo -e "${GREEN}${BOLD}SetupVibe Omarchy ${OMARCHY_MAJOR} concluído.${NC}"

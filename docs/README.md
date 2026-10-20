@@ -74,7 +74,6 @@ installation and never executes package-removal commands.
 | Docker + Ansible + GitHub CLI         | ✔              | GitHub CLI only | ✔       |
 | Modern Unix tools (bat, eza, fzf…)    | ✔ via Homebrew | ✔               | ✗       |
 | Network & monitoring tools            | ✔              | ✔               | ✔       |
-| Chafa terminal image previews         | ✔              | ✔               | ✔       |
 | SetupVibe environment skill           | ✔              | ✔               | ✔       |
 | Tailscale                             | ✔              | ✔               | ✔       |
 | SSH server                            | ✔ (Linux only) | ✔               | ✔       |
@@ -87,6 +86,8 @@ installation and never executes package-removal commands.
 | Standalone Terminal Browser           | ✔              | WSL only        | ✔       |
 | Harlequin (PostgreSQL + MySQL)         | ✔              | ✔               | ✔       |
 | Pet snippets + fzf                    | ✔              | ✔               | ✔       |
+| Redis TUI                            | ✔              | ✔               | ✔       |
+| Yazi file manager + ya               | ✔              | ✔               | ✔       |
 | Herdr agent multiplexer               | ✔              | ✗               | ✔       |
 | Antigravity CLI (`agy`)               | ✔              | ✔               | ✗       |
 | PM2 auto-startup                      | ✔              | ✗               | ✗       |
@@ -116,6 +117,14 @@ installation and never executes package-removal commands.
 ### Pet
 
 - [Installation, snippet commands and synchronization](en/PET.md)
+
+### Redis TUI
+
+- [Installation, supported platforms and Redis connections](en/REDIS_TUI.md)
+
+### Yazi
+
+- [Installation, file navigation and platform details](en/YAZI.md)
 
 ### Tmux
 

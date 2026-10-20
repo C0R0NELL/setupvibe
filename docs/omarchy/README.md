@@ -75,12 +75,16 @@ executa `pacman -R`. Os itens adicionados são:
   via `omarchy pkg add`, sem plugin do Herdr.
 - [Harlequin](../en/HARLEQUIN.md), com os adaptadores
   PostgreSQL e MySQL pelo uv e Python 3.14 em ambiente isolado.
-- [Pet e fzf](../en/PET.md) como última instalação, por `omarchy pkg add pet-bin fzf`,
+- [Pet e fzf](../en/PET.md), por `omarchy pkg add pet-bin fzf`,
   preservando snippets e configurações existentes.
+- [Redis TUI](../en/REDIS_TUI.md), pelo instalador
+  oficial no diretório do usuário, preservando conexões salvas.
+- [Yazi e ya](../en/YAZI.md) como última instalação, reaproveitando os comandos
+  existentes ou usando `omarchy pkg add yazi`, sem modificar configurações.
 
 Os arquivos de configuração adicionados ficam em `~/.config/setupvibe/`:
 
-- `starship.toml`: preset Gruvbox Rainbow independente do arquivo do Omarchy.
+- `starship.toml`: [configuração Gruvbox Rainbow compartilhada](../../conf/starship.toml) com `user@hostname` por SSH, independente do arquivo do Omarchy. Configurações existentes são preservadas.
 - `aliases.bash`: aliases e funções adicionais, carregados depois dos aliases
   do Omarchy e protegidos contra colisões.
 

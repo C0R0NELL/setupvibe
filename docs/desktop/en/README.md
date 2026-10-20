@@ -35,22 +35,18 @@ The script shows an interactive roadmap and asks for confirmation before startin
 
 ## What Gets Installed
 
-**18 steps, fully automated.**
+**20 steps, fully automated.**
 
 ### Step 1 — Base System & Build Tools
 
-**Linux:** installs via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, SSL/compression libs, and the Charmbracelet APT repo (for `glow`).
+**Linux:** installs via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, SSL/compression libs, and the Charmbracelet APT repo (for `glow`).
 
 **macOS:** relies on Xcode Command Line Tools (checks and exits if not present). Base tools are installed via Homebrew in the next step.
 
 ### Step 2 — Homebrew
 
-- **macOS:** installs Homebrew if absent, then installs base tools (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, `openssl`, `readline`, etc.)
+- **macOS:** installs Homebrew if absent, then installs base tools (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `openssl`, `readline`, etc.)
 - **Linux:** installs Linuxbrew under `/home/linuxbrew/.linuxbrew`; adds PATH entries to `~/.bashrc`, `~/.profile`, `~/.zshrc`; runs `brew upgrade` if already present
-
-[Chafa](https://hpjansson.org/chafa/download/) previews images with
-`chafa image.png`; use `chafa --format symbols image.png` for character output.
-Its command is validated after installation.
 
 ### Step 3 — PHP 8.5 Ecosystem
 
@@ -154,7 +150,7 @@ select it in the host or connecting terminal.
 - Installs Oh My Zsh (unattended)
 - Clones `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins
 - Installs Nerd Fonts: **FiraCode** and **JetBrains Mono** (Homebrew Cask on macOS; v3.4.0 downloaded to `~/.local/share/fonts` on Linux)
-- Installs Starship prompt and applies the **Gruvbox Rainbow** preset
+- Installs Starship and applies the shared [Gruvbox Rainbow configuration](../../../conf/starship.toml) to `~/.config/starship.toml`, showing `user@hostname` over SSH
 - Downloads helper scripts from [`bin/`](../../../bin) to `~/.setupvibe/bin`; see [Executables](../../en/EXECUTABLES.md)
 - Downloads the appropriate `.zshrc`:
   - macOS → [`conf/zshrc-macos.zsh`](../../../conf/zshrc-macos.zsh)
@@ -223,7 +219,19 @@ Runs `brew install pet fzf` through the existing user Homebrew, then validates
 both commands with temporary Pet configuration. Existing snippets and shell
 bindings are preserved. See the [Pet guide](../../en/PET.md).
 
-### Step 18 — Finalization & Cleanup
+### Step 18 — Redis TUI
+
+Installs the official Redis TUI client as the target user, validates version
+and help, and reuses working installations without changing saved connections.
+No Redis server is installed. See the [Redis TUI guide](../../en/REDIS_TUI.md).
+
+### Step 19 — Yazi
+
+Runs `brew install yazi` through the existing user Homebrew and validates both
+`yazi` and `ya` with `--version`. Preserves user settings and plugins.
+See the [Yazi guide](../../en/YAZI.md).
+
+### Step 20 — Finalization & Cleanup
 
 **macOS:** `brew cleanup --prune=all`, `brew autoremove`, and removes only SetupVibe temporary files.
 

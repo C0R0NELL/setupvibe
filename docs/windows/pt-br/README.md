@@ -23,7 +23,7 @@ A Edição Windows (Beta) configura utilitários nativos do Windows, Python, Nod
 - Sistema base do WSL sem uma distribuição Linux, com WSL 2 como padrão
 - [agent-browser](../../pt-br/AGENT_BROWSER.md) pelo npm, Chrome for Testing e a skill oficial global para Codex e Claude Code; valida uma abertura real com `doctor --offline`
 - Rede espelhada do WSL com acesso por VPN/LAN, tunelamento de DNS, integração com o proxy do Windows, entrada liberada no firewall Hyper-V, recuperação automática de memória e discos virtuais esparsos
-- Git, 7-Zip, Wget, FFmpeg, ImageMagick, Chafa e GitHub CLI (`gh`)
+- Git, 7-Zip, Wget, FFmpeg, ImageMagick e GitHub CLI (`gh`)
 - bat, eza, zoxide, fzf, ripgrep, fd, lazygit, Neovim, Glow, tldr, Fastfetch, duf e jq
 - Nmap, Speedtest CLI, Tailscale, gping, btop4win e trippy
 - PowerShell 7, Windows Terminal, FiraCode Nerd Font e JetBrains Mono Nerd Font
@@ -36,10 +36,6 @@ de skills do usuário quando necessário. As tabelas listam ferramentas
 instaladas, exemplos de comandos, usos práticos e disponibilidade por edição
 para ajudar os agentes a atender aos pedidos do usuário.
 Veja [os caminhos e o comportamento de atualização](../../en/ENVIRONMENT_SKILL.md).
-
-O Chafa usa o pacote WinGet `hpjansson.Chafa`, é validado com
-`chafa --version` e é removido por `-Uninstall`. Visualize imagens com
-`chafa image.png` ou `chafa --format symbols image.png`.
 
 Após instalar os utilitários e o Python, o helper compartilhado ativa
 `nerdFontsVersion: "3"` e `showFileIcons: true` no Lazygit. Se o Lazydocker já
@@ -141,10 +137,24 @@ preservando perfis de bancos do usuário e outras ferramentas do uv.
 
 ## Snippets Com Pet
 
-A última instalação adiciona o [Pet](../../en/PET.md) pela versão oficial
+A instalação adiciona o [Pet](../../en/PET.md) pela versão oficial
 para Windows, verifica SHA-256 e reaproveita o `fzf` instalado. O executável
 `pet.exe` fica em `%USERPROFILE%\.setupvibe\bin`. A instalação e o `-Uninstall`
 preservam snippets e configurações do usuário, sem alterar atalhos do shell.
+
+## Redis TUI
+
+A instalação adiciona o [Redis TUI](../../en/REDIS_TUI.md) pelo ZIP
+oficial x64 com verificação SHA-256. Reaproveita instalações funcionais e
+valida `--version` e `--help` sem conectar a bancos. O `-Uninstall` remove
+somente o executável gerenciado, preservando configurações salvas.
+
+## Yazi
+
+O WinGet `sxyazi.yazi` fornece `yazi` e `ya`, ambos validados. O Git para
+Windows fornece `file.exe` pela variável de usuário reversível `YAZI_FILE_ONE`.
+Valores válidos existentes, configurações e plugins são preservados.
+Veja o [guia do Yazi](../../en/YAZI.md).
 
 ## Depois da Instalação
 
@@ -169,6 +179,9 @@ python --version
 uv --version
 harlequin --version
 pet version
+redis-tui --version
+yazi --version
+ya --version
 pip --version
 node --version
 npm --version

@@ -8,23 +8,26 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ### Added
 
+- Local fork: added Yazi and its companion ya CLI. Unix Desktop reuses Homebrew; Server uses the official APT repository, Omarchy its package helper, and native Windows WinGet. Both executables are validated without opening the interface. Windows reuses Git's file.exe with a reversible user environment setting; existing user configuration and plugins are preserved. Updated the environment skill and documentation.
+- Local fork: added Redis TUI after Pet on all editions. Unix uses the official checksum-verifying installer as the target user; native Windows uses the official x64 ZIP with a pinned SHA-256. Reuses working installations, validates version/help without connecting to Redis, cleans temporary downloads, and preserves saved connections during installation and Windows removal. Updated the environment skill and guides.
 - Local fork: added Pet and its fzf selector after Harlequin on all editions. Desktop reuses Homebrew, Server and Windows use SHA-256-verified official release binaries, and Omarchy uses its package helper. Validation runs with temporary Pet configuration, preserving user snippets, sync credentials and shell bindings; Windows removal preserves user data. Added commands to the environment skill and documentation.
 - Local fork: added Harlequin with PostgreSQL and MySQL adapters after Terminal Browser on Unix Desktop, Server and Omarchy, and near the end on native Windows. Uses uv and Python 3.14 in an isolated environment, bootstraps uv when needed, and validates adapters, drivers and a local SQL query. Windows reuses the signed Python installation, manages uv through WinGet, preserves profiles and unrelated uv tools, and removes Harlequin before its dependencies in uninstall mode.
 - Local fork: added standalone Terminal Browser on Unix Desktop, Server and Omarchy, without its Herdr plugin or native Windows installation. The shared helper uses the official installer as the target user, resolves Linux `t64` dependencies, skips interactive onboarding, preserves working installations and validates the CLI and bundled runtime. Added usage and browser zoom instructions to the documentation and environment skill inventory.
 - Local fork: added `setupvibe-environment` with installed-tool tables, commands, uses, and availability by edition. It prefers the user's existing Herdr workspace within their request and authorization, preserving running processes and user focus. Unix Desktop, Windows Desktop, and Server install it globally for ten supported harnesses through Skills CLI, using copies without symlinks, documented native roots, and failure reporting for partial installations.
-- Local fork: added Chafa for terminal image previews to Unix Desktop and Server through APT/Homebrew and to Windows through `hpjansson.Chafa` on WinGet, with command validation and managed Windows removal. Documented normal previews and the portable `--format symbols` mode.
 - Local fork: added a shared standard-library Python helper to configure Lazygit and installed Lazydocker after Desktop tool installation on Unix and Windows. It respects native configuration paths, preserves unrelated settings and the first backup, and skips unconventional YAML. Windows continues to install only Lazygit.
 - Local fork: added a dedicated browser automation step to Unix Desktop and Windows, installing `agent-browser`, Chrome/Chromium, browser dependencies, and the official global skill for Codex and Claude Code. Linux ARM64 uses Playwright's Chromium downloader because the upstream browser installer rejects this platform; current Chrome requires macOS 13+.
 - Added browser setup and usage guides in English, Portuguese, Spanish, and French, including headless launch validation and the Windows uninstall behavior.
 
 ### Changed
 
+- Local fork: versioned the shared Gruvbox Rainbow Starship configuration in `conf/starship.toml` for Unix Desktop, Server and new Omarchy configurations. Username has no trailing space and hostname follows as `@hostname` only over SSH, using the same orange segment. Local checkouts use the local template; remote runs download it from this fork's main branch.
 - Local fork: commented out automatic demonstration cron job creation in Unix Desktop on macOS, Linux, and WSL, preserving existing schedules and cron service activation. Server, native Windows, and Omarchy already do not create these jobs; Server keeps its existing legacy-example cleanup.
 - Local fork: replaced Herdr Shepherd with `C0R0NELL/herdr-agents-sidebar` in the manual plugin notes, including its Linux requirements, installation command, and activation through **Apply sidebar**.
 - Local fork: all installer commands, configuration and helper downloads, shell aliases, documentation, and Codex/Claude skill references now use `C0R0NELL/setupvibe`. All four editions use direct raw GitHub URLs on `main`, including Windows elevation, restart, and uninstall.
 
 ### Removed
 
+- Local fork: removed the terminal image preview utility from managed package lists, CLI validation, documentation and the distributed environment skill.
 - Local fork: removed the optional terminal dashboard for scheduled jobs, including Desktop, Server and Omarchy installation, its private Server runtime, shell alias, guides, and environment-skill entries. Native cron and crontab commands remain available.
 
 ---

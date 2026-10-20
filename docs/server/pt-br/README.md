@@ -51,7 +51,7 @@ com `npx skills add <origem>`.
 
 ## O Que é Instalado
 
-**12 etapas totalmente automatizadas (Etapas 0–11), mais uma Etapa 12 opcional para configuração do Docker Swarm Manager.**
+**14 etapas totalmente automatizadas (Etapas 0–13), mais uma Etapa 14 opcional para configuração do Docker Swarm Manager.**
 
 ### Etapa 0 — Pré-requisitos e Verificação de Arquitetura
 
@@ -63,7 +63,6 @@ Instala via APT:
 
 - Utilitários principais: `curl`, `file`, `figlet`, `fontconfig`, `fzf`, `git`, `gnupg`, `iproute2`, `jq`, `nano`, `procps`, `psmisc`, `sshpass`, `tmux`, `unzip`, `wget`
 - Serviços do sistema: `cron`, `logrotate`, `rsyslog`
-- **Chafa** via APT, validado com `--version`; visualize com `chafa image.png` ou `chafa --format symbols image.png`
 - **zoxide** pelo instalador oficial
 - Habilita o `cron` sem criar tarefas e remove somente as tarefas de demonstração legadas adicionadas pelo SetupVibe v0.41.4-v0.41.6
 
@@ -103,7 +102,7 @@ Pacotes APT:
 - Instala ZSH via APT
 - Instala Oh My Zsh (sem interação)
 - Clona `zsh-autosuggestions` e `zsh-syntax-highlighting`
-- Instala o prompt Starship em `~/.local/bin` e aplica o preset **Gruvbox Rainbow**
+- Instala o Starship em `~/.local/bin` e aplica a [configuração Gruvbox Rainbow compartilhada](../../../conf/starship.toml) em `~/.config/starship.toml`, mostrando `user@hostname` por SSH
 - Baixa scripts auxiliares de [`bin/`](../../../bin) para `~/.setupvibe/bin`. Veja [Executáveis](../../pt-br/EXECUTABLES.md)
 - Baixa [`conf/zshrc-server.zsh`](../../../conf/zshrc-server.zsh) para `~/.zshrc`
 - Cria `~/.zshrc.local` para aliases e configurações pessoais; as atualizações nunca o sobrescrevem.
@@ -190,13 +189,25 @@ Instala o binário oficial do Pet com verificação SHA-256 para o usuário de d
 e reaproveita o `fzf` do APT. A validação preserva snippets e configurações;
 não adiciona Homebrew. Veja o [guia do Pet](../../en/PET.md).
 
-### Passo 11 — Finalização e Limpeza
+### Passo 11 — Redis TUI
+
+Instala o cliente oficial Redis TUI como usuário de destino, valida versão e
+ajuda sem conectar a bancos e reaproveita instalações funcionais. Preserva
+configurações e não instala servidor Redis. Veja o [guia](../../en/REDIS_TUI.md).
+
+### Passo 12 — Yazi
+
+Instala o Yazi pelo repositório APT oficial, reaproveitando uma fonte oficial
+existente ou adicionando o canal estável. Valida `yazi` e `ya` sem abrir
+a interface. Veja o [guia](../../en/YAZI.md).
+
+### Passo 13 — Finalização e Limpeza
 
 - Executa `autoclean` e `clean` do APT
 - Remove as listas de pacotes baixadas pelo APT
 - Preserva pacotes instalados, logs do sistema e caches do usuário
 
-### Passo 12 — Docker Swarm Manager (opcional)
+### Passo 14 — Docker Swarm Manager (opcional)
 
 Ativado passando `--manager` ou respondendo **sim** ao prompt interativo exibido ao final do setup.
 

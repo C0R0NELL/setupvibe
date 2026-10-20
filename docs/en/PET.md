@@ -3,8 +3,8 @@
 > Command-line snippet manager for all SetupVibe editions — v0.41.11
 
 [Pet](https://github.com/knqyf263/pet) saves shell commands with descriptions,
-tags and parameters. SetupVibe installs it after Harlequin, with `fzf` as its
-interactive selector.
+tags and parameters. SetupVibe installs it after Harlequin and before Redis
+TUI, with `fzf` as its interactive selector.
 
 ## Installation
 

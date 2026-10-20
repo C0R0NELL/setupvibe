@@ -258,6 +258,8 @@ STEPS=(
     "Terminal Browser (Standalone)"
     "Harlequin (PostgreSQL & MySQL)"
     "Pet Snippets (Homebrew & fzf)"
+    "Redis TUI"
+    "Yazi (Homebrew)"
     "Finalization & Cleanup"
 )
 
@@ -870,9 +872,8 @@ step_1() {
         sys_do apt-get install -y build-essential git wget unzip fontconfig curl sshpass \
             libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev llvm \
             libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-            libyaml-dev autoconf bison procps file tmux ffmpeg imagemagick chafa cron
+            libyaml-dev autoconf bison procps file tmux ffmpeg imagemagick cron
 
-        user_do /usr/bin/chafa --version >/dev/null
 
         # Adding Charmbracelet Repo (needed for Glow)
         install_key "https://repo.charm.sh/apt/gpg.key" "/etc/apt/keyrings/charm.gpg"
@@ -904,8 +905,7 @@ step_2() {
             brew_cmd update
             
             echo "Installing base tools via Homebrew..."
-            brew_cmd install wget unzip curl tmux sshpass openssl readline sqlite3 xz zlib tcl-tk ffmpeg imagemagick chafa
-            user_do "$BREW_PREFIX/bin/chafa" --version >/dev/null
+            brew_cmd install wget unzip curl tmux sshpass openssl readline sqlite3 xz zlib tcl-tk ffmpeg imagemagick
         else
             echo -e "${RED}✘ Homebrew installation failed.${NC}"
             return 1
@@ -1523,6 +1523,22 @@ step_10() {
 }
 
 
+configure_starship() {
+    local config_source=""
+    local config_path="$REAL_HOME/.config/starship.toml"
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        config_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/conf/starship.toml"
+    fi
+    user_do mkdir -p "$REAL_HOME/.config" || return 1
+    if [[ -f "$config_source" ]]; then
+        user_do install -m 0644 "$config_source" "$config_path" || return 1
+    else
+        safe_download "https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/starship.toml" "$config_path" || return 1
+    fi
+    user_do perl -i -pe 's/╭/┌/g; s/╰/└/g; s/\x{e0b6}/\x{e0b2}/g; s/\x{e0b4}/\x{e0b0}/g' "$config_path"
+}
+
 step_11() {
     install_setupvibe_bin
 
@@ -1545,12 +1561,10 @@ step_11() {
 
         echo "Configuring Starship..."
         brew_cmd install starship
-        user_do mkdir -p "$REAL_HOME/.config"
+        user_do "$BREW_PREFIX/bin/starship" --version || return 1
 
-        echo "Applying Starship Preset: Gruvbox Rainbow..."
-        user_do "$BREW_PREFIX/bin/starship" preset gruvbox-rainbow \
-            --force -o "$REAL_HOME/.config/starship.toml"
-        perl -i -pe 's/╭/┌/g; s/╰/└/g; s/\x{e0b6}/\x{e0b2}/g; s/\x{e0b4}/\x{e0b0}/g' "$REAL_HOME/.config/starship.toml"
+        echo "Applying SetupVibe Starship configuration (Gruvbox Rainbow)..."
+        configure_starship || return 1
 
         # macOS ZSHRC
         safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/zshrc-macos.zsh "$REAL_HOME/.zshrc"
@@ -1582,12 +1596,10 @@ step_11() {
             user_do mkdir -p "$REAL_HOME/.local/bin"
             curl -sS https://starship.rs/install.sh | user_do sh -s -- -y --bin-dir "$REAL_HOME/.local/bin"
         fi
-        user_do mkdir -p "$REAL_HOME/.config"
+        user_do "$REAL_HOME/.local/bin/starship" --version || return 1
 
-        echo "Applying Starship Preset: Gruvbox Rainbow..."
-        user_do "$REAL_HOME/.local/bin/starship" preset gruvbox-rainbow \
-            --force -o "$REAL_HOME/.config/starship.toml"
-        perl -i -pe 's/╭/┌/g; s/╰/└/g; s/\x{e0b6}/\x{e0b2}/g; s/\x{e0b4}/\x{e0b0}/g' "$REAL_HOME/.config/starship.toml"
+        echo "Applying SetupVibe Starship configuration (Gruvbox Rainbow)..."
+        configure_starship || return 1
 
         # Linux ZSHRC
         safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/zshrc-linux.zsh "$REAL_HOME/.zshrc"
@@ -1911,6 +1923,32 @@ step_17() {
 
 
 step_18() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_redis_tui.sh"
+    local helper_source=""
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_redis_tui.sh"
+    fi
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/install_redis_tui.sh "$helper_path"
+    fi
+    # shellcheck source=utils/install_redis_tui.sh
+    source "$helper_path"
+    setupvibe_install_redis_tui
+}
+
+
+step_19() {
+    brew_cmd install yazi
+    user_do "$BREW_PREFIX/bin/yazi" --version
+    user_do "$BREW_PREFIX/bin/ya" --version
+}
+
+
+step_20() {
     local pm2_bin
     local pm2_override
     local pm2_override_dir
@@ -2066,6 +2104,8 @@ run_section 14 step_15
 run_section 15 step_16
 run_section 16 step_17
 run_section 17 step_18
+run_section 18 step_19
+run_section 19 step_20
 
 
 # --- FINALIZATION ---

@@ -10,6 +10,12 @@ through uv, using the existing Python 3.14 installation.
 [Pet snippets](../en/PET.md) uses the official Windows binary and the existing
 fzf selector. User snippets are preserved during installation and removal.
 
+[Redis TUI](../en/REDIS_TUI.md) follows Pet using the official x64 ZIP with
+SHA-256 verification, preserving saved connections during installation and removal.
+
+[Yazi and ya](../en/YAZI.md) use WinGet and Git for Windows file type detection,
+with a reversible `YAZI_FILE_ONE` setting and preserved user configuration.
+
 Choose your language:
 
 - [English](en/README.md)

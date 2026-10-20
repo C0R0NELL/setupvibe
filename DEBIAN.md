@@ -25,9 +25,9 @@ um terceiro agente.
 
 O SetupVibe oferece duas edições Unix executáveis em Debian:
 
-- `desktop.sh`: instalador interativo de 18 etapas para desktop, WSL e
+- `desktop.sh`: instalador interativo de 20 etapas para desktop, WSL e
   ambientes completos de desenvolvimento.
-- `server.sh`: instalador de 12 etapas, com opção não interativa `--yes`,
+- `server.sh`: instalador de 14 etapas, com opção não interativa `--yes`,
   concentrado em operações, Docker, shell, monitoramento e CLIs de IA.
 
 Debian 12 ou mais recente é suportado. A validação descrita neste arquivo foi
@@ -333,8 +333,10 @@ artefatos.
 ### Idempotência do Starship e do `PATH`
 
 `starship preset` recusa sobrescrever `~/.config/starship.toml` sem `--force`.
-Como esse arquivo é gerenciado pelo Desktop, o rerun deve aplicar o preset com
-essa opção.
+Desktop e Server agora instalam o template versionado em `conf/starship.toml`,
+substituindo o arquivo gerenciado na reexecução. Checkouts usam o template local;
+execuções remotas baixam o arquivo deste fork em `main`. O hostname aparece
+após o usuário somente por SSH. Omarchy mantém configurações já existentes.
 
 Cada etapa adicionava novamente os mesmos diretórios ao `PATH`, o que gerava
 uma variável enorme na unidade systemd do PM2. Diretórios gerenciados devem ser
@@ -403,20 +405,6 @@ O diagnóstico avisou que faltava FFmpeg nos containers que executaram apenas a
 nova etapa. FFmpeg já é instalado nas etapas base do Desktop Unix e nas
 utilidades do Windows; é necessário para `agent-browser record`.
 
-## Chafa e prévias no terminal em outubro de 2026
-
-Chafa é instalado pelo APT na etapa base de Desktop e Server. Os pacotes
-testados foram 1.12.4 no Debian 12 e 1.14.0 no Ubuntu 24.04, em ARM64. Essas
-versões diferem da versão mais recente publicada pelo projeto; mantenha os
-exemplos compatíveis com os pacotes das distribuições suportadas.
-
-Passaram instalação limpa, reexecução como usuário comum com `sudo`, validação
-de versão, renderização de PNG com `--format symbols` e retorno de erro para
-arquivo inexistente. Os testes usaram os helpers do Server em containers
-descartáveis com o checkout somente para leitura, sem publicar portas ou
-executar os instaladores completos. A renderização em caracteres permite
-validar imagens sem depender de um protocolo gráfico ou de um terminal GUI.
-
 ## Distribuição da skill de ambiente em outubro de 2026
 
 Skills CLI 1.7.1 trata agentes com raiz de projeto `.agents/skills` como
@@ -483,3 +471,45 @@ Até `pet version` inicializa arquivos quando falta a configuração. Por isso,
 a validação usa `PET_CONFIG_DIR` temporário; nunca deve ler snippets reais ou
 credenciais de sincronização. Os testes usaram checkout somente para leitura,
 sem portas publicadas e sem executar os instaladores completos.
+
+## Redis TUI em outubro de 2026
+
+A instalação isolada do Redis TUI 1.0.47 passou em Debian 12 ARM64 usando o
+instalador oficial e sua verificação SHA-256. As etapas de Server, Desktop e
+Omarchy reutilizaram o binário funcional, inclusive na reexecução como usuário
+comum. Foram verificadas propriedade do usuário, limpeza de temporários e
+preservação byte a byte do `.bashrc`, da configuração atual e da configuração
+legada, ambas deliberadamente inválidas no teste.
+
+`--version` e `--help` encerram antes da leitura de conexões ou migração de
+configuração; não execute a interface como validação do instalador. O binário
+Linux é estático e não exigiu novas bibliotecas. O container usou checkout
+somente para leitura, sem portas publicadas ou Redis em execução.
+
+## Yazi em outubro de 2026
+
+Yazi 26.9.1 e `ya` passaram na instalação real pelo Homebrew em Linux ARM64 e
+na nova etapa Desktop, que reutilizou a instalação existente. A etapa Server
+passou em Debian 12 ARM64 com o APT oficial, incluindo reexecução como usuário
+comum com sudo, uma única fonte APT, chave e fonte preservadas e configuração
+do usuário e `.bashrc` inalterados. A instalação sem recomendações acrescentou
+somente o pacote necessário; os dois binários são estáticos.
+
+O pacote APT ARM64 testado informa um `Triple` x86_64 em `--version`, embora
+`file` confirme executáveis ARM64 e ambos funcionem nativamente. Não use esse
+metadado do pacote como verificação de arquitetura.
+
+O fluxo Windows teve análise de sintaxe e testes simulados do limite de
+registro: localização personalizada do Git, preservação de valor válido,
+reexecução, restauração do valor anterior, fallback de máquina e preservação
+de alterações posteriores do usuário. Não houve execução nativa em Windows,
+macOS ou Omarchy.
+
+## Configuração Starship em outubro de 2026
+
+O template compartilhado passou na instalação e reexecução das funções de
+configuração em diretórios temporários no Linux ARM64. O Starship 1.26.0
+renderizou `user@hostname` com variável de sessão SSH e ocultou o hostname sem
+ela, sem avisos. Checkouts com espaços no caminho, a URL remota de `main` e a
+preservação de personalizações existentes do Omarchy também foram verificados.
+Nenhum perfil ou arquivo de configuração real do usuário foi alterado.

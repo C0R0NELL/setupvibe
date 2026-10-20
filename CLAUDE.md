@@ -69,7 +69,7 @@ uninstall, and setup aliases must use direct GitHub raw URLs from this fork's
 `main` branch. Use another branch only when explicitly testing that branch.
 Keep the Codex and Claude skills aligned with this source policy.
 
-### `desktop.sh` Steps (18)
+### `desktop.sh` Steps (20)
 
 1. Base system & build tools
 2. Homebrew
@@ -88,7 +88,9 @@ Keep the Codex and Claude skills aligned with this source policy.
 15. Standalone Terminal Browser
 16. Harlequin (uv, Python 3.14, PostgreSQL and MySQL adapters)
 17. Pet snippets and fzf through existing Homebrew
-18. Finalization & cleanup
+18. Redis TUI
+19. Yazi and ya through existing Homebrew
+20. Finalization & cleanup
 
 Browser automation is included in both Desktop installers. Install `agent-browser`
 through npm, approve only its own installation script, and validate the native
@@ -124,9 +126,9 @@ custom `LG_CONFIG_FILE` lists. Windows installs only Lazygit and configures
 Lazydocker only when already present. Select a Nerd Font in the displaying
 terminal, including the host terminal for WSL or SSH.
 
-### `server.sh` Steps (12)
+### `server.sh` Steps (14)
 
-Subset of desktop steps — no Homebrew or full language ecosystems (PHP, Ruby, Go, Rust). Node.js is installed via NodeSource APT repo; Harlequin uses uv and an isolated Python 3.14 when needed, preserving the system Python. Focus on base tools, Docker, Ansible, shell, tmux, monitoring, AI CLIs, Terminal Browser, Harlequin and Pet. Steps 8–10 install those last three tools, step 11 cleans up, and optional step 12 configures Swarm.
+Subset of desktop steps — no Homebrew or full language ecosystems (PHP, Ruby, Go, Rust). Node.js is installed via NodeSource APT repo; Harlequin uses uv and an isolated Python 3.14 when needed, preserving the system Python. Focus on base tools, Docker, Ansible, shell, tmux, monitoring, AI CLIs, Terminal Browser, Harlequin, Pet, Redis TUI and Yazi. Steps 8–12 install those last five tools, step 13 cleans up, and optional step 14 configures Swarm.
 
 ### Standalone Terminal Browser
 
@@ -165,11 +167,41 @@ Desktop step 17 reuses Homebrew with `brew install pet fzf`. Server step 10
 and native Windows share `utils/install_pet.mjs`, using already-installed Node
 to verify pinned official release SHA-256 values and install the native binary
 as the target user. Server reuses APT fzf without adding Homebrew. Omarchy uses
-`omarchy pkg add pet-bin fzf`. Pet is the last tool, before Unix cleanup.
+`omarchy pkg add pet-bin fzf`. Pet precedes Redis TUI.
 Validate with `pet version` and a temporary `PET_CONFIG_DIR`; normal version
 checks may create configuration/snippet files. Preserve saved snippets, sync
 credentials and shell bindings; Windows removal deletes only managed code.
 See [the guide](docs/en/PET.md).
+
+### Redis TUI
+
+Desktop step 18, Server step 11 and Omarchy share
+`utils/install_redis_tui.sh`. Run the official checksum-verifying Unix
+installer as the target user into a temporary staging directory, then validate
+`--version` and `--help` before installing in `~/.local/bin`. Support macOS
+Intel/Apple Silicon and Linux/WSL x86_64/ARM64 without adding runtimes or taps.
+Native Windows uses the official 1.0.47 x64 ZIP with its pinned SHA-256 and
+the existing managed user bin directory. Reuse working installations, remove
+temporary downloads on success or failure, and preserve connection settings.
+Yazi follows Redis TUI before Unix cleanup. Do not install a Redis
+server or open database connections during validation. Windows removal deletes
+only its managed executable. See [the guide](docs/en/REDIS_TUI.md).
+
+### Yazi
+
+Desktop step 19 reuses Homebrew with `brew install yazi` and validates both
+`yazi` and `ya` as the target user. Server step 12 uses the official Yazi APT
+repository, reuses an existing official source, and otherwise adds the stable
+channel with a key under `/etc/apt/keyrings`. Preserve lock waiting/retries
+and install without recommended packages or removals. Omarchy reuses existing
+commands or adds `yazi` through its package helper. Do not add Homebrew to
+Server or Omarchy.
+
+Native Windows uses WinGet `sxyazi.yazi`, validates both CLIs and uses
+Git for Windows `file.exe`. Preserve a valid `YAZI_FILE_ONE`; otherwise track
+the previous user value in `~/.setupvibe/yazi-environment.json` and restore it
+on removal only while the value remains managed. Preserve Yazi user settings,
+themes, plugins and shell bindings. See [the guide](docs/en/YAZI.md).
 
 ### Distributed environment skill
 
@@ -198,15 +230,6 @@ The shared Node helper also publishes the skill file to documented native
 roots, because Skills CLI routes several harnesses to `.agents/skills`.
 See [the distribution guide](docs/en/ENVIRONMENT_SKILL.md) for paths and sources.
 
-### Terminal image previews
-
-Desktop and Server install Chafa through existing package managers: APT in
-Linux Desktop/Server step 1, Homebrew in macOS Desktop step 2, and the WinGet
-package `hpjansson.Chafa` in Windows Desktop. Validate the managed binary with
-`--version`; Windows uses the standard command checks and uninstall list.
-Keep rendering defaults unchanged. Document `chafa image.png` and the portable
-`chafa --format symbols image.png` mode for SSH and terminal multiplexers.
-
 ### `omarchy.sh`
 
 Omarchy 4 is an existing Arch-based desktop environment and owns its shell,
@@ -223,8 +246,8 @@ commands.
 | Path                        | Content                                                           |
 | --------------------------- | ----------------------------------------------------------------- |
 | `docs/README.md`            | Overview and comparison table of all editions                     |
-| `docs/desktop/en/README.md` | Full desktop edition documentation (18 steps)                     |
-| `docs/server/en/README.md`  | Server edition documentation (12 steps)                           |
+| `docs/desktop/en/README.md` | Full desktop edition documentation (20 steps)                     |
+| `docs/server/en/README.md`  | Server edition documentation (14 steps)                           |
 | `docs/windows/en/README.md` | Windows edition (Beta) documentation                              |
 | `docs/omarchy/README.md`    | Omarchy 4 additive edition documentation                          |
 | `docs/en/EXECUTABLES.md`    | Executable helper script documentation (shared by Unix editions) |
@@ -268,6 +291,7 @@ Configuration files deployed by the scripts to the user's home directory:
 | File                  | Deployed to                | Purpose                                                                       |
 | --------------------- | -------------------------- | ----------------------------------------------------------------------------- |
 | `tmux-desktop.conf`   | `~/.tmux.conf` (desktop)   | Tmux with TPM; 20+ plugins, onedark theme, mouse support, session persistence |
+| `starship.toml` | `~/.config/starship.toml` (Desktop/Server); `~/.config/setupvibe/starship.toml` (new Omarchy configurations) | Shared Gruvbox Rainbow prompt with `user@hostname` over SSH; local checkouts use this file, remote runs download it from this fork's `main` |
 | `tmux-server.conf`    | `~/.tmux.conf` (server)    | Lean tmux config for server environments                                      |
 | `zshrc-macos.zsh`     | `~/.zshrc` (macOS)         | Homebrew, Cargo, Composer, Go, Bun, rbenv paths                               |
 | `zshrc-linux.zsh`     | `~/.zshrc` (Linux desktop) | Linuxbrew paths, NPM, system aliases                                          |

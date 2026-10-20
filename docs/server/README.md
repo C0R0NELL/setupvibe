@@ -2,7 +2,7 @@
 
 > Linux server setup — v0.41.11
 
-Lean Linux-only setup for production servers. No Homebrew or full language ecosystems. Installs Docker, Ansible, GitHub CLI, networking tools, Tailscale, SSH, shell, tmux, Herdr, AI CLI tools, the Vercel Labs Skills CLI via NodeSource Node.js, standalone [Terminal Browser](../en/TERMINAL_BROWSER.md), [Harlequin with an isolated Python 3.14](../en/HARLEQUIN.md), and [Pet snippets](../en/PET.md). It preserves the existing SSH authentication policy, stops on the first failed step, and optionally configures the machine as a Docker Swarm Manager through `--manager` and `--advertise-addr`.
+Lean Linux-only setup for production servers. No Homebrew or full language ecosystems. Installs Docker, Ansible, GitHub CLI, networking tools, Tailscale, SSH, shell, tmux, Herdr, AI CLI tools, the Vercel Labs Skills CLI via NodeSource Node.js, standalone [Terminal Browser](../en/TERMINAL_BROWSER.md), [Harlequin with an isolated Python 3.14](../en/HARLEQUIN.md), [Pet snippets](../en/PET.md), [Redis TUI](../en/REDIS_TUI.md), and [Yazi](../en/YAZI.md). It preserves the existing SSH authentication policy, stops on the first failed step, and optionally configures the machine as a Docker Swarm Manager through `--manager` and `--advertise-addr`.
 
 ## Documentation
 

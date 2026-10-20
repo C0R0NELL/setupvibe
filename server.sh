@@ -364,6 +364,8 @@ STEPS=(
     "Terminal Browser (Standalone)"
     "Harlequin (PostgreSQL & MySQL)"
     "Pet Snippets & fzf"
+    "Redis TUI"
+    "Yazi"
     "Finalization & Cleanup"
 )
 
@@ -650,11 +652,10 @@ step_1() {
 
     echo "Installing core server tools..."
     apt_do install -y \
-        ca-certificates chafa curl file figlet fontconfig fzf git gnupg iproute2 jq \
+        ca-certificates curl file figlet fontconfig fzf git gnupg iproute2 jq \
         logrotate nano procps psmisc rsyslog sshpass tmux unzip wget \
         cron
 
-    user_do /usr/bin/chafa --version >/dev/null
 
     echo "Installing or updating zoxide..."
     run_remote_script user https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh
@@ -812,7 +813,7 @@ step_4() {
 
 step_5() {
     local current_shell
-    local starship_bin
+    local starship_source=""
 
     install_setupvibe_bin
 
@@ -833,11 +834,18 @@ step_5() {
     echo "Installing or updating Starship..."
     user_do mkdir -p "$REAL_HOME/.local/bin"
     run_remote_script user https://starship.rs/install.sh -y --bin-dir "$REAL_HOME/.local/bin"
-    starship_bin=$REAL_HOME/.local/bin/starship
+    user_do "$REAL_HOME/.local/bin/starship" --version
     user_do mkdir -p "$REAL_HOME/.config"
 
-    echo "Applying Starship Preset: Gruvbox Rainbow..."
-    user_do "$starship_bin" preset gruvbox-rainbow -o "$REAL_HOME/.config/starship.toml"
+    echo "Applying SetupVibe Starship configuration (Gruvbox Rainbow)..."
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        starship_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/conf/starship.toml"
+    fi
+    if [[ -f "$starship_source" ]]; then
+        user_do install -m 0644 "$starship_source" "$REAL_HOME/.config/starship.toml"
+    else
+        safe_download "https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/conf/starship.toml" "$REAL_HOME/.config/starship.toml"
+    fi
     user_do sed -i 's/╭/┌/g; s/╰/└/g' "$REAL_HOME/.config/starship.toml"
 
     backup_file_once "$REAL_HOME/.zshrc"
@@ -1076,6 +1084,43 @@ step_10() {
 
 
 step_11() {
+    local helper_path="$REAL_HOME/.setupvibe/bin/install_redis_tui.sh"
+    local helper_source=""
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_redis_tui.sh"
+    fi
+    if [[ -f "$helper_source" ]]; then
+        user_do mkdir -p "$(dirname -- "$helper_path")"
+        user_do install -m 0644 "$helper_source" "$helper_path"
+    else
+        safe_download https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/utils/install_redis_tui.sh "$helper_path"
+    fi
+    # shellcheck source=utils/install_redis_tui.sh
+    source "$helper_path"
+    setupvibe_install_redis_tui
+}
+
+
+step_12() {
+    # Reuse an existing official source to avoid competing Signed-By entries.
+    if ! grep -qs 'https://yazi-rs.github.io/builds' \
+        /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; then
+        install_repository_key https://yazi-rs.github.io/builds/yazi-keyring.gpg \
+            /etc/apt/keyrings/setupvibe-yazi.gpg
+        printf '%s\n' \
+            "deb [arch=$ARCH_RAW signed-by=/etc/apt/keyrings/setupvibe-yazi.gpg] https://yazi-rs.github.io/builds/ stable main" |
+            sys_do tee /etc/apt/sources.list.d/setupvibe-yazi.list >/dev/null
+    fi
+    wait_for_apt
+    apt_do update
+    apt_do install -y --no-remove --no-install-recommends yazi
+    user_do /usr/bin/yazi --version
+    user_do /usr/bin/ya --version
+}
+
+
+step_13() {
     echo "Cleaning APT caches..."
     apt_do autoclean -qq
     apt_do clean -qq
@@ -1152,6 +1197,8 @@ STEP_FUNCTIONS=(
     step_9
     step_10
     step_11
+    step_12
+    step_13
 )
 [[ "$SWARM_MANAGER" == "true" ]] && STEP_FUNCTIONS+=(step_swarm)
 
@@ -1183,7 +1230,7 @@ if [[ "$INSTALL_FAILED" == "false" && "$SWARM_MANAGER" == "false" && "$ASSUME_YE
     if [[ "$SWARM_ANSWER" =~ ^[yYsS]$ ]]; then
         SWARM_MANAGER=true
         STEPS+=("Docker Swarm Manager Setup")
-        run_section 12 step_swarm
+        run_section 14 step_swarm
         [[ "$LAST_STEP_OK" == "true" ]] || INSTALL_FAILED=true
     else
         echo -e "${YELLOW}Skipping Docker Swarm setup.${NC}"

@@ -35,22 +35,18 @@ Le script affiche une feuille de route interactive et demande confirmation avant
 
 ## Ce qui est installé
 
-**18 étapes, entièrement automatisées.**
+**20 étapes, entièrement automatisées.**
 
 ### Étape 1 — Système de Base et Outils de Build
 
-**Linux :** installation via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, bibliothèques SSL/compression et le dépôt APT Charmbracelet (pour `glow`).
+**Linux :** installation via APT — `build-essential`, `git`, `wget`, `unzip`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, bibliothèques SSL/compression et le dépôt APT Charmbracelet (pour `glow`).
 
 **macOS :** repose sur les Xcode Command Line Tools (vérifie et quitte s'ils sont absents). Les outils de base sont installés via Homebrew à l'étape suivante.
 
 ### Étape 2 — Homebrew
 
-- **macOS :** installe Homebrew s'il est absent, puis installe les outils de base (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `chafa`, `openssl`, `readline`, etc.)
+- **macOS :** installe Homebrew s'il est absent, puis installe les outils de base (`wget`, `curl`, `tmux`, `ffmpeg`, `imagemagick`, `openssl`, `readline`, etc.)
 - **Linux :** installe Linuxbrew sous `/home/linuxbrew/.linuxbrew` ; ajoute les entrées PATH à `~/.bashrc`, `~/.profile`, `~/.zshrc` ; exécute `brew upgrade` s'il est déjà présent
-
-[Chafa](https://hpjansson.org/chafa/download/) affiche des images avec
-`chafa image.png` ; utilisez `chafa --format symbols image.png` pour une sortie en caractères.
-La commande est validée après l'installation.
 
 ### Étape 3 — Écosystème PHP 8.5
 
@@ -154,7 +150,7 @@ l'ordinateur qui se connecte.
 - Installe Oh My Zsh (sans intervention)
 - Clone les plugins `zsh-autosuggestions` et `zsh-syntax-highlighting`
 - Installe les Nerd Fonts : **FiraCode** et **JetBrains Mono** (Homebrew Cask sur macOS ; v3.4.0 téléchargée vers `~/.local/share/fonts` sur Linux)
-- Installe le prompt Starship et applique le preset **Gruvbox Rainbow**
+- Installe Starship et applique la [configuration Gruvbox Rainbow partagée](../../../conf/starship.toml) dans `~/.config/starship.toml`, affichant `user@hostname` en SSH
 - Télécharge les scripts auxiliaires depuis [`bin/`](../../../bin) vers `~/.setupvibe/bin` ; consultez [Exécutables](../../fr/EXECUTABLES.md)
 - Télécharge le `.zshrc` approprié :
   - macOS → [`conf/zshrc-macos.zsh`](../../../conf/zshrc-macos.zsh)
@@ -226,7 +222,19 @@ Exécute `brew install pet fzf` avec le Homebrew existant de l'utilisateur et
 valide les commandes avec une configuration Pet temporaire. Préserve les
 snippets et raccourcis shell. Voir le [guide Pet](../../en/PET.md).
 
-### Étape 18 — Finalisation et Nettoyage
+### Étape 18 — Redis TUI
+
+Installe le client officiel Redis TUI pour l'utilisateur cible, valide version
+et aide, et réutilise les installations fonctionnelles en préservant les
+connexions. Aucun serveur Redis n'est installé. Voir le [guide](../../en/REDIS_TUI.md).
+
+### Étape 19 — Yazi
+
+Exécute `brew install yazi` avec le Homebrew existant de l'utilisateur et
+valide `yazi` et `ya` avec `--version`, en préservant réglages et plugins.
+Voir le [guide Yazi](../../en/YAZI.md).
+
+### Étape 20 — Finalisation et Nettoyage
 
 **macOS :** `brew cleanup --prune=all`, `brew autoremove` et supprime uniquement les fichiers temporaires de SetupVibe.
 

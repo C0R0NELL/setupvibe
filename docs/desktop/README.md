@@ -2,7 +2,7 @@
 
 > Cross-platform development environment setup — v0.41.11
 
-Cross-platform setup for macOS and Linux desktops. Installs a complete development stack in 18 steps: PHP 8.5, Ruby 3.4.10, Go 1.26.5, Rust, Python, the global `qrcode` package and its `qr` command, Node.js 24 LTS, DevOps tools, modern Unix utilities, shell, tmux, Herdr, AI CLI tools, the Vercel Labs Skills CLI, [agent-browser with Chrome/Chromium](../en/AGENT_BROWSER.md), standalone [Terminal Browser](../en/TERMINAL_BROWSER.md), [Harlequin with PostgreSQL and MySQL](../en/HARLEQUIN.md), and [Pet snippets](../en/PET.md). Browser automation requires macOS 13+ on Apple systems and supports Linux x86_64 and ARM64.
+Cross-platform setup for macOS and Linux desktops. Installs a complete development stack in 20 steps: PHP 8.5, Ruby 3.4.10, Go 1.26.5, Rust, Python, the global `qrcode` package and its `qr` command, Node.js 24 LTS, DevOps tools, modern Unix utilities, shell, tmux, Herdr, AI CLI tools, the Vercel Labs Skills CLI, [agent-browser with Chrome/Chromium](../en/AGENT_BROWSER.md), standalone [Terminal Browser](../en/TERMINAL_BROWSER.md), [Harlequin with PostgreSQL and MySQL](../en/HARLEQUIN.md), [Pet snippets](../en/PET.md), [Redis TUI](../en/REDIS_TUI.md), and [Yazi](../en/YAZI.md). Browser automation requires macOS 13+ on Apple systems and supports Linux x86_64 and ARM64.
 
 ## Documentation
 

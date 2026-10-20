@@ -32,6 +32,7 @@ $script:PackagePathStatePath = Join-Path $env:ProgramData 'SetupVibe\windows-pac
 $script:SetupVibeUserDirectory = Join-Path $env:USERPROFILE '.setupvibe'
 $script:WindowsUtilitiesDirectory = Join-Path $script:SetupVibeUserDirectory 'bin'
 $script:WindowsUtilitiesStatePath = Join-Path $script:SetupVibeUserDirectory 'windows-utilities.json'
+$script:YaziEnvironmentStatePath = Join-Path $script:SetupVibeUserDirectory 'yazi-environment.json'
 $script:CodexInstallDirectory = Join-Path $env:LOCALAPPDATA 'Programs\OpenAI\Codex\bin'
 $script:InvokerUserSid = $null
 
@@ -51,7 +52,6 @@ $script:WinGetPackages = @(
     @{ Id = 'JernejSimoncic.Wget'; Name = 'Wget' }
     @{ Id = 'Gyan.FFmpeg'; Name = 'FFmpeg' }
     @{ Id = 'ImageMagick.ImageMagick'; Name = 'ImageMagick' }
-    @{ Id = 'hpjansson.Chafa'; Name = 'Chafa' }
     @{ Id = 'astral-sh.uv'; Name = 'uv (Harlequin installer)' }
     @{ Id = 'GitHub.cli'; Name = 'GitHub CLI (gh)' }
     @{ Id = 'sharkdp.bat'; Name = 'bat' }
@@ -61,6 +61,7 @@ $script:WinGetPackages = @(
     @{ Id = 'BurntSushi.ripgrep.MSVC'; Name = 'ripgrep' }
     @{ Id = 'sharkdp.fd'; Name = 'fd' }
     @{ Id = 'JesseDuffield.lazygit'; Name = 'lazygit' }
+    @{ Id = 'sxyazi.yazi'; Name = 'Yazi' }
     @{ Id = 'Neovim.Neovim'; Name = 'Neovim' }
     @{ Id = 'charmbracelet.glow'; Name = 'Glow' }
     @{ Id = 'tldr-pages.tlrc'; Name = 'tldr' }
@@ -88,7 +89,6 @@ $script:WinGetCommandChecks = @(
     @{ Name = 'Wget'; Command = 'wget.exe'; Arguments = @('--version') }
     @{ Name = 'FFmpeg'; Command = 'ffmpeg.exe'; Arguments = @('-version') }
     @{ Name = 'ImageMagick'; Command = 'magick.exe'; Arguments = @('-version') }
-    @{ Name = 'Chafa'; Command = 'chafa.exe'; Arguments = @('--version') }
     @{ Name = 'uv'; Command = 'uv.exe'; Arguments = @('--version') }
     @{ Name = 'bat'; Command = 'bat.exe'; Arguments = @('--version') }
     @{ Name = 'eza'; Command = 'eza.exe'; Arguments = @('--version') }
@@ -97,6 +97,8 @@ $script:WinGetCommandChecks = @(
     @{ Name = 'ripgrep'; Command = 'rg.exe'; Arguments = @('--version') }
     @{ Name = 'fd'; Command = 'fd.exe'; Arguments = @('--version') }
     @{ Name = 'lazygit'; Command = 'lazygit.exe'; Arguments = @('--version') }
+    @{ Name = 'Yazi'; Command = 'yazi.exe'; Arguments = @('--version') }
+    @{ Name = 'Ya'; Command = 'ya.exe'; Arguments = @('--version') }
     @{ Name = 'Neovim'; Command = 'nvim.exe'; Arguments = @('--version') }
     @{ Name = 'Glow'; Command = 'glow.exe'; Arguments = @('--version') }
     @{ Name = 'tldr'; Command = 'tldr.exe'; Arguments = @('--version') }
@@ -2218,6 +2220,113 @@ function Uninstall-Pet {
     Write-Success 'SetupVibe Pet was removed; snippets and synchronization credentials were preserved.'
 }
 
+function Configure-Yazi {
+    if ($env:YAZI_FILE_ONE -and (Test-Path -LiteralPath $env:YAZI_FILE_ONE -PathType Leaf)) {
+        Invoke-NativeCommand -FilePath $env:YAZI_FILE_ONE -ArgumentList @('--version')
+        Write-Success 'Yazi preserves the existing YAZI_FILE_ONE configuration.'
+        return
+    }
+    $gitPath = Find-RuntimeExecutable -Name 'git.exe'
+    $gitDirectory = Split-Path -Parent $gitPath
+    $candidates = @(
+        (Join-Path (Get-NativeProgramFilesDirectory) 'Git\usr\bin\file.exe')
+        (Join-Path $env:LOCALAPPDATA 'Programs\Git\usr\bin\file.exe')
+    )
+    for ($i = 0; $i -lt 3 -and $gitDirectory; $i++) {
+        $candidates += Join-Path $gitDirectory 'usr\bin\file.exe'
+        $gitDirectory = Split-Path -Parent $gitDirectory
+    }
+    $filePath = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+    if (-not $filePath) {
+        throw 'Yazi requires file.exe from the installed Git for Windows.'
+    }
+    Invoke-NativeCommand -FilePath $filePath -ArgumentList @('--version')
+    if (Test-Path -LiteralPath $script:YaziEnvironmentStatePath) {
+        $state = Get-Content -LiteralPath $script:YaziEnvironmentStatePath -Raw | ConvertFrom-Json
+        $state.ManagedValue = $filePath
+    }
+    else {
+        $state = @{
+            PreviousValue = [Environment]::GetEnvironmentVariable('YAZI_FILE_ONE', 'User')
+            ManagedValue = $filePath
+        }
+    }
+    $state | ConvertTo-Json | Set-Content -LiteralPath $script:YaziEnvironmentStatePath -Encoding UTF8
+    [Environment]::SetEnvironmentVariable('YAZI_FILE_ONE', $filePath, 'User')
+    $env:YAZI_FILE_ONE = $filePath
+    Send-EnvironmentChangeNotification
+    Write-Success 'Yazi uses Git for Windows file.exe; the previous user setting was preserved for removal.'
+}
+
+function Uninstall-YaziEnvironment {
+    if (-not (Test-Path -LiteralPath $script:YaziEnvironmentStatePath)) { return }
+    $state = Get-Content -LiteralPath $script:YaziEnvironmentStatePath -Raw | ConvertFrom-Json
+    if ([Environment]::GetEnvironmentVariable('YAZI_FILE_ONE', 'User') -eq $state.ManagedValue) {
+        [Environment]::SetEnvironmentVariable('YAZI_FILE_ONE', $state.PreviousValue, 'User')
+        $env:YAZI_FILE_ONE = [Environment]::GetEnvironmentVariable('YAZI_FILE_ONE', 'User')
+        if (-not $env:YAZI_FILE_ONE) {
+            $env:YAZI_FILE_ONE = [Environment]::GetEnvironmentVariable('YAZI_FILE_ONE', 'Machine')
+        }
+        Send-EnvironmentChangeNotification
+    }
+    Remove-Item -LiteralPath $script:YaziEnvironmentStatePath -Force
+}
+
+function Install-RedisTui {
+    $binaryPath = Join-Path $script:WindowsUtilitiesDirectory 'redis-tui.exe'
+    if (Test-Path -LiteralPath $binaryPath -PathType Leaf) {
+        try {
+            Invoke-NativeCommand -FilePath $binaryPath -ArgumentList @('--version')
+            Invoke-NativeCommand -FilePath $binaryPath -ArgumentList @('--help')
+            Assert-CommandResolvesToPath -Name 'redis-tui' -ExpectedPath $binaryPath
+            Write-Success 'Redis TUI is already installed; preserving the current version and saved connections.'
+            return
+        }
+        catch {
+            Write-WarningMessage 'The managed Redis TUI command needs repair.'
+        }
+    }
+
+    $version = '1.0.47'
+    # Official v1.0.47 checksums.txt: redis-tui_1.0.47_Windows_x86_64.zip
+    $expectedChecksum = 'ef44947c684403ee1d9c05dcee8b52e25f7a553b2ae575db0ef72c3a78a536c1'
+    $archiveName = "redis-tui_${version}_Windows_x86_64.zip"
+    $temporaryDirectory = Join-Path ([IO.Path]::GetTempPath()) ("SetupVibe-RedisTui-{0}" -f [Guid]::NewGuid().ToString('N'))
+    $archivePath = Join-Path $temporaryDirectory $archiveName
+    $curlPath = Join-Path $env:SystemRoot 'System32\curl.exe'
+    New-Item -Path $temporaryDirectory -ItemType Directory | Out-Null
+    try {
+        Invoke-NativeCommand -FilePath $curlPath -ArgumentList @(
+            '--fail', '--location', '--retry', '3', '--connect-timeout', '15', '--max-time', '120'
+            '--proto', '=https', '--proto-redir', '=https', '--tlsv1.2'
+            '--output', $archivePath
+            "https://github.com/davidbudnick/redis-tui/releases/download/v$version/$archiveName"
+        )
+        if ((Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash -ne $expectedChecksum) {
+            throw 'Redis TUI archive SHA-256 mismatch.'
+        }
+        Expand-Archive -LiteralPath $archivePath -DestinationPath $temporaryDirectory
+        $payloadPath = Join-Path $temporaryDirectory 'redis-tui.exe'
+        Invoke-NativeCommand -FilePath $payloadPath -ArgumentList @('--version')
+        Invoke-NativeCommand -FilePath $payloadPath -ArgumentList @('--help')
+        Copy-Item -LiteralPath $payloadPath -Destination $binaryPath -Force
+        Import-EnvironmentPath
+        Assert-CommandResolvesToPath -Name 'redis-tui' -ExpectedPath $binaryPath
+        Write-Success 'Redis TUI was installed and validated; saved connections were preserved.'
+    }
+    finally {
+        Remove-Item -LiteralPath $temporaryDirectory -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Uninstall-RedisTui {
+    $binaryPath = Join-Path $script:WindowsUtilitiesDirectory 'redis-tui.exe'
+    if (Test-Path -LiteralPath $binaryPath) {
+        Remove-Item -LiteralPath $binaryPath -Force
+    }
+    Write-Success 'SetupVibe Redis TUI was removed; saved connections were preserved.'
+}
+
 function Invoke-WithHarlequinEnvironment {
     param([Parameter(Mandatory = $true)][scriptblock]$Action)
 
@@ -2602,6 +2711,8 @@ if ($Uninstall) {
     Invoke-SetupStep -Name 'Antigravity CLI' -Action { Uninstall-AntigravityCli }
     Invoke-SetupStep -Name 'Harlequin' -Action { Uninstall-Harlequin }
     Invoke-SetupStep -Name 'Pet' -Action { Uninstall-Pet }
+    Invoke-SetupStep -Name 'Redis TUI' -Action { Uninstall-RedisTui }
+    Invoke-SetupStep -Name 'Yazi environment setting' -Action { Uninstall-YaziEnvironment }
     Invoke-SetupStep -Name 'AI CLI PATH entries' -Action { Uninstall-AiCliPaths }
     Invoke-SetupStep -Name 'Legacy ecosystem tools' -Action { Uninstall-LegacyEcosystemTools }
     Invoke-SetupStep -Name 'Node.js 24 LTS official MSI' -Action { Uninstall-NodeJs }
@@ -2694,6 +2805,8 @@ else {
 
     Invoke-SetupStep -Name 'Harlequin (PostgreSQL and MySQL)' -Action { Install-Harlequin }
     Invoke-SetupStep -Name 'Pet snippets and fzf' -Action { Install-Pet }
+    Invoke-SetupStep -Name 'Redis TUI' -Action { Install-RedisTui }
+    Invoke-SetupStep -Name 'Yazi file type detection' -Action { Configure-Yazi }
     Import-EnvironmentPath
     Invoke-SetupStep -Name 'Original Windows PowerShell profile' -Action {
         Uninstall-PowerShellProfile
