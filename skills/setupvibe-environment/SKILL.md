@@ -68,7 +68,7 @@ Linux ARM64 uses the Chromium prepared by the installer.
 | Harlequin | `harlequin --help`; `harlequin -a postgres -h HOST -U USER -d DATABASE` (**interactive**); `harlequin -a mysql -h HOST -U USER --database DATABASE` (**interactive**) | Browse database schemas, edit SQL and inspect query results; includes PostgreSQL, MySQL/MariaDB, SQLite and DuckDB adapters. | D, S, W |
 | hsql (Harlequin) | `hsql --help` | Discover commands for noninteractive SQL queries and database inspection using Harlequin adapters. | D, S, W |
 | Redis TUI | `redis-tui --help`; `redis-tui --host localhost --port 6379` (**interactive**) | Browse Redis keys, inspect values and TTLs, and monitor database metrics. | D, S, W, Omarchy |
-| GitHub CLI | `gh repo view`; `gh pr list`; `gh issue list` | Inspect GitHub repositories, pull requests and issues from the current project. | D, S, W |
+| GitHub CLI | `gh repo view`; `gh pr list`; `gh issue list` | Inspect GitHub repositories, pull requests and issues from the current project. Consult `gh --help` or `gh <command> --help` for commands and options relevant to the task. | D, S, W |
 | Lazygit | `lazygit` (**interactive**) | Review diffs, stage changes and manage Git history in a TUI. | D, W |
 | Docker | `docker ps`; `docker logs --tail 100 CONTAINER`; `docker stats --no-stream` | Inspect containers, logs and resource usage. | D, S |
 | Docker Compose | `docker compose ps`; `docker compose config` | Inspect a project's services and validate its Compose configuration. | D, S |
