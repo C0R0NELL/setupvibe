@@ -551,11 +551,13 @@ run_section() {
     # A function called directly from an `if` condition inherits Bash's
     # errexit suppression. Run it in an isolated strict shell so an
     # intermediate failure cannot be hidden by a later successful command.
+    # Child tools must not read the remaining installer from `curl | bash`.
+    # Interactive prompts use /dev/tty; explicit input pipes remain available.
     set +e
     (
         set -Eeuo pipefail
         "$2"
-    )
+    ) < /dev/null
     status=$?
     set -e
 

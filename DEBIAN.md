@@ -513,3 +513,24 @@ renderizou `user@hostname` com variável de sessão SSH e ocultou o hostname sem
 ela, sem avisos. Checkouts com espaços no caminho, a URL remota de `main` e a
 preservação de personalizações existentes do Omarchy também foram verificados.
 Nenhum perfil ou arquivo de configuração real do usuário foi alterado.
+
+## Entrada do Desktop via pipe em novembro de 2026
+
+Uma instalação no Debian WSL encerrou após a etapa 14, sem executar as etapas
+15–20 ou imprimir o resumo final, embora o navegador tivesse sido validado.
+O problema foi reproduzido em Linux ARM64 com a função real `run_section` e
+Skills CLI 1.7.1, usando somente a listagem de uma skill local: a interface
+Clack lê a entrada padrão mesmo com `--yes` e consome os comandos restantes
+de `curl | bash`. O processo termina com código zero, ocultando a interrupção.
+
+O subshell de cada etapa do Desktop deve receber entrada padrão de
+`/dev/null`. Comandos com pipes explícitos recebem a própria entrada, e os
+prompts interativos continuam usando `/dev/tty`.
+
+`python3 tests/test_desktop_stdin.py` verifica a proteção em execução por pipe
+e por arquivo, a continuidade das 20 etapas, o resumo real do instalador,
+pipes explícitos e propagação de falhas intermediárias. O teste falhou antes
+da correção e passou depois. A listagem real do Skills CLI também deixou de
+consumir as etapas seguintes após a correção. Nenhuma ferramenta foi instalada
+nem serviço alterado durante esses testes; o instalador completo não foi
+reexecutado e não houve teste na outra máquina WSL do usuário.

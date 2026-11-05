@@ -25,6 +25,10 @@ All notable changes to **SetupVibe** are documented in this file.
 - Local fork: replaced Herdr Shepherd with `C0R0NELL/herdr-agents-sidebar` in the manual plugin notes, including its Linux requirements, installation command, and activation through **Apply sidebar**.
 - Local fork: all installer commands, configuration and helper downloads, shell aliases, documentation, and Codex/Claude skill references now use `C0R0NELL/setupvibe`. All four editions use direct raw GitHub URLs on `main`, including Windows elevation, restart, and uninstall.
 
+### Fixed
+
+- Fixed Unix Desktop stopping silently after browser automation during `curl | bash` installation. Each automated step now receives an empty standard input, preventing Skills CLI's terminal UI from consuming the remaining installer. Explicit input pipes and `/dev/tty` prompts remain available. Added isolated regression checks for subsequent steps, the final summary and failure reporting.
+
 ### Removed
 
 - Local fork: removed the terminal image preview utility from managed package lists, CLI validation, documentation and the distributed environment skill.

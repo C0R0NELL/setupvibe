@@ -15,7 +15,7 @@ There are four editions:
 
 ## How to Run
 
-There are no build tools, package managers, or test suites. Scripts are executed directly:
+Scripts are executed directly, without a build step:
 
 ```bash
 # Run locally
@@ -39,6 +39,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\desktop.ps1 -Uninstall
 ```
 
 To test changes to a script, run it directly on a target machine or VM.
+
+Run `python3 tests/test_desktop_stdin.py` for the focused Desktop input-stream
+regression checks. They exercise the real step runner without installing tools
+or changing services; they do not replace full installer integration tests.
 
 ### Required Debian Context
 

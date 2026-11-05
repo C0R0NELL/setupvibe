@@ -31,6 +31,9 @@ bash desktop.sh
 
 The script shows an interactive roadmap and asks for confirmation before starting. It also prompts to configure Git identity if not already set.
 
+Wait for the final summary with all 20 steps marked `OK` and
+`SetupVibe Desktop Completed Successfully!` to confirm completion.
+
 ---
 
 ## What Gets Installed

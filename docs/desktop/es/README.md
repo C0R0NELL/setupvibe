@@ -31,6 +31,9 @@ bash desktop.sh
 
 El script muestra una hoja de ruta interactiva y solicita confirmación antes de comenzar. También propone configurar la identidad de Git si aún no está definida.
 
+Espera el resumen final con los 20 pasos marcados como `OK` y el mensaje
+`SetupVibe Desktop Completed Successfully!` para confirmar la finalización.
+
 ---
 
 ## Qué se instala

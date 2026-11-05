@@ -68,6 +68,9 @@ Run scripts from the local checkout to test changes before publishing them.
 curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/desktop.sh | bash
 ```
 
+Desktop installation is complete when the final summary shows all 20 steps
+as `OK` and prints `SetupVibe Desktop Completed Successfully!`.
+
 ### Windows Desktop (Beta)
 
 Run the Windows utility installer directly from this fork's `main` branch. It requests administrator access through the standard UAC prompt without changing the UAC policy.
