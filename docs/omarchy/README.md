@@ -40,6 +40,34 @@ curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/omarchy.sh 
 bash omarchy.sh --help
 ```
 
+### Reparar PHP, Rails e Portainer
+
+Depois que uma execução anterior terminar, use o reparo seletivo:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/C0R0NELL/setupvibe/main/omarchy.sh | bash -s -- --repair
+```
+
+Esse modo verifica somente PHP ZIP, Ruby/Rails e Docker/Portainer. Não repete
+os outros downloads, instalações, configurações de shell ou distribuição de skills.
+
+- ZIP já pertence ao pacote `php` do Arch. Quando desativado, o reparo usa
+  `/etc/php/conf.d/99-setupvibe-zip.ini`, preservando o `php.ini` existente.
+- RubyGems é recuperado para o Ruby ativo. Ruby do sistema usa `rubygems`
+  e `ruby-stdlib` para fornecer a biblioteca padrão completa;
+  um `gem` presente no diretório do Ruby é recuperado pelo PATH. Runtimes
+  personalizados incompletos geram uma orientação sem substituir o Ruby.
+  Rails e Bundler usam instalação do usuário e executáveis em `~/.local/bin`.
+- O contexto Docker precisa apontar para um socket local. O serviço nativo é
+  habilitado quando necessário para o socket padrão; problemas de acesso podem
+  exigir adicionar o usuário ao grupo `docker`. O Portainer é iniciado com a
+  identidade do usuário e os grupos atualizados em um processo filho.
+
+Quando solicitado pelo reparo, execute `newgrp docker` no seu terminal ou
+encerre e entre novamente na sessão para atualizar os grupos. Um erro impede
+a mensagem de conclusão. Contextos remotos e daemons rootless indisponíveis
+recebem uma orientação específica; o reparo preserva essas configurações.
+
 ## O que o Omarchy já fornece
 
 A edição não repete os componentes documentados pelo [manual oficial do
@@ -65,7 +93,9 @@ O script usa `omarchy pkg add`, que instala somente pacotes ausentes e não
 executa `pacman -R`. Os itens adicionados são:
 
 - PHP, Composer, extensões PHP disponíveis no repositório, Laravel Installer e
-  Rails sobre o Ruby que já existe.
+  ZIP habilitado quando necessário. ZIP e Intl já pertencem ao pacote PHP;
+  não são solicitados como pacotes separados. Rails e Bundler são instalados
+  para o usuário sobre o Ruby ativo, recuperando RubyGems quando necessário.
 - Go, Rust, Python, `uv` e `qrcode` com o comando `qr`, somente
   quando o comando ainda não está disponível.
 - Node e Bun por mise somente quando ainda faltam; `pnpm` e PM2 pelo npm.
@@ -104,7 +134,8 @@ Os arquivos de configuração adicionados ficam em `~/.config/setupvibe/`:
 O `~/.bashrc` recebe somente um bloco marcado que aponta para esses arquivos.
 O `~/.config/starship.toml` do Omarchy e as configurações do Tmux não são
 substituídos. O serviço SSH é apenas habilitado quando já existe, sem alteração
-do `sshd_config`. O Portainer só é iniciado se o Docker estiver disponível.
+do `sshd_config`. O Docker local é verificado antes de iniciar o Portainer;
+o serviço e as permissões de acesso são preparados quando necessário.
 
 Downloads, ferramentas e skills pertencem ao usuário-alvo, inclusive quando
 o script é iniciado por `sudo`. O `uv` usa o gerenciador do Omarchy quando

@@ -20,6 +20,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 ASSUME_YES=false
+REPAIR_ONLY=false
 
 die() {
     echo -e "${RED}Erro: $*${NC}" >&2
@@ -38,6 +39,7 @@ Instala a camada SetupVibe sobre uma instalação Omarchy 4 existente.
 
 Opções:
   --yes     Não pede confirmação no início.
+  --repair  Repara somente PHP ZIP, Ruby/Rails e Docker/Portainer.
   --help    Exibe esta ajuda.
 EOF
 }
@@ -101,7 +103,11 @@ confirm_installation() {
     [[ -t 0 || -r /dev/tty ]] || die "Use --yes quando não houver um terminal interativo."
 
     echo -e "${BOLD}SetupVibe Omarchy ${OMARCHY_MAJOR} v${VERSION}${NC}"
-    echo "A instalação adicionará ferramentas e configurações do SetupVibe."
+    if $REPAIR_ONLY; then
+        echo "O reparo verifica PHP ZIP, Ruby/Rails e Docker/Portainer."
+    else
+        echo "A instalação adicionará ferramentas e configurações do SetupVibe."
+    fi
     echo "Ela não remove pacotes, arquivos do Omarchy, aliases existentes ou configurações existentes."
     echo ""
     printf 'Pressione ENTER para continuar ou digite q para cancelar: '
@@ -213,9 +219,70 @@ install_additional_packages() {
     # Extensões PHP e utilitários de rede variam entre os repositórios Arch.
     # Cada item é independente para manter o restante da instalação disponível.
     omarchy_pkg_add_optional \
-        php-gd php-intl php-pgsql php-sqlite php-zip \
+        php-gd php-pgsql php-sqlite \
         rsync bind mtr nmap tcpdump iftop nload iotop sysstat glances htop \
         tailscale
+}
+
+configure_php_zip() (
+    local scan_dir
+    local temporary_file
+    local zip_ini=/etc/php/conf.d/99-setupvibe-zip.ini
+
+    if user_do php -r 'exit(extension_loaded("zip") ? 0 : 1);'; then
+        echo "Extensão ZIP do PHP já está ativa."
+        return 0
+    fi
+    # Arch ships zip.so in php itself; php-zip is not a repository package.
+    scan_dir=$(user_do php -r 'echo PHP_CONFIG_FILE_SCAN_DIR;')
+    [[ "$scan_dir" == /etc/php/conf.d ]] ||
+        die "ZIP está desativado em um PHP personalizado. Habilite-o no gerenciador desse PHP."
+    user_do php -n -d extension=zip -r 'exit(extension_loaded("zip") ? 0 : 1);' ||
+        die "O PHP instalado não conseguiu carregar zip.so."
+    if sys_do test -e "$zip_ini"; then
+        die "ZIP continua desativado; revise $zip_ini e PHP_INI_SCAN_DIR."
+    fi
+    user_do mkdir -p "$REAL_HOME/.setupvibe/tmp"
+    temporary_file=$(user_do mktemp "$REAL_HOME/.setupvibe/tmp/php-zip.XXXXXX")
+    trap 'user_do rm -f -- "$temporary_file"' EXIT
+    printf '%s\n' '; Managed by SetupVibe' 'extension=zip' | user_do tee "$temporary_file" >/dev/null
+    sys_do mkdir -p "$scan_dir"
+    sys_do install -o root -g root -m 0644 "$temporary_file" "$zip_ini"
+    user_do php -r 'exit(extension_loaded("zip") ? 0 : 1);' ||
+        die "O PHP não carregou $zip_ini; confira a configuração exibida por php --ini."
+    echo "Extensão ZIP do PHP ativada."
+)
+
+configure_rails() {
+    local ruby_bindir
+    path_prepend_once "$REAL_HOME/.local/bin"
+    export PATH
+
+    if ! command -v ruby >/dev/null 2>&1; then
+        omarchy_pkg_add ruby rubygems ruby-stdlib
+    fi
+    user_do ruby --version
+    ruby_bindir=$(user_do ruby -rrbconfig -e 'print RbConfig::CONFIG["bindir"]')
+    if [[ "$ruby_bindir" == /usr/bin ]]; then
+        omarchy_pkg_add rubygems ruby-stdlib
+    elif ! user_do gem --version >/dev/null 2>&1; then
+        if [[ -x "$ruby_bindir/gem" ]]; then
+            path_prepend_once "$ruby_bindir"
+            export PATH
+            if [[ "$ruby_bindir" == "$REAL_HOME"/.local/share/mise/installs/ruby/*/bin ]]; then
+                user_do mise reshim
+            fi
+        else
+            die "Ruby ativo em $ruby_bindir está sem RubyGems. Repare esse Ruby no seu gerenciador."
+        fi
+    fi
+    user_do gem --version
+    if ! user_do rails --version >/dev/null 2>&1 || ! user_do bundle --version >/dev/null 2>&1; then
+        user_do mkdir -p "$REAL_HOME/.local/bin"
+        user_do gem install bundler rails --user-install --bindir "$REAL_HOME/.local/bin" --no-document
+    fi
+    user_do rails --version
+    user_do bundle --version
 }
 
 configure_php_and_rails() {
@@ -224,6 +291,7 @@ configure_php_and_rails() {
     path_prepend_once "$COMPOSER_HOME/vendor/bin"
     export PATH
 
+    configure_php_zip
     echo "Configurando Composer e Laravel..."
     if command -v composer >/dev/null 2>&1; then
         user_do env COMPOSER_HOME="$COMPOSER_HOME" composer global require laravel/installer
@@ -232,13 +300,7 @@ configure_php_and_rails() {
     fi
 
     echo "Configurando Rails sobre o Ruby já fornecido pelo Omarchy..."
-    if command -v rails >/dev/null 2>&1; then
-        echo "Rails já está disponível; nenhuma instalação foi repetida."
-    elif command -v gem >/dev/null 2>&1; then
-        user_do gem install bundler rails --no-document
-    else
-        warn "RubyGems não foi encontrado; Rails será ignorado nesta execução."
-    fi
+    configure_rails
 }
 
 configure_python_go_rust() {
@@ -469,14 +531,45 @@ EOF
 }
 
 configure_portainer() {
-    if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
-        warn "Docker não está disponível agora; o compose do Portainer foi apenas adicionado."
-        return 0
+    local endpoint
+    local -a docker_command
+    if ! command -v docker >/dev/null 2>&1; then
+        omarchy_pkg_add docker docker-compose docker-buildx
     fi
-
-    if ! user_do docker compose -f "$REAL_HOME/.setupvibe/portainer-compose.yml" up -d; then
-        warn "Portainer não pôde ser iniciado agora; o compose continua disponível."
+    if [[ -n "${DOCKER_CONTEXT:-}" ]]; then
+        endpoint=$(user_do docker context inspect "$DOCKER_CONTEXT" --format '{{.Endpoints.docker.Host}}')
+    elif [[ -n "${DOCKER_HOST:-}" ]]; then
+        endpoint=$DOCKER_HOST
+    else
+        endpoint=$(user_do docker context inspect --format '{{.Endpoints.docker.Host}}')
     fi
+    [[ "$endpoint" == unix:///* ]] ||
+        die "O contexto Docker aponta para $endpoint. Selecione um contexto local para configurar o Portainer."
+    docker_command=(user_do env -u DOCKER_HOST -u DOCKER_CONTEXT docker --host "$endpoint")
+    if ! "${docker_command[@]}" info >/dev/null 2>&1; then
+        [[ "$endpoint" == unix:///var/run/docker.sock || "$endpoint" == unix:///run/docker.sock ]] ||
+            die "Docker local indisponível em $endpoint. Inicie esse daemon antes de configurar o Portainer."
+        sys_do systemctl enable --now docker
+        sys_do env -u DOCKER_HOST -u DOCKER_CONTEXT docker --host "$endpoint" info >/dev/null ||
+            die "Docker não iniciou. Consulte: journalctl -u docker -n 50 --no-pager"
+        if [[ "$REAL_USER" != root ]] && ! "${docker_command[@]}" info >/dev/null 2>&1; then
+            getent group docker >/dev/null || sys_do groupadd --system docker
+            if [[ " $(id -nG "$REAL_USER") " != *" docker "* ]]; then
+                sys_do usermod -aG docker "$REAL_USER"
+            fi
+            # Refresh supplementary groups only for these child commands.
+            docker_command=(sudo -u "$REAL_USER" -H env -u DOCKER_HOST -u DOCKER_CONTEXT PATH="$PATH" docker --host "$endpoint")
+            echo "Para usar Docker neste terminal depois, execute: newgrp docker"
+        fi
+        "${docker_command[@]}" info >/dev/null || die "O usuário $REAL_USER ainda não consegue acessar o Docker."
+    fi
+    if ! "${docker_command[@]}" compose version >/dev/null 2>&1; then
+        omarchy_pkg_add docker-compose
+    fi
+    user_do mkdir -p "$REAL_HOME/.setupvibe/portainer_data"
+    download_if_missing "$SETUPVIBE_RAW/conf/portainer-compose.yml" \
+        "$REAL_HOME/.setupvibe/portainer-compose.yml" 100
+    "${docker_command[@]}" compose -f "$REAL_HOME/.setupvibe/portainer-compose.yml" up -d
 }
 
 configure_tailscale() {
@@ -609,6 +702,7 @@ main() {
     for arg in "$@"; do
         case "$arg" in
             --yes) ASSUME_YES=true ;;
+            --repair) REPAIR_ONLY=true ;;
             --help|-h) usage; return 0 ;;
             *) die "Opção desconhecida: $arg" ;;
         esac
@@ -620,6 +714,14 @@ main() {
     path_prepend_once "$REAL_HOME/.local/bin"
     export PATH
     confirm_installation
+
+    if $REPAIR_ONLY; then
+        configure_php_zip
+        configure_rails
+        configure_portainer
+        echo "Reparo de PHP ZIP, Ruby/Rails e Docker/Portainer concluído."
+        return 0
+    fi
 
     install_additional_packages
     install_setupvibe_files

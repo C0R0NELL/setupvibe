@@ -263,6 +263,15 @@ When adding or removing a tool, review all four editions and the product skill's
 availability table. Adapt Omarchy to its native tools and existing configuration;
 document platform exclusions instead of leaving an edition unreviewed.
 
+`omarchy.sh --repair` runs only PHP ZIP, Ruby/Rails and Docker/Portainer checks.
+ZIP ships in Arch's PHP package; enable it through a dedicated managed INI only
+when needed, preserving php.ini. Recover RubyGems for the active Ruby, use
+`--user-install --bindir ~/.local/bin` for Rails/Bundler, and validate both CLIs.
+For Portainer, inspect the selected Docker endpoint, reject remote endpoints,
+start the native daemon only for its default local socket, and refresh user
+groups in a child process when access requires it. Preserve existing Docker
+configuration and data; do not silently report success when a required step fails.
+
 ### `docs/` Directory
 
 | Path                        | Content                                                           |

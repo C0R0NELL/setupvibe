@@ -241,6 +241,172 @@ install_pet
         self.require_success(self.run_shell("write_starship_config\n"))
         self.assertEqual(config.read_text(), "# user customization\n")
 
+    def test_native_packages_do_not_request_bundled_php_extensions(self):
+        result = self.run_shell('''omarchy_pkg_add() { printf 'packages %s\\n' "$*" >> "$MOCK_LOG"; }
+install_additional_packages
+''')
+        self.require_success(result)
+        self.assertNotIn("php-zip", self.log.read_text())
+        self.assertNotIn("php-intl", self.log.read_text())
+
+    def test_php_zip_uses_managed_ini_and_preserves_main_configuration(self):
+        system = self.home / "fake-system"
+        ini = system / "etc/php/php.ini"
+        ini.parent.mkdir(parents=True)
+        ini.write_text("; user PHP configuration\n")
+        self.command("php", '''case "$*" in
+    *PHP_CONFIG_FILE_SCAN_DIR*) echo /etc/php/conf.d ;;
+    *'extension=zip'*) exit 0 ;;
+    *extension_loaded*) test -e "$MOCK_SYSTEM_ROOT/etc/php/conf.d/99-setupvibe-zip.ini" ;;
+    *) exit 2 ;;
+esac
+''')
+        commands = '''sys_do() {
+    local -a args=()
+    while (( $# )); do
+        case "$1" in
+            -o|-g) shift 2 ;;
+            /etc/php*) args+=("$MOCK_SYSTEM_ROOT$1"); shift ;;
+            *) args+=("$1"); shift ;;
+        esac
+    done
+    "${args[@]}"
+}
+configure_php_zip
+'''
+        for _ in range(2):
+            self.require_success(self.run_shell(commands, extra_env={"MOCK_SYSTEM_ROOT": str(system)}))
+        self.assertEqual(ini.read_text(), "; user PHP configuration\n")
+        self.assertEqual((ini.parent / "conf.d/99-setupvibe-zip.ini").read_text().count("extension=zip"), 1)
+
+    def ruby_fixture(self):
+        self.command("rails", "exit 127\n")
+        self.command("bundle", "exit 127\n")
+        self.command("ruby", '''case "$*" in
+    *RbConfig*) printf '%s' "${MOCK_RUBY_BINDIR:-/usr/bin}" ;;
+    *) echo 'ruby 3.4.12' ;;
+esac
+''')
+        self.command("gem", '''test -e "$HOME/gem-ready" || exit 127
+if [[ "$1" == install ]]; then
+    printf 'gem %s\\n' "$*" >> "$MOCK_LOG"
+    printf '#!/bin/bash\\necho Rails\\n' > "$HOME/.local/bin/rails"
+    printf '#!/bin/bash\\necho Bundler\\n' > "$HOME/.local/bin/bundle"
+    chmod +x "$HOME/.local/bin/rails" "$HOME/.local/bin/bundle"
+else
+    echo '3.6.9'
+fi
+''')
+        return '''omarchy_pkg_add() {
+    printf 'packages %s\\n' "$*" >> "$MOCK_LOG"
+    touch "$HOME/gem-ready"
+}
+configure_rails
+'''
+
+    def test_rails_repairs_missing_native_rubygems_and_installs_in_user_bin(self):
+        commands = self.ruby_fixture()
+        for _ in range(2):
+            self.require_success(self.run_shell(commands))
+        log = self.log.read_text()
+        self.assertIn("packages rubygems", log)
+        self.assertIn("--user-install", log)
+        self.assertIn(f"--bindir {self.bin}", log)
+        self.assertTrue((self.bin / "rails").exists())
+        self.assertTrue((self.bin / "bundle").exists())
+        self.assertEqual(log.count("gem install"), 1)
+
+    def test_rails_recovers_gem_from_active_ruby_directory_without_replacing_ruby(self):
+        commands = self.ruby_fixture()
+        ruby_bin = self.home / "managed ruby/bin"
+        ruby_bin.mkdir(parents=True)
+        gem = ruby_bin / "gem"
+        gem.write_text((self.bin / "gem").read_text())
+        gem.chmod(0o755)
+        (self.home / "gem-ready").touch()
+        self.command("gem", "exit 127\n")
+        self.require_success(self.run_shell(commands, extra_env={"MOCK_RUBY_BINDIR": str(ruby_bin)}))
+        self.assertNotIn("packages", self.log.read_text())
+        self.assertTrue((self.bin / "rails").exists())
+
+    def test_rails_does_not_replace_a_managed_ruby_missing_gem(self):
+        result = self.run_shell(self.ruby_fixture(), extra_env={"MOCK_RUBY_BINDIR": "/custom/mise/ruby/bin"})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Ruby ativo", result.stderr)
+        self.assertNotIn("packages", self.log.read_text())
+
+    def docker_fixture(self):
+        self.command("docker", '''printf 'docker %s\\n' "$*" >> "$MOCK_LOG"
+if [[ "${1:-}" == --host ]]; then shift 2; fi
+case "$*" in
+    'context inspect '*) echo "${MOCK_DOCKER_ENDPOINT:-unix:///var/run/docker.sock}" ;;
+    info)
+        test -e "$HOME/docker-ready" || exit 1
+        [[ "${MOCK_ROOT_CHECK:-}" == 1 || "${MOCK_REFRESHED_GROUPS:-}" == 1 ]] ;;
+    'compose version') exit 0 ;;
+    'compose -f '*) touch "$HOME/portainer-started" ;;
+    *) exit 2 ;;
+esac
+''')
+        self.command("sudo", '''printf 'sudo %s\\n' "$*" >> "$MOCK_LOG"
+shift 3
+export MOCK_REFRESHED_GROUPS=1
+exec "$@"
+''')
+        compose = self.home / ".setupvibe/portainer-compose.yml"
+        compose.parent.mkdir(parents=True)
+        compose.write_text((ROOT / "conf/portainer-compose.yml").read_text())
+        return '''id() { echo tester; }
+getent() { echo 'docker:x:990:'; }
+sys_do() {
+    printf 'system %s\\n' "$*" >> "$MOCK_LOG"
+    case "$1" in
+        systemctl)
+            [[ "${MOCK_DOCKER_START_FAIL:-}" != 1 ]] || return 44
+            touch "$HOME/docker-ready" ;;
+        usermod|groupadd) return 0 ;;
+        env) MOCK_ROOT_CHECK=1 "$@" ;;
+        *) return 3 ;;
+    esac
+}
+configure_portainer
+'''
+
+    def test_portainer_starts_local_service_and_refreshes_user_group(self):
+        self.require_success(self.run_shell(self.docker_fixture()))
+        log = self.log.read_text()
+        self.assertIn("systemctl enable --now docker", log)
+        self.assertIn("usermod -aG docker tester", log)
+        self.assertIn("sudo -u tester -H env", log)
+        self.assertTrue((self.home / "portainer-started").exists())
+
+    def test_portainer_refuses_remote_context_without_starting_local_daemon(self):
+        result = self.run_shell(self.docker_fixture(), extra_env={"MOCK_DOCKER_ENDPOINT": "ssh://production.example"})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("system ", self.log.read_text())
+        self.assertFalse((self.home / "portainer-started").exists())
+
+    def test_portainer_reports_failed_daemon_start(self):
+        result = self.run_shell(self.docker_fixture(), extra_env={"MOCK_DOCKER_START_FAIL": "1"})
+        self.assertEqual(result.returncode, 44, result.stdout + result.stderr)
+        self.assertFalse((self.home / "portainer-started").exists())
+
+    def test_repair_mode_runs_only_affected_configuration(self):
+        commands = '''detect_user() { :; }
+check_omarchy() { :; }
+confirm_installation() { :; }
+configure_php_zip() { echo REPAIR_PHP; }
+configure_rails() { echo REPAIR_RAILS; }
+configure_portainer() { echo REPAIR_PORTAINER; }
+install_additional_packages() { echo UNEXPECTED_FULL_INSTALL; exit 7; }
+main --repair
+'''
+        result = self.run_shell(commands)
+        self.require_success(result)
+        for marker in ("REPAIR_PHP", "REPAIR_RAILS", "REPAIR_PORTAINER"):
+            self.assertIn(marker, result.stdout)
+        self.assertNotIn("UNEXPECTED_FULL_INSTALL", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

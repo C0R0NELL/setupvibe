@@ -534,3 +534,25 @@ da correção e passou depois. A listagem real do Skills CLI também deixou de
 consumir as etapas seguintes após a correção. Nenhuma ferramenta foi instalada
 nem serviço alterado durante esses testes; o instalador completo não foi
 reexecutado e não houve teste na outra máquina WSL do usuário.
+
+## Relato do TryOmarchy em novembro de 2026
+
+Uma execução real enviada pelo usuário mostrou tentativa de instalar `php-zip`,
+Rails ignorado por ausência de `gem` e Portainer não iniciado por falha de acesso
+ao Docker. O Laravel, uv, Spec-Kit, Antigravity e a skill para dez harnesses
+informaram sucesso nos trechos enviados. Esses logs não incluem a conclusão
+geral nem a validação final do navegador.
+
+No Arch, ZIP e Intl pertencem ao pacote PHP; ZIP deve ser validado e, quando
+necessário, habilitado por INI separado sem reescrever php.ini. Para Ruby, não
+presuma que o pacote ou o executável Ruby inclua um `gem` acessível: confira
+o runtime ativo e RubyGems antes de instalar Rails para o usuário. A causa
+específica do RubyGems ausente e da falha Docker na VM não foi diagnosticada
+diretamente; o reparo verifica esses estados durante sua execução.
+
+`omarchy.sh --repair` repete apenas PHP ZIP, Ruby/Rails e Docker/Portainer.
+Os testes isolados reproduzem as omissões e verificam INI preservado,
+instalação no usuário, recuperação de PATH, serviço Docker parado, grupos
+desatualizados, recusa de contexto remoto e falha no início do daemon.
+Os comandos de sistema e runtimes desses testes são simulados; não houve
+execução do reparo na VM do usuário nem alterações nos serviços desta VPS.

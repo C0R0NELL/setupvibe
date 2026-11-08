@@ -105,6 +105,10 @@ Use `bash omarchy.sh --yes` for an unattended local run. See the [Omarchy
 installation guide](docs/omarchy/README.md) for the preserved components and
 the added layer.
 
+For an existing Omarchy installation, `omarchy.sh --repair` repairs PHP ZIP,
+Ruby/Rails and Docker/Portainer without rerunning the remaining steps. See the
+[selective repair command](docs/omarchy/README.md#reparar-php-rails-e-portainer).
+
 ## General Notes
 
 ### Agent Environment Skill
