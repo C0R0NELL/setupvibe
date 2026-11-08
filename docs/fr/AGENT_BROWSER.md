@@ -2,10 +2,10 @@
 
 > Automatisation du navigateur et intégration des agents — v0.41.11, ajout local du fork
 
-Desktop Unix ajoute `agent-browser` à l'étape 14 et déplace le nettoyage à
-l'étape 15. Desktop Windows ajoute sa propre étape. Le CLI, le navigateur et
+Desktop Unix ajoute `agent-browser` à l'étape 14 ; le nettoyage est à
+l'étape 20. Desktop Windows et Omarchy ajoutent leurs propres fonctions. Le CLI, le navigateur et
 la skill officielle sont préparés pour Codex et Claude Code dans tous les
-projets. Server et Omarchy n'incluent pas cette étape.
+projets. Server n'inclut pas cette étape.
 
 ## Exigences par plateforme
 
@@ -15,6 +15,11 @@ projets. Server et Omarchy n'incluent pas cette étape.
 | Windows 11 22H2+, x64 | Chrome for Testing via `agent-browser.cmd install` | Node.js 24 du MSI officiel ; lanceurs CMD compatibles avec les stratégies PowerShell restrictives |
 | Ubuntu 24.04+, Debian 12+, Zorin OS 18+, WSL ; x86_64 | Chrome for Testing | Node.js 24, bibliothèques APT, polices, Xvfb/Xauth et Vulkan |
 | Les mêmes systèmes Linux ; ARM64 | Chromium téléchargé via Playwright | Les mêmes dépendances ; sans Snap, installation globale de Playwright ni projet de tests |
+| Omarchy 4, Arch Linux x86_64, y compris TryOmarchy | Chrome for Testing via `agent-browser install` | Node.js 24+ existant via mise ; bibliothèques Arch, polices, Xvfb/Xauth et Vulkan via `omarchy pkg add` |
+
+Omarchy conserve le préfixe npm de l'utilisateur et utilise son gestionnaire
+natif pour les bibliothèques. Node.js antérieur à 24 produit une erreur demandant
+sa mise à jour via Omarchy/mise, sans remplacer le runtime existant.
 
 Chrome actuel exige macOS 13+. Les autres étapes acceptent toujours macOS 12,
 mais l'étape navigateur signale une erreur sur ce système. Windows ARM reste
@@ -45,7 +50,8 @@ Les paquets `fonts-noto-color-emoji`, `fonts-noto-cjk`, `fonts-freefont-ttf`,
 
 Seules les bibliothèques système utilisent `sys_do`. npm, navigateurs, skills
 et validations s'exécutent comme `REAL_USER`, même avec `sudo bash`. Les
-paquets npm globaux Linux restent dans `~/.npm-global`. Une nouvelle exécution
+paquets npm globaux du Desktop Unix restent dans `~/.npm-global` ; Omarchy conserve
+son préfixe npm utilisateur. Une nouvelle exécution
 réutilise les téléchargements compatibles.
 
 ## Utilisation par les agents

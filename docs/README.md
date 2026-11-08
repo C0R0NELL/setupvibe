@@ -46,6 +46,10 @@ Tmux, Docker, mise, runtimes and tools that already ship with the operating
 system. It adds the SetupVibe layer, including PHP and Laravel, Composer,
 Rails tooling, PM2 and pnpm, selected runtimes and utilities, extra AI CLIs,
 the SSH helper, Portainer files and a separate Starship configuration.
+It also installs agent-browser and its official Codex/Claude skill, distributes
+the environment skill, configures Lazy tool appearance, and includes Terminal
+Browser, Harlequin, Pet, Redis TUI and Yazi. Native package operations use
+`omarchy pkg add`; shared helpers install user tools without Homebrew or APT.
 
 Run it from the SetupVibe repository or through the raw script URL:
 
@@ -59,39 +63,40 @@ installation and never executes package-removal commands.
 
 ## Edition Comparison
 
-| Feature                               | Desktop        | Windows         | Server  |
-| ------------------------------------- | -------------- | --------------- | ------- |
-| Base system & CLI tools               | ✔              | ✔               | ✔       |
-| Homebrew                              | ✔              | ✗               | ✗       |
-| WinGet + Chocolatey                   | ✗              | ✔               | ✗       |
-| OpenSSH Client                        | ✔              | ✔               | ✔       |
-| WSL 2 base without a distribution     | ✗              | ✔               | ✗       |
-| PHP 8.5 + Composer + Laravel          | ✔              | ✗               | ✗       |
-| Ruby + rbenv + Rails                  | ✔              | ✗               | ✗       |
-| Go, Rust, Python + uv + qrcode        | ✔              | ✗               | ✗       |
-| Node.js 24                            | ✔              | Node.js 24 LTS   | ✔ (APT) |
-| Bun + PNPM                            | ✔              | ✗                | ✗       |
-| Docker + Ansible + GitHub CLI         | ✔              | GitHub CLI only | ✔       |
-| Modern Unix tools (bat, eza, fzf…)    | ✔ via Homebrew | ✔               | ✗       |
-| Network & monitoring tools            | ✔              | ✔               | ✔       |
-| SetupVibe environment skill           | ✔              | ✔               | ✔       |
-| Tailscale                             | ✔              | ✔               | ✔       |
-| SSH server                            | ✔ (Linux only) | ✔               | ✔       |
-| ZSH + Oh My Zsh + Starship            | ✔              | ✗               | ✔       |
-| Nerd Fonts (FiraCode, JetBrains Mono) | ✔              | ✔               | ✗       |
-| Tmux + TPM plugins                    | ✔              | ✗               | ✔       |
-| AI CLI tools                          | ✔              | ✔ (selected)    | ✔       |
-| Vercel Labs Skills CLI                | ✔              | ✔               | ✔       |
-| agent-browser + Chrome/Chromium       | ✔ (macOS 13+)  | ✔               | ✗       |
-| Standalone Terminal Browser           | ✔              | WSL only        | ✔       |
-| Harlequin (PostgreSQL + MySQL)         | ✔              | ✔               | ✔       |
-| Pet snippets + fzf                    | ✔              | ✔               | ✔       |
-| Redis TUI                            | ✔              | ✔               | ✔       |
-| Yazi file manager + ya               | ✔              | ✔               | ✔       |
-| Herdr agent multiplexer               | ✔              | ✗               | ✔       |
-| Antigravity CLI (`agy`)               | ✔              | ✔               | ✗       |
-| PM2 auto-startup                      | ✔              | ✗               | ✗       |
-| Docker Swarm Manager (`--manager`)    | ✗              | ✗               | ✔       |
+| Feature | Desktop | Windows | Server | Omarchy |
+| --- | --- | --- | --- | --- |
+| Base system & CLI tools | ✔ | ✔ | ✔ | Existing + additions |
+| Homebrew | ✔ | ✗ | ✗ | ✗ |
+| WinGet + Chocolatey | ✗ | ✔ | ✗ | ✗ |
+| OpenSSH Client | ✔ | ✔ | ✔ | Existing |
+| WSL 2 base without a distribution | ✗ | ✔ | ✗ | ✗ |
+| PHP + Composer + Laravel | ✔ (PHP 8.5) | ✗ | ✗ | ✔ (Arch packages) |
+| Ruby + Rails | ✔ (rbenv) | ✗ | ✗ | Existing Ruby + Rails |
+| Go, Rust, Python + uv + qrcode | ✔ | ✗ | ✗ | ✔ |
+| Node.js 24 | ✔ | Node.js 24 LTS | ✔ (APT) | Existing mise runtime, 24+ required |
+| Bun + PNPM | ✔ | ✗ | ✗ | ✔ |
+| Docker + Ansible + GitHub CLI | ✔ | GitHub CLI only | ✔ | Existing Docker + additions |
+| Modern Unix tools (bat, eza, fzf…) | ✔ via Homebrew | ✔ | ✗ | Existing |
+| Lazy tool appearance | ✔ | ✔ | ✗ | ✔ |
+| Network & monitoring tools | ✔ | ✔ | ✔ | ✔ (available packages) |
+| SetupVibe environment skill | ✔ | ✔ | ✔ | ✔ |
+| Tailscale | ✔ | ✔ | ✔ | ✔ |
+| SSH server | ✔ (Linux only) | ✔ | ✔ | Enables existing service |
+| Shell and prompt | ZSH + Oh My Zsh + Starship | Original shell | ZSH + Oh My Zsh + Starship | Existing Bash + separate Starship config |
+| Nerd Fonts | ✔ | ✔ | ✗ | Existing |
+| Tmux + TPM plugins | ✔ | ✗ | ✔ | Existing Tmux configuration |
+| AI CLI tools | ✔ | ✔ (selected) | ✔ | Existing + additions |
+| Vercel Labs Skills CLI | ✔ | ✔ | ✔ | ✔ |
+| agent-browser + Chrome/Chromium | ✔ (macOS 13+) | ✔ | ✗ | ✔ |
+| Standalone Terminal Browser | ✔ | WSL only | ✔ | ✔ |
+| Harlequin (PostgreSQL + MySQL) | ✔ | ✔ | ✔ | ✔ |
+| Pet snippets + fzf | ✔ | ✔ | ✔ | ✔ |
+| Redis TUI | ✔ | ✔ | ✔ | ✔ |
+| Yazi file manager + ya | ✔ | ✔ | ✔ | ✔ |
+| Herdr agent multiplexer | ✔ | ✗ | ✔ | Existing |
+| Antigravity CLI (`agy`) | ✔ | ✔ | ✗ | ✔ |
+| PM2 auto-startup | ✔ | ✗ | ✗ | CLI only |
+| Docker Swarm Manager (`--manager`) | ✗ | ✗ | ✔ | ✗ |
 
 ## Specialized Guides
 

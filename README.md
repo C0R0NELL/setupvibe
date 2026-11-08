@@ -10,15 +10,15 @@ Installs and configures a development environment in one command, supporting Win
 - **Safe Windows Servicing:** Asks before stopping competing installers, tries a normal stop before forcing remaining processes, runs `sfc.exe /scannow` afterward, rejects pending restarts, and validates the component store.
 - **Reliable OpenSSH Installation:** Resolves the latest official x64 Win32-OpenSSH MSI directly from its GitHub release page without the releases API, force-installs the client and server, and configures `sshd` and TCP/22 independently of DISM, Features on Demand, WSUS, or Windows Update.
 - **Native Package Management:** Uses WinGet and Chocolatey on Windows, with Homebrew or APT on Unix systems.
-- **Native Windows Shell:** Keeps Windows PowerShell and PowerShell 7 profiles unchanged, without Starship, ZSH, automatic zoxide initialization, or persistent execution-policy changes; Unix editions retain ZSH, Oh My Zsh, and Starship.
-- **Optimized Terminals:** Installs Windows Terminal on Windows and configures Tmux + TPM on Unix systems.
-- **Lazy Tool Appearance:** Desktop installers enable Lazygit file icons and Nerd Fonts v3; installed Lazydocker also receives status icons, rounded borders, and an expanding focused side panel. Other settings and the first `config.yml.bak` are preserved. Select a Nerd Font in the terminal that displays the session.
-- **Environment Skill:** Desktop and Server distribute the shared `setupvibe-environment` skill to ten supported agent harnesses through Skills CLI. It helps agents choose installed tools for user requests, with commands, practical uses, and availability by edition.
+- **Native Windows Shell:** Keeps Windows PowerShell and PowerShell 7 profiles unchanged, without Starship, ZSH, automatic zoxide initialization, or persistent execution-policy changes; Unix Desktop and Server use ZSH, Oh My Zsh, and Starship. Omarchy retains Bash.
+- **Optimized Terminals:** Installs Windows Terminal on Windows and configures Tmux + TPM on Unix Desktop and Server. Omarchy retains its existing terminal and Tmux configuration.
+- **Lazy Tool Appearance:** Desktop and Omarchy enable Lazygit file icons and Nerd Fonts v3; installed Lazydocker also receives status icons, rounded borders, and an expanding focused side panel. Other settings and the first `config.yml.bak` are preserved. Select a Nerd Font in the terminal that displays the session.
+- **Environment Skill:** All editions distribute the shared `setupvibe-environment` skill to ten supported agent harnesses through Skills CLI. It helps agents choose installed tools for user requests, with commands, practical uses, and availability by edition.
 - **Global Helper Scripts:** Installs Windows helper scripts in `%USERPROFILE%\.setupvibe\bin` and adds the directory to the user's `PATH`.
 - **AI Runtime Foundation:** Installs and validates Python 3.14 directly from `python.org` and Node.js 24 LTS from the official `latest-v24.x` channel on `nodejs.org`, automatically repairs missing runtime files, and exposes `python`, `pip`, `node`, `npm`, and `npx` in the Windows machine `PATH` for Claude and Codex.
 - **Native Windows AI CLIs:** Installs Claude Code through Anthropic's recommended native installer with its official npm package as a recovery path, Codex CLI through OpenAI's official standalone Windows installer, OpenCode CLI, and Google Antigravity CLI as `agy`, while preserving PowerShell profiles and restricted execution policies.
 - **Agent Skills:** Installs and validates the [Vercel Labs Skills CLI](https://github.com/vercel-labs/skills) on Desktop, Windows, and Server editions.
-- **Desktop Browser Automation:** Adds [agent-browser](https://github.com/vercel-labs/agent-browser), Chrome/Chromium, OS dependencies, and its official global skill for Codex and Claude on Unix Desktop and Windows. Linux ARM64 uses a compatible Chromium download; current Chrome requires macOS 13+. See the [browser guide](docs/en/AGENT_BROWSER.md).
+- **Desktop Browser Automation:** Adds [agent-browser](https://github.com/vercel-labs/agent-browser), Chrome/Chromium, OS dependencies, and its official global skill for Codex and Claude on Unix Desktop, Windows and Omarchy. Omarchy reuses its Node.js 24+ and package helper for Arch libraries. Linux ARM64 uses a compatible Chromium download; current Chrome requires macOS 13+. See the [browser guide](docs/en/AGENT_BROWSER.md).
 - **Agent Multiplexer:** Installs and validates [Herdr](https://github.com/herdrdev/herdr) on the Unix Desktop and Server editions, with a dedicated [usage guide](docs/en/HERDR.md).
 - **Terminal Browser:** Installs the standalone [Terminal Browser](docs/en/TERMINAL_BROWSER.md) on Unix Desktop (macOS, Linux and WSL), Server and Omarchy, including Linux libraries and command validation.
 - **Terminal SQL Client:** Installs [Harlequin](docs/en/HARLEQUIN.md) with PostgreSQL and MySQL adapters through uv and Python 3.14 on all editions, validating its isolated environment without connecting to external databases.
@@ -30,7 +30,7 @@ Installs and configures a development environment in one command, supporting Win
 - **Smart Privilege Elevation:** Uses `sudo` only where strictly necessary on macOS and Linux; most tools are installed in `$HOME/.local/bin`.
 - **Global QR Code Generator:** Installs the PyPI `qrcode` package for the target user on macOS and Linux, exposing its `qr` command in the shell.
 - **Auto-Update:** Automatically upgrades existing Homebrew packages during setup.
-- **Modern Shell:** ZSH + Oh My Zsh + Starship with a curated set of plugins and aliases. The [shared Gruvbox Rainbow configuration](conf/starship.toml) shows `user@hostname` over SSH.
+- **Modern Shell:** Unix Desktop and Server use ZSH + Oh My Zsh + Starship with curated plugins and aliases; Omarchy keeps Bash with additive configuration. The [shared Gruvbox Rainbow configuration](conf/starship.toml) shows `user@hostname` over SSH.
 - **Optimized Tmux:** Pre-configured with TPM, intuitive keybindings, and window/pane numbering starting at 1.
 - **Current Runtimes:** PHP 8.5, Ruby 3.4.10, Go 1.26.5, Python 3.14 on macOS, and Node.js 24 LTS.
 - **AI-Ready Unix Editions:** Includes the latest AI CLI tools for developers on macOS, Linux, and WSL.
@@ -109,7 +109,7 @@ the added layer.
 
 ### Agent Environment Skill
 
-Desktop (Unix and Windows) and Server install the product skill from
+Desktop (Unix and Windows), Server and Omarchy install the product skill from
 [`skills/setupvibe-environment/SKILL.md`](skills/setupvibe-environment/SKILL.md)
 for Codex, Claude Code, OpenCode, Grok Build, Kimi Code CLI, Gemini CLI, Cursor,
 GitHub Copilot, Antigravity CLI, and Amp. It is available across projects under

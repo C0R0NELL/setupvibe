@@ -14,7 +14,8 @@ ordinary language runtimes such as Python and Node.js are omitted.
 - **D:** Unix Desktop, including macOS, Linux and WSL configured with `desktop.sh`.
 - **S:** Linux Server configured with `server.sh`.
 - **W:** Native Windows configured with `desktop.ps1`.
-- **Linux:** Linux Desktop, WSL and Server; excludes macOS and native Windows.
+- **O:** Omarchy 4 configured with `omarchy.sh`, including its existing tools.
+- **Linux:** Linux Desktop, WSL, Server and Omarchy; excludes macOS and native Windows.
 
 The tables describe each installer's tool list. Check the relevant executable
 in the current session with `command -v TOOL` on Unix or `Get-Command TOOL` in
@@ -29,11 +30,11 @@ to work in that interface; use commands that print results for agent inspection.
 
 | Tool | Command or example | Use for | Editions |
 | --- | --- | --- | --- |
-| ImageMagick | `magick identify "image.png"` (v7) or `identify "image.png"` (v6) | Inspect dimensions and format; resize, convert or compose images with `magick` (v7) or `convert` (v6). | D, W |
-| FFmpeg / FFprobe | `ffprobe "video.mp4"`; `ffmpeg -i "input.mov" "output.mp4"` | Inspect, convert or extract audio/video; support browser recordings. | D, W |
-| QR code generator | `qr --output=qr.png https://example.com` | Generate a QR image from text or a URL; `qr --help` lists output options. | D |
-| agent-browser | `agent-browser skills get core`; `agent-browser open https://example.com`; `agent-browser snapshot -i` | Automate a browser, inspect pages, fill forms and capture screenshots. | D, W; macOS 13+ |
-| Terminal Browser | `terminal-browser open https://example.com` (**interactive**); `terminal-browser open --ssh user@server http://localhost:3000` | Browse pages in a terminal with Kitty graphics support, locally or through SSH. Standalone installation. | D, S |
+| ImageMagick | `magick identify "image.png"` (v7) or `identify "image.png"` (v6) | Inspect dimensions and format; resize, convert or compose images with `magick` (v7) or `convert` (v6). | D, W, O |
+| FFmpeg / FFprobe | `ffprobe "video.mp4"`; `ffmpeg -i "input.mov" "output.mp4"` | Inspect, convert or extract audio/video; support browser recordings. | D, W, O |
+| QR code generator | `qr --output=qr.png https://example.com` | Generate a QR image from text or a URL; `qr --help` lists output options. | D, O |
+| agent-browser | `agent-browser skills get core`; `agent-browser open https://example.com`; `agent-browser snapshot -i` | Automate a browser, inspect pages, fill forms and capture screenshots. | D, W, O; macOS 13+ |
+| Terminal Browser | `terminal-browser open https://example.com` (**interactive**); `terminal-browser open --ssh user@server http://localhost:3000` | Browse pages in a terminal with Kitty graphics support, locally or through SSH. Standalone installation. | D, S, O |
 
 For agent-browser, read `skills get core` for instructions matching the installed
 version, and close the session with `agent-browser close` when finished. On
@@ -45,18 +46,18 @@ Linux ARM64 uses the Chromium prepared by the installer.
 
 | Tool | Command or example | Use for | Editions |
 | --- | --- | --- | --- |
-| Pet | `pet list`; `pet new -t` (**interactive**); `pet search` (**interactive**) | Save and find shell snippets with descriptions and tags. Search prints the selection; `pet exec` executes it. | D, S, W, Omarchy |
-| Yazi / ya | `yazi "path/to/folder"` (**interactive**); `ya --help` | Browse files with previews; discover companion commands for Yazi utilities and plugin management. | D, S, W, Omarchy |
-| Ripgrep | `rg -n "pattern" .`; `rg --files` | Search source text or list project files quickly. | D, W |
-| fd | `fd '\.png$' .` | Find files by name or extension. | D, W |
-| bat | `bat --paging=never "file.txt"` | Read files with syntax highlighting without opening a pager. | D, W |
-| eza | `eza -la`; `eza --tree --level=2` | Inspect directory contents or a compact directory tree. | D, W |
-| fzf | `fzf` (**interactive**); `fzf --filter="term"` | Select from a list interactively, or filter newline-separated input without a TUI. | D, S, W |
-| jq | `jq '.items[]' "data.json"` | Query, transform and format JSON. | D, S, W |
+| Pet | `pet list`; `pet new -t` (**interactive**); `pet search` (**interactive**) | Save and find shell snippets with descriptions and tags. Search prints the selection; `pet exec` executes it. | D, S, W, O |
+| Yazi / ya | `yazi "path/to/folder"` (**interactive**); `ya --help` | Browse files with previews; discover companion commands for Yazi utilities and plugin management. | D, S, W, O |
+| Ripgrep | `rg -n "pattern" .`; `rg --files` | Search source text or list project files quickly. | D, W, O |
+| fd | `fd '\.png$' .` | Find files by name or extension. | D, W, O |
+| bat | `bat --paging=never "file.txt"` | Read files with syntax highlighting without opening a pager. | D, W, O |
+| eza | `eza -la`; `eza --tree --level=2` | Inspect directory contents or a compact directory tree. | D, W, O |
+| fzf | `fzf` (**interactive**); `fzf --filter="term"` | Select from a list interactively, or filter newline-separated input without a TUI. | D, S, W, O |
+| jq | `jq '.items[]' "data.json"` | Query, transform and format JSON. | D, S, W, O |
 | Glow | `glow "README.md"` | Render Markdown for reading in the terminal. | D, W |
-| tldr via tlrc | `tldr docker` | Look up short practical command examples. The executable is `tldr`, not `tlrc`. | D, W |
-| Zoxide | `zoxide query project` | Find a previously visited directory; `z project` navigates in configured Unix ZSH sessions. Windows installs the CLI without shell initialization. | D, S, W |
-| Neovim | `nvim "file.txt"` (**interactive**) | Edit files in a terminal editor. | D, W |
+| tldr (tlrc on Desktop) | `tldr docker` | Look up short practical command examples. The executable is `tldr`, not `tlrc`. | D, W, O |
+| Zoxide | `zoxide query project` | Find a previously visited directory; `z project` navigates in configured Unix ZSH sessions. Windows installs the CLI without shell initialization. | D, S, W, O |
+| Neovim | `nvim "file.txt"` (**interactive**) | Edit files in a terminal editor. | D, W, O |
 | Wget | `wget -O "download.zip" https://example.com/download.zip` | Download a file to a chosen path; use `wget.exe` on PowerShell to avoid its `wget` alias. | D, S, W |
 | rsync | `rsync -av --dry-run "source/" "destination/"` | Preview file synchronization locally or over SSH before applying it. | Linux; macOS system utility |
 | 7-Zip | `7z l "archive.zip"` | List archive contents and extract archives with `7z x`. | W |
@@ -65,22 +66,22 @@ Linux ARM64 uses the Chromium prepared by the installer.
 
 | Tool | Command or example | Use for | Editions |
 | --- | --- | --- | --- |
-| Harlequin | `harlequin --help`; `harlequin -a postgres -h HOST -U USER -d DATABASE` (**interactive**); `harlequin -a mysql -h HOST -U USER --database DATABASE` (**interactive**) | Browse database schemas, edit SQL and inspect query results; includes PostgreSQL, MySQL/MariaDB, SQLite and DuckDB adapters. | D, S, W |
-| hsql (Harlequin) | `hsql --help` | Discover commands for noninteractive SQL queries and database inspection using Harlequin adapters. | D, S, W |
-| Redis TUI | `redis-tui --help`; `redis-tui --host localhost --port 6379` (**interactive**) | Browse Redis keys, inspect values and TTLs, and monitor database metrics. | D, S, W, Omarchy |
-| GitHub CLI | `gh repo view`; `gh pr list`; `gh issue list` | Inspect GitHub repositories, pull requests and issues from the current project. Consult `gh --help` or `gh <command> --help` for commands and options relevant to the task. | D, S, W |
-| Lazygit | `lazygit` (**interactive**) | Review diffs, stage changes and manage Git history in a TUI. | D, W |
-| Docker | `docker ps`; `docker logs --tail 100 CONTAINER`; `docker stats --no-stream` | Inspect containers, logs and resource usage. | D, S |
-| Docker Compose | `docker compose ps`; `docker compose config` | Inspect a project's services and validate its Compose configuration. | D, S |
-| Docker Buildx | `docker buildx ls` | Inspect builders for container image builds. | D, S |
-| Docker Swarm | `docker info`; `docker service ls`; `docker stack ls` | Inspect Swarm services and stacks when the host is a manager. Server initialization is optional through `--manager`. | D, S; active Swarm required |
-| Portainer CE | `docker compose -f "$HOME/.setupvibe/portainer-compose.yml" ps` | Inspect the Portainer instance managed by SetupVibe; its web UI uses HTTPS port 9443. | D, S |
-| Lazydocker | `lazydocker` (**interactive**) | Inspect and manage Docker resources in a terminal dashboard. | D |
+| Harlequin | `harlequin --help`; `harlequin -a postgres -h HOST -U USER -d DATABASE` (**interactive**); `harlequin -a mysql -h HOST -U USER --database DATABASE` (**interactive**) | Browse database schemas, edit SQL and inspect query results; includes PostgreSQL, MySQL/MariaDB, SQLite and DuckDB adapters. | D, S, W, O |
+| hsql (Harlequin) | `hsql --help` | Discover commands for noninteractive SQL queries and database inspection using Harlequin adapters. | D, S, W, O |
+| Redis TUI | `redis-tui --help`; `redis-tui --host localhost --port 6379` (**interactive**) | Browse Redis keys, inspect values and TTLs, and monitor database metrics. | D, S, W, O |
+| GitHub CLI | `gh repo view`; `gh pr list`; `gh issue list` | Inspect GitHub repositories, pull requests and issues from the current project. Consult `gh --help` or `gh <command> --help` for commands and options relevant to the task. | D, S, W, O |
+| Lazygit | `lazygit` (**interactive**) | Review diffs, stage changes and manage Git history in a TUI. | D, W, O |
+| Docker | `docker ps`; `docker logs --tail 100 CONTAINER`; `docker stats --no-stream` | Inspect containers, logs and resource usage. | D, S, O |
+| Docker Compose | `docker compose ps`; `docker compose config` | Inspect a project's services and validate its Compose configuration. | D, S, O |
+| Docker Buildx | `docker buildx ls` | Inspect builders for container image builds. | D, S, O |
+| Docker Swarm | `docker info`; `docker service ls`; `docker stack ls` | Inspect Swarm services and stacks when the host is a manager. Server initialization is optional through `--manager`. | D, S, O; active Swarm required |
+| Portainer CE | `docker compose -f "$HOME/.setupvibe/portainer-compose.yml" ps` | Inspect the Portainer instance managed by SetupVibe; its web UI uses HTTPS port 9443. | D, S, O |
+| Lazydocker | `lazydocker` (**interactive**) | Inspect and manage Docker resources in a terminal dashboard. | D, O |
 | ctop | `ctop` (**interactive**) | Monitor container CPU, memory and network usage in a TUI. | D, S |
-| Ansible | `ansible-inventory -i hosts --list`; `ansible-playbook site.yml --syntax-check` | Inspect inventories and validate playbook syntax for infrastructure automation. | D, S |
-| PM2 | `pm2 list`; `pm2 logs APP --lines 100 --nostream` | Inspect managed application processes and recent logs. | D |
+| Ansible | `ansible-inventory -i hosts --list`; `ansible-playbook site.yml --syntax-check` | Inspect inventories and validate playbook syntax for infrastructure automation. | D, S, O |
+| PM2 | `pm2 list`; `pm2 logs APP --lines 100 --nostream` | Inspect managed application processes and recent logs. | D, O |
 | crontab | `crontab -l` | Read the current user's scheduled jobs. | D, S |
-| SSH helper (Unix) | `ssh_copy_id --host HOST --user USER` | Copy a local public SSH key to a remote user's authorized keys; prompts for the password. | D, S |
+| SSH helper (Unix) | `ssh_copy_id --host HOST --user USER` | Copy a local public SSH key to a remote user's authorized keys; prompts for the password. | D, S, O |
 | SSH helper (Windows) | `ssh_copy_id USER@HOST -NoConnect` | Copy the public key and verify key authentication without opening an interactive SSH session. | W |
 
 In a noninteractive Unix shell, invoke the SSH helper as
@@ -91,14 +92,14 @@ Windows launcher is `ssh_copy_id.cmd` and works as `ssh_copy_id`.
 
 | Tool | Command or example | Use for | Editions |
 | --- | --- | --- | --- |
-| Fastfetch | `fastfetch` | Summarize the operating system, hardware and shell environment. | D, W |
+| Fastfetch | `fastfetch` | Summarize the operating system, hardware and shell environment. | D, W, O |
 | duf | `duf` | Inspect filesystem capacity and free space. | D, W |
-| htop / btop | `htop`; `btop` (**interactive**) | Inspect processes, CPU and memory usage in terminal dashboards. | D, S |
+| htop / btop | `htop`; `btop` (**interactive**) | Inspect processes, CPU and memory usage in terminal dashboards. | D, S, O |
 | btop4win | `btop4win` (**interactive**) | Inspect native Windows processes and resource usage. | W |
-| Glances | `glances` (**interactive**) | Inspect system, process, disk and network metrics together. | D, S |
-| Tailscale | `tailscale status`; `tailscale ip` | Check private-network connectivity and the machine's Tailscale addresses. | D, S, W; macOS installs the app |
-| Nmap | `nmap -sT -p 80,443 HOST` | Check the specified host's HTTP/HTTPS ports when requested. | D, S, W |
-| MTR | `mtr --report --report-cycles 10 HOST` | Inspect routing hops, latency and packet loss. | D, S |
+| Glances | `glances` (**interactive**) | Inspect system, process, disk and network metrics together. | D, S, O |
+| Tailscale | `tailscale status`; `tailscale ip` | Check private-network connectivity and the machine's Tailscale addresses. | D, S, W, O; macOS installs the app |
+| Nmap | `nmap -sT -p 80,443 HOST` | Check the specified host's HTTP/HTTPS ports when requested. | D, S, W, O |
+| MTR | `mtr --report --report-cycles 10 HOST` | Inspect routing hops, latency and packet loss. | D, S, O |
 | gping | `gping HOST` (**interactive**) | Compare latency with a live graph. | D, W |
 | Trippy | `trip HOST` (**interactive**) | Explore network paths and latency in a traceroute dashboard. The executable is `trip`, not `trippy`. | D, W |
 | RustScan | `rustscan -a HOST` | Discover open ports on a specified host when requested. | D |
@@ -129,16 +130,16 @@ To leave work running, detach with `Ctrl+B`, then `q`; run `herdr` to reconnect.
 
 | Tool | Command or example | Use for | Editions |
 | --- | --- | --- | --- |
-| Herdr | `herdr` (**interactive**); `herdr config check` | Organize workspaces, tabs and panes with agent status; validate its configuration. | D, S |
-| Tmux | `tmux new -s NAME`; `tmux ls`; `tmux attach -t NAME` | Manage persistent terminal sessions; new/attach are interactive. | D, S |
-| Skills CLI | `skills list --global`; `skills find TERM` | Discover installed skills or search for skills relevant to a task; use `skills.cmd` in Windows PowerShell. | D, S, W |
-| Spec-Kit | `specify check`; `specify init PROJECT` | Check prerequisites or initialize a specification-driven project when requested. | D |
-| Agentlytics | `agentlytics` | Start the installed agent-usage dashboard when requested; it has no noninteractive `--version`. | D |
-| mise | `mise ls` | Inspect installed development tool versions managed by mise. | D |
-| Claude Code / Codex / OpenCode | `claude`; `codex`; `opencode` | Start the installed coding agent when the user wants a separate agent session. | D, S, W |
-| GitHub Copilot CLI | `copilot` | Start the installed Copilot agent. | D, S |
-| Kimi Code CLI | `kimi` | Start the installed Kimi agent. | D |
-| Antigravity CLI | `agy` | Start the installed Antigravity agent. | D, W |
+| Herdr | `herdr` (**interactive**); `herdr config check` | Organize workspaces, tabs and panes with agent status; validate its configuration. | D, S, O |
+| Tmux | `tmux new -s NAME`; `tmux ls`; `tmux attach -t NAME` | Manage persistent terminal sessions; new/attach are interactive. | D, S, O |
+| Skills CLI | `skills list --global`; `skills find TERM` | Discover installed skills or search for skills relevant to a task; use `skills.cmd` in Windows PowerShell. | D, S, W, O |
+| Spec-Kit | `specify check`; `specify init PROJECT` | Check prerequisites or initialize a specification-driven project when requested. | D, O |
+| Agentlytics | `agentlytics` | Start the installed agent-usage dashboard when requested; it has no noninteractive `--version`. | D, O |
+| mise | `mise ls` | Inspect installed development tool versions managed by mise. | D, O |
+| Claude Code / Codex / OpenCode | `claude`; `codex`; `opencode` | Start the installed coding agent when the user wants a separate agent session. | D, S, W, O |
+| GitHub Copilot CLI | `copilot` | Start the installed Copilot agent. | D, S, O |
+| Kimi Code CLI | `kimi` | Start the installed Kimi agent. | D, O |
+| Antigravity CLI | `agy` | Start the installed Antigravity agent. | D, W, O |
 | Windows Terminal / WSL | `wt`; `wsl --list --verbose` | Open a terminal or inspect WSL distributions; the Windows installer prepares WSL without installing a distribution. | W |
 
 Unix ZSH shortcuts include `tn NAME` (`tmux new -s NAME`), `ta NAME`
@@ -149,7 +150,8 @@ Unix ZSH shortcuts include `tn NAME` (`tmux new -s NAME`), `ta NAME`
 
 The inventory follows the [Unix Desktop](https://github.com/C0R0NELL/setupvibe/blob/main/docs/desktop/en/README.md),
 [Server](https://github.com/C0R0NELL/setupvibe/blob/main/docs/server/en/README.md)
-and [Windows](https://github.com/C0R0NELL/setupvibe/blob/main/docs/windows/en/README.md)
+and [Windows](https://github.com/C0R0NELL/setupvibe/blob/main/docs/windows/en/README.md),
+plus the [Omarchy layer](https://github.com/C0R0NELL/setupvibe/blob/main/docs/omarchy/README.md)
 installers and documentation. For additional examples, consult the
 [browser guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/AGENT_BROWSER.md),
 [Terminal Browser guide](https://github.com/C0R0NELL/setupvibe/blob/main/docs/en/TERMINAL_BROWSER.md),

@@ -1,8 +1,8 @@
 # SetupVibe Environment Skill
 
-> User-level skill distribution for Desktop and Server — v0.41.11
+> User-level skill distribution for all editions — v0.41.11
 
-Desktop step 13, Server step 7, and Windows after Skills CLI installation
+Desktop step 13, Server step 7, Omarchy after its AI tools, and Windows after Skills CLI installation
 install [`setupvibe-environment`](../../skills/setupvibe-environment/SKILL.md).
 This is a product skill shipped with SetupVibe. The skills under `.codex/skills`
 and `.claude/skills` remain development instructions for maintaining this repo.
@@ -11,8 +11,9 @@ and `.claude/skills` remain development instructions for maintaining this repo.
 
 The discovery description tells agents to consult already-installed tools and
 choose suitable commands for the user's request. Tables list tools, command
-examples, practical uses, and availability in Unix Desktop, Server, and native
-Windows. They cover image previews, media, browser automation, file search,
+examples, practical uses, and availability in Unix Desktop, Server, native
+Windows and Omarchy. The Omarchy inventory includes tools provided by its base
+system and the SetupVibe additions. They cover image previews, media, browser automation, file search,
 JSON, GitHub, containers, infrastructure, diagnostics, sessions, and agent
 tooling. Ordinary language runtimes such as Python and Node.js are omitted.
 

@@ -12,15 +12,14 @@ TUI, with `fzf` as its interactive selector.
 | --- | --- |
 | Desktop macOS, Linux and WSL | `brew install pet fzf`, using SetupVibe's existing Homebrew |
 | Linux Server | Official Pet 1.0.1 binary in `~/.local/bin`; existing APT `fzf` |
-| Omarchy | `omarchy pkg add pet-bin fzf` |
+| Omarchy | Official Pet 1.0.1 binary in `~/.local/bin`; `fzf` through `omarchy pkg add` |
 | Native Windows x64 | Official Pet 1.0.1 binary in `%USERPROFILE%\.setupvibe\bin`; existing WinGet `fzf` |
 
 The shared `utils/install_pet.mjs` helper verifies the official release's
-SHA-256 before extracting and installing Server/Windows binaries. It reuses
+SHA-256 before extracting and installing Server, Windows and Omarchy binaries. It reuses
 an existing matching version. Release downloads and validation files are
 temporary. Homebrew retains its normal cache policy; Server and Omarchy keep
-their package-manager policies without adding Homebrew. Omarchy installs only
-missing commands.
+their package-manager policies for fzf without adding Homebrew or an AUR dependency.
 
 Validation uses a temporary `PET_CONFIG_DIR`, because even `pet version` can
 initialize configuration files. Existing snippets, editor settings, sync

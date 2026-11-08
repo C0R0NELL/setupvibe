@@ -2,10 +2,10 @@
 
 > Automação de navegador e integração com agentes no Desktop — v0.41.11, adição local do fork
 
-O instalador Desktop Unix adiciona `agent-browser` no passo 14 e passa a limpeza
-para o passo 15. O Desktop Windows tem uma etapa própria de automação de
+O instalador Desktop Unix adiciona `agent-browser` no passo 14; a limpeza fica
+no passo 20. Desktop Windows e Omarchy têm funções próprias de automação de
 navegador. A CLI, o navegador e a skill oficial ficam preparados para Codex e
-Claude Code em todos os projetos. Server e Omarchy não recebem essa etapa.
+Claude Code em todos os projetos. Server não recebe essa etapa.
 
 ## Requisitos e instalação por sistema
 
@@ -15,6 +15,11 @@ Claude Code em todos os projetos. Server e Omarchy não recebem essa etapa.
 | Windows 11 22H2+, x64 | Chrome for Testing por `agent-browser.cmd install` | Node.js 24 pelo MSI oficial; `agent-browser.cmd` e `skills.cmd` funcionam com políticas PowerShell restritas |
 | Ubuntu 24.04+, Debian 12+, Zorin OS 18+, WSL; x86_64 | Chrome for Testing por `agent-browser install` | Node.js 24, bibliotecas APT, fontes, Xvfb/Xauth e Vulkan |
 | Os mesmos sistemas Linux; ARM64 | Chromium pelo instalador de navegadores do Playwright | As mesmas dependências APT; sem daemon Snap, Playwright global ou projeto de testes |
+| Omarchy 4, Arch Linux x86_64, incluindo TryOmarchy | Chrome for Testing por `agent-browser install` | Node.js 24+ existente via mise; bibliotecas Arch, fontes, Xvfb/Xauth e Vulkan por `omarchy pkg add` |
+
+Omarchy preserva o prefixo npm do usuário e instala as bibliotecas pelo seu
+gerenciador nativo. Node.js anterior ao 24 gera um erro orientando a atualização
+pelo Omarchy/mise, sem substituir o runtime existente.
 
 O Chrome atual exige macOS 13+. Os outros passos do Desktop Unix continuam
 aceitando macOS 12, mas a etapa de navegador informa um erro claro nesse sistema.
@@ -48,7 +53,8 @@ interromper caso a instalação exija remover pacotes existentes. Também instal
 
 Somente bibliotecas de sistema usam `sys_do`. npm, downloads de navegador,
 skills e validações executam como `REAL_USER`, inclusive com `sudo bash`.
-Pacotes npm globais no Linux ficam em `~/.npm-global`; navegador e skills
+Pacotes npm globais no Desktop Unix ficam em `~/.npm-global`; Omarchy preserva
+seu prefixo npm do usuário. Navegador e skills
 pertencem ao usuário-alvo. Reexecuções reaproveitam downloads compatíveis.
 
 ## Como os agentes usam

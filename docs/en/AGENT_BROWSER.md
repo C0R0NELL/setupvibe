@@ -2,10 +2,10 @@
 
 > Desktop browser automation and agent integration — v0.41.11, local fork addition
 
-The Unix Desktop installer adds `agent-browser` in step 14 and moves cleanup to
-step 15. The Windows Desktop installer adds its own browser automation step.
+The Unix Desktop installer adds `agent-browser` in step 14; cleanup is step 20.
+Windows Desktop and Omarchy add their own browser automation functions.
 The CLI, browser and official discovery skill are prepared for Codex and Claude
-Code across projects. The Server and Omarchy installers do not include this step.
+Code across projects. The Server installer does not include this step.
 
 ## Requirements and installation by platform
 
@@ -15,6 +15,7 @@ Code across projects. The Server and Omarchy installers do not include this step
 | Windows 11 22H2+, x64 | Chrome for Testing through `agent-browser.cmd install` | Node.js 24 from the official MSI; `agent-browser.cmd` and `skills.cmd` avoid restricted PowerShell script execution |
 | Ubuntu 24.04+, Debian 12+, Zorin OS 18+, WSL; x86_64 | Chrome for Testing through `agent-browser install` | Node.js 24, APT browser libraries, fonts, Xvfb/Xauth and Vulkan |
 | The same Linux systems; ARM64 | Chromium through Playwright's browser downloader | The same APT dependencies; no Snap daemon, global Playwright package, or test project |
+| Omarchy 4, Arch Linux x86_64, including TryOmarchy | Chrome for Testing through `agent-browser install` | Existing Node.js 24+ through mise; Arch libraries, fonts, Xvfb/Xauth and Vulkan through `omarchy pkg add` |
 
 Chrome currently requires macOS 13+. The other Unix Desktop steps still support
 macOS 12, but the browser step reports a clear error there instead of claiming a
@@ -55,8 +56,14 @@ and `mesa-vulkan-drivers` for headed sessions without a display and WebGPU.
 
 Only system libraries use `sys_do`. npm packages, browser downloads, skills and
 validation run as `REAL_USER`, including when SetupVibe starts through `sudo`.
-Linux npm globals remain under `~/.npm-global`; browser files never belong to
+Unix Desktop npm globals remain under `~/.npm-global`; Omarchy retains its
+existing user npm prefix. Browser files never belong to
 the invoking root account. Repeating setup reuses compatible downloads.
+
+Omarchy uses native Arch package names, including `nss`, `gtk3`, `alsa-lib`,
+`mesa`, `xorg-server-xvfb`, `xorg-xauth` and `vulkan-icd-loader`. It does not call
+APT, install Homebrew or replace the user's mise runtime. Node.js below 24
+produces an error asking the user to update it through Omarchy/mise.
 
 ## Instructions for agents
 

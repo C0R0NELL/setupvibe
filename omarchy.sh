@@ -9,7 +9,7 @@ set -Eeuo pipefail
 # shell Bash, Starship, mise, Tmux, Docker, ferramentas Unix, fontes, aliases,
 # funções, Neovim, Herdr e CLIs de IA.
 
-VERSION="0.41.10"
+VERSION="0.41.11"
 OMARCHY_MAJOR="4"
 SETUPVIBE_RAW="https://raw.githubusercontent.com/C0R0NELL/setupvibe/main"
 
@@ -44,7 +44,7 @@ EOF
 
 user_do() {
     if [[ "$(id -u)" -eq 0 && -n "${REAL_USER:-}" && "$REAL_USER" != root ]]; then
-        sudo -u "$REAL_USER" -H "$@"
+        sudo -u "$REAL_USER" -H env PATH="$PATH" "$@"
     else
         "$@"
     fi
@@ -148,36 +148,33 @@ ensure_mise_tool() {
     hash -r 2>/dev/null || true
 }
 
-safe_download() {
+safe_download() (
     local url=$1
     local destination=$2
     local minimum_size=${3:-100}
     local temporary_file
     local destination_dir
 
-    temporary_file="$(mktemp)"
-    if ! curl --proto '=https' --tlsv1.2 --fail --silent --show-error \
+    temporary_file="$(user_do mktemp)" || return 1
+    trap 'user_do rm -f -- "$temporary_file"' EXIT
+    if ! user_do curl --proto '=https' --proto-redir '=https' --tlsv1.2 --fail --silent --show-error \
         --location --retry 3 --retry-all-errors --connect-timeout 10 \
         --max-time 120 --output "$temporary_file" "$url"; then
-        rm -f -- "$temporary_file"
         return 1
     fi
 
     if (( $(wc -c < "$temporary_file") < minimum_size )); then
-        rm -f -- "$temporary_file"
         return 1
     fi
 
     if head -c 200 "$temporary_file" | grep -qiE '<!doctype|<html'; then
-        rm -f -- "$temporary_file"
         return 1
     fi
 
     destination_dir="$(dirname "$destination")"
-    user_do mkdir -p "$destination_dir"
+    user_do mkdir -p "$destination_dir" || return 1
     user_do install -m 0644 "$temporary_file" "$destination"
-    rm -f -- "$temporary_file"
-}
+)
 
 download_if_missing() {
     local url=$1
@@ -211,7 +208,7 @@ install_additional_packages() {
     # ferramentas Unix, Neovim, fontes, Herdr, gh e os CLIs de IA principais.
     # Esta lista contém somente a camada que o SetupVibe ainda acrescenta.
     echo "Adicionando runtimes e ferramentas ausentes do Omarchy..."
-    omarchy_pkg_add php composer go rust python python-pip ansible
+    omarchy_pkg_add php composer go rust python python-pip ansible github-cli lazygit lazydocker
 
     # Extensões PHP e utilitários de rede variam entre os repositórios Arch.
     # Cada item é independente para manter o restante da instalação disponível.
@@ -248,8 +245,7 @@ configure_python_go_rust() {
     path_prepend_once "$REAL_HOME/.local/bin"
     export PATH
     if ! user_do bash -lc "command -v uv >/dev/null 2>&1"; then
-        echo "Instalando uv no diretório do usuário..."
-        user_do bash -lc 'curl -LsSf https://astral.sh/uv/install.sh | sh'
+        omarchy_pkg_add uv
     fi
     hash -r 2>/dev/null || true
 
@@ -284,16 +280,22 @@ install_optional_ai_tools() {
         "agentlytics"
     )
     local -a commands=(skills kimi agentlytics)
+    local -a allowed_scripts=(skills @moonshot-ai/kimi-code better-sqlite3)
     local index
 
     echo "Adicionando apenas os CLIs de IA que o Omarchy não fornece..."
     for index in "${!packages[@]}"; do
-        if user_do bash -lc "command -v '${commands[$index]}' >/dev/null 2>&1"; then
+        if [[ "${commands[$index]}" != agentlytics ]] &&
+            user_do bash -lc "command -v '${commands[$index]}' >/dev/null 2>&1"; then
             echo "${commands[$index]} já está disponível; mantendo o comando existente."
         else
-            user_do npm install --global "${packages[$index]}"
+            user_do npm install --global --allow-scripts="${allowed_scripts[$index]}" "${packages[$index]}"
         fi
     done
+    local npm_root
+    npm_root=$(user_do npm root --global)
+    user_do env AGENTLYTICS_ROOT="$npm_root/agentlytics" node -e \
+        'const Database = require(process.env.AGENTLYTICS_ROOT + "/node_modules/better-sqlite3"); const db = new Database(":memory:"); db.close();'
 
     if ! user_do bash -lc "command -v specify >/dev/null 2>&1"; then
         user_do uv tool install --upgrade specify-cli
@@ -500,39 +502,81 @@ configure_ssh() {
         sys_do systemctl enable --now ssh 2>/dev/null || true
 }
 
-install_terminal_browser() {
-    local helper_path="$REAL_HOME/.setupvibe/bin/install_terminal_browser.sh"
+install_setupvibe_helper() {
+    local helper_name=$1
+    local helper_path="$REAL_HOME/.setupvibe/bin/$helper_name"
     local helper_source=""
 
     if [[ -f "${BASH_SOURCE[0]}" ]]; then
-        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_terminal_browser.sh"
+        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/$helper_name"
     fi
     if [[ -f "$helper_source" ]]; then
         user_do mkdir -p "$(dirname -- "$helper_path")"
         user_do install -m 0644 "$helper_source" "$helper_path"
     else
-        safe_download "$SETUPVIBE_RAW/utils/install_terminal_browser.sh" "$helper_path"
+        safe_download "$SETUPVIBE_RAW/utils/$helper_name" "$helper_path"
     fi
+}
+
+configure_lazy_ui() {
+    install_setupvibe_helper configure_lazy_ui.py
+    user_do python3 "$REAL_HOME/.setupvibe/bin/configure_lazy_ui.py"
+}
+
+install_environment_skill() {
+    local skill_source="$SETUPVIBE_RAW/skills/setupvibe-environment/SKILL.md"
+    local repo_root=""
+    local npm_root
+
+    if [[ -f "${BASH_SOURCE[0]}" ]]; then
+        repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+        if [[ -f "$repo_root/skills/setupvibe-environment/SKILL.md" ]]; then
+            skill_source="$repo_root/skills/setupvibe-environment"
+        fi
+    fi
+    npm_root=$(user_do npm root --global)
+    install_setupvibe_helper install_environment_skill.mjs
+    user_do node "$REAL_HOME/.setupvibe/bin/install_environment_skill.mjs" \
+        --skills-package "$npm_root/skills" --source "$skill_source"
+}
+
+install_agent_browser() {
+    local npm_prefix
+    user_do node -e 'if (Number(process.versions.node.split(".")[0]) < 24) { console.error("agent-browser requires Node.js 24+. Update Node through Omarchy/mise."); process.exit(1); }'
+    npm_prefix=$(user_do npm config get prefix)
+    [[ "$npm_prefix" == /* ]] || die "O npm não retornou um prefixo absoluto."
+    path_prepend_once "$npm_prefix/bin"
+    export PATH
+
+    # Use Arch libraries rather than the upstream installer's APT-only --with-deps.
+    omarchy_pkg_add \
+        alsa-lib at-spi2-core cairo dbus expat fontconfig freetype2 gtk3 \
+        libcups libdrm libx11 libxcb libxcomposite libxcursor libxdamage \
+        libxext libxfixes libxi libxrandr libxrender libxshmfence libxkbcommon \
+        mesa nspr nss pango noto-fonts-cjk noto-fonts-emoji ttf-liberation \
+        xorg-server-xvfb xorg-xauth vulkan-icd-loader vulkan-swrast ffmpeg
+    user_do npm install --global --allow-scripts=agent-browser agent-browser@latest
+    user_do agent-browser --version
+    user_do agent-browser install
+    user_do skills add vercel-labs/agent-browser --skill agent-browser \
+        --global --agent codex claude-code --yes
+    user_do agent-browser skills get core >/dev/null
+    user_do agent-browser doctor --offline
+}
+
+install_terminal_browser() {
+    install_setupvibe_helper install_terminal_browser.sh
     # shellcheck source=utils/install_terminal_browser.sh
-    source "$helper_path"
+    source "$REAL_HOME/.setupvibe/bin/install_terminal_browser.sh"
     setupvibe_install_terminal_browser
 }
 
 install_harlequin() {
     local helper_dir="$REAL_HOME/.setupvibe/bin"
-    local source_dir=""
     local helper_name
 
-    if [[ -f "${BASH_SOURCE[0]}" ]]; then
-        source_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils"
-    fi
-    user_do mkdir -p "$helper_dir"
     for helper_name in install_harlequin.sh validate_harlequin.py; do
-        if [[ -n "$source_dir" && -f "$source_dir/$helper_name" ]]; then
-            user_do install -m 0644 "$source_dir/$helper_name" "$helper_dir/$helper_name"
-        else
-            safe_download "$SETUPVIBE_RAW/utils/$helper_name" "$helper_dir/$helper_name"
-        fi
+        install_setupvibe_helper "$helper_name"
     done
     # shellcheck source=utils/install_harlequin.sh
     source "$helper_dir/install_harlequin.sh"
@@ -540,35 +584,15 @@ install_harlequin() {
 }
 
 install_pet() {
-    local pet_tmp_dir
-    local -a packages=()
-    command -v pet >/dev/null 2>&1 || packages+=(pet-bin)
-    command -v fzf >/dev/null 2>&1 || packages+=(fzf)
-    omarchy_pkg_add "${packages[@]}"
-    user_do mkdir -p "$REAL_HOME/.setupvibe/tmp"
-    pet_tmp_dir=$(user_do mktemp -d "$REAL_HOME/.setupvibe/tmp/pet.XXXXXX")
-    (
-        trap 'user_do rm -rf -- "$pet_tmp_dir"' EXIT
-        user_do env PET_CONFIG_DIR="$pet_tmp_dir" pet version
-        user_do fzf --version
-    )
+    omarchy_pkg_add fzf
+    install_setupvibe_helper install_pet.mjs
+    user_do node "$REAL_HOME/.setupvibe/bin/install_pet.mjs" --bin-dir "$REAL_HOME/.local/bin"
 }
 
 install_redis_tui() {
-    local helper_path="$REAL_HOME/.setupvibe/bin/install_redis_tui.sh"
-    local helper_source=""
-
-    if [[ -f "${BASH_SOURCE[0]}" ]]; then
-        helper_source="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/utils/install_redis_tui.sh"
-    fi
-    if [[ -f "$helper_source" ]]; then
-        user_do mkdir -p "$(dirname -- "$helper_path")"
-        user_do install -m 0644 "$helper_source" "$helper_path"
-    else
-        safe_download "$SETUPVIBE_RAW/utils/install_redis_tui.sh" "$helper_path"
-    fi
+    install_setupvibe_helper install_redis_tui.sh
     # shellcheck source=utils/install_redis_tui.sh
-    source "$helper_path"
+    source "$REAL_HOME/.setupvibe/bin/install_redis_tui.sh"
     setupvibe_install_redis_tui
 }
 
@@ -602,13 +626,16 @@ main() {
     configure_php_and_rails
     configure_python_go_rust
     configure_javascript
+    configure_lazy_ui
     install_optional_ai_tools
+    install_environment_skill
     write_starship_config
     write_aliases
     append_shell_integration
     configure_portainer
     configure_tailscale
     configure_ssh
+    install_agent_browser
     install_terminal_browser
     install_harlequin
     install_pet
@@ -621,4 +648,5 @@ main() {
     echo "Arquivos adicionados em ~/.config/setupvibe e ~/.setupvibe."
 }
 
-main "$@"
+# Prompts read /dev/tty; automated tools must not consume the installer stream.
+main "$@" </dev/null

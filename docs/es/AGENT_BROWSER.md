@@ -2,10 +2,9 @@
 
 > Automatización del navegador e integración con agentes — v0.41.11, adición local del fork
 
-Desktop Unix añade `agent-browser` en el paso 14 y mueve la limpieza al paso 15.
-Desktop Windows añade su propia etapa. Prepara la CLI, el navegador y la skill
-oficial para Codex y Claude Code en todos los proyectos. Server y Omarchy no
-incluyen esta etapa.
+Desktop Unix añade `agent-browser` en el paso 14; la limpieza está en el paso 20.
+Desktop Windows y Omarchy añaden sus propias funciones. Preparan la CLI, el navegador y la skill
+oficial para Codex y Claude Code en todos los proyectos. Server no incluye esta etapa.
 
 ## Requisitos por plataforma
 
@@ -15,6 +14,11 @@ incluyen esta etapa.
 | Windows 11 22H2+, x64 | Chrome for Testing mediante `agent-browser.cmd install` | Node.js 24 del MSI oficial; lanzadores CMD compatibles con políticas PowerShell restringidas |
 | Ubuntu 24.04+, Debian 12+, Zorin OS 18+, WSL; x86_64 | Chrome for Testing | Node.js 24, bibliotecas APT, fuentes, Xvfb/Xauth y Vulkan |
 | Los mismos sistemas Linux; ARM64 | Chromium descargado mediante Playwright | Las mismas dependencias; sin Snap, Playwright global ni proyecto de pruebas |
+| Omarchy 4, Arch Linux x86_64, incluido TryOmarchy | Chrome for Testing mediante `agent-browser install` | Node.js 24+ existente mediante mise; bibliotecas Arch, fuentes, Xvfb/Xauth y Vulkan mediante `omarchy pkg add` |
+
+Omarchy conserva el prefijo npm del usuario y usa su gestor nativo para las
+bibliotecas. Node.js anterior a 24 genera un error que pide actualizarlo mediante
+Omarchy/mise, sin reemplazar el runtime existente.
 
 Chrome actual requiere macOS 13+. Los otros pasos mantienen soporte para macOS
 12, pero la etapa de navegador informa un error allí. Windows ARM sigue fuera
@@ -45,7 +49,8 @@ instalan `fonts-noto-color-emoji`, `fonts-noto-cjk`, `fonts-freefont-ttf`,
 
 Solo las bibliotecas de sistema usan `sys_do`. npm, navegadores, skills y
 validaciones usan `REAL_USER`, incluso con `sudo bash`. Los paquetes npm
-globales en Linux permanecen en `~/.npm-global`. Repetir la instalación
+globales del Desktop Unix permanecen en `~/.npm-global`; Omarchy conserva
+su prefijo npm del usuario. Repetir la instalación
 reutiliza las descargas compatibles.
 
 ## Uso por los agentes

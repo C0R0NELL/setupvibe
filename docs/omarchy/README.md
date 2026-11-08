@@ -1,6 +1,6 @@
 # SetupVibe para Omarchy 4
 
-> Camada de desenvolvimento da Promovaweb sobre Omarchy 4 — v0.41.10
+> Camada de desenvolvimento do SetupVibe sobre Omarchy 4 — v0.41.11
 
 `omarchy.sh` configura o SetupVibe em uma instalação Omarchy 4 existente. A
 edição reconhece que o Omarchy já entrega o ambiente principal e trabalha por
@@ -13,6 +13,10 @@ sobrescreve os arquivos de configuração do Omarchy.
 - Arquitetura `x86_64`.
 - Usuário com acesso a `sudo` para o `pacman` e serviços systemd.
 - Terminal interativo, exceto quando `--yes` for usado.
+- Node.js 24+ no ambiente do usuário para agent-browser; versões existentes
+  continuam gerenciadas pelo Omarchy/mise.
+
+No TryOmarchy para Windows, execute os comandos no terminal Linux dentro da VM.
 
 O script confere `/usr/share/omarchy`, o comando `omarchy`, o pacote instalado
 e a versão major 4 antes de alterar qualquer coisa.
@@ -67,16 +71,25 @@ executa `pacman -R`. Os itens adicionados são:
 - Node e Bun por mise somente quando ainda faltam; `pnpm` e PM2 pelo npm.
 - Ansible, utilitários de rede ausentes e Tailscale quando os pacotes estão
   disponíveis.
+- GitHub CLI, Lazygit e Lazydocker quando ausentes, com ícones e aparência
+  configurados pelo helper compartilhado. Outros ajustes e o primeiro backup
+  são preservados.
 - Skills CLI, Kimi Code, Agentlytics, Antigravity CLI e Spec-Kit, sem repetir
-  os CLIs já instalados pelo Omarchy.
+  os CLIs já instalados pelo Omarchy. Agentlytics recebe a aprovação limitada
+  de `better-sqlite3` e validação do binding em memória.
+- [Skill de ambiente](../en/ENVIRONMENT_SKILL.md) atual, distribuída aos dez
+  harnesses suportados como no Desktop e Server.
 - `ssh_copy_id`, `ecosystem.config.js` e o compose do Portainer em
   `~/.setupvibe/`.
+- [agent-browser](../en/AGENT_BROWSER.md), Chrome for Testing e skill oficial
+  global para Codex e Claude. Bibliotecas Arch, fontes, Xvfb/Xauth e Vulkan
+  usam `omarchy pkg add`; o navegador é validado com `doctor --offline`.
 - [Terminal Browser independente](../en/TERMINAL_BROWSER.md), com bibliotecas
   via `omarchy pkg add`, sem plugin do Herdr.
 - [Harlequin](../en/HARLEQUIN.md), com os adaptadores
   PostgreSQL e MySQL pelo uv e Python 3.14 em ambiente isolado.
-- [Pet e fzf](../en/PET.md), por `omarchy pkg add pet-bin fzf`,
-  preservando snippets e configurações existentes.
+- [Pet e fzf](../en/PET.md): binário oficial do Pet com SHA-256 pelo helper
+  compartilhado e `fzf` por `omarchy pkg add`, preservando snippets e configurações.
 - [Redis TUI](../en/REDIS_TUI.md), pelo instalador
   oficial no diretório do usuário, preservando conexões salvas.
 - [Yazi e ya](../en/YAZI.md) como última instalação, reaproveitando os comandos
@@ -93,6 +106,11 @@ O `~/.config/starship.toml` do Omarchy e as configurações do Tmux não são
 substituídos. O serviço SSH é apenas habilitado quando já existe, sem alteração
 do `sshd_config`. O Portainer só é iniciado se o Docker estiver disponível.
 
+Downloads, ferramentas e skills pertencem ao usuário-alvo, inclusive quando
+o script é iniciado por `sudo`. O `uv` usa o gerenciador do Omarchy quando
+ausente. Os plugins opcionais do Herdr seguem a
+[lista de instalação manual](../../README.md#herdr-plugins).
+
 ## Validação após a instalação
 
 ```bash
@@ -102,8 +120,20 @@ command -v starship
 command -v composer
 command -v pm2
 command -v ssh_copy_id
+gh --version
+agent-browser doctor --offline
+skills list --global
+harlequin --version
+redis-tui --version
+yazi --version
+ya --version
 docker compose -f ~/.setupvibe/portainer-compose.yml config
 ```
 
 Abra um novo terminal depois da execução para carregar o bloco adicionado ao
 `.bashrc`.
+
+Para validar alterações no instalador sem instalar ferramentas nem alterar
+serviços, execute `python3 tests/test_omarchy_integrations.py` no checkout.
+Os testes usam configurações temporárias e simulam os gerenciadores e o navegador;
+a execução completa em Omarchy/TryOmarchy continua sendo um teste de integração.

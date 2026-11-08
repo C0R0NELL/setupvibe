@@ -44,6 +44,11 @@ Run `python3 tests/test_desktop_stdin.py` for the focused Desktop input-stream
 regression checks. They exercise the real step runner without installing tools
 or changing services; they do not replace full installer integration tests.
 
+Run `python3 tests/test_omarchy_integrations.py` for isolated Omarchy checks of
+the real helper functions, target-user downloads, sudo PATH, configuration
+preservation and failure reporting. Package managers and the browser are
+simulated; these checks do not replace a full Omarchy/TryOmarchy installation.
+
 ### Required Debian Context
 
 Before changing, investigating, or testing `desktop.sh`, `server.sh`, Linux
@@ -96,14 +101,14 @@ Keep the Codex and Claude skills aligned with this source policy.
 19. Yazi and ya through existing Homebrew
 20. Finalization & cleanup
 
-Browser automation is included in both Desktop installers. Install `agent-browser`
+Browser automation is included in both Desktop installers and Omarchy. Install `agent-browser`
 through npm, approve only its own installation script, and validate the native
 CLI, `agent-browser skills get core`, and a real headless launch with
 `agent-browser doctor --offline`. Browser files must belong to the target user.
 Install the official discovery skill globally through Skills CLI for Codex and
 Claude Code; do not copy the usage guide from `node_modules`.
 
-On Linux, install the upstream browser libraries through `sys_do`, resolve
+On Debian/Ubuntu Linux, install the upstream browser libraries through `sys_do`, resolve
 available `t64` package names after `apt-get update`, and use `--no-remove`.
 Include fonts, Xvfb/Xauth and the Vulkan runtime. Linux ARM64 must download
 Chromium through Playwright's browser downloader because the upstream
@@ -121,7 +126,7 @@ execution-policy changes are needed for browser automation.
 
 ### Lazy tool appearance
 
-Both Desktop installers run `utils/configure_lazy_ui.py` with the installed
+Both Desktop installers and Omarchy run `utils/configure_lazy_ui.py` with the installed
 Python after modern tools are available. The helper uses only the standard
 library and configures installed Lazygit/Lazydocker under the target user's
 native configuration paths. Preserve unrelated settings, UTF-8 BOMs, line
@@ -170,8 +175,9 @@ connections. See [the guide](docs/en/HARLEQUIN.md).
 Desktop step 17 reuses Homebrew with `brew install pet fzf`. Server step 10
 and native Windows share `utils/install_pet.mjs`, using already-installed Node
 to verify pinned official release SHA-256 values and install the native binary
-as the target user. Server reuses APT fzf without adding Homebrew. Omarchy uses
-`omarchy pkg add pet-bin fzf`. Pet precedes Redis TUI.
+as the target user. Server reuses APT fzf without adding Homebrew. Omarchy also
+uses the verified release helper and adds fzf through `omarchy pkg add`; do not
+request AUR packages through the repository-only helper. Pet precedes Redis TUI.
 Validate with `pet version` and a temporary `PET_CONFIG_DIR`; normal version
 checks may create configuration/snippet files. Preserve saved snippets, sync
 credentials and shell bindings; Windows removal deletes only managed code.
@@ -210,9 +216,9 @@ themes, plugins and shell bindings. See [the guide](docs/en/YAZI.md).
 ### Distributed environment skill
 
 `skills/setupvibe-environment/SKILL.md` is the single source for the product
-skill installed in Unix Desktop step 13, Server step 7, and Windows after Skills
-CLI installation. Its description identifies already-installed tools for
-fulfilling user requests. Maintain tables of executable commands, practical
+skill installed in Unix Desktop step 13, Server step 7, Omarchy after its AI
+tools, and Windows after Skills CLI installation. Its description identifies
+already-installed tools for fulfilling user requests. Maintain tables of executable commands, practical
 uses, and availability by edition from the installers and documentation;
 omit ordinary language runtimes. Keep executable names distinct from shell
 aliases and interactive interfaces. It is separate from this repository's
@@ -244,6 +250,18 @@ SetupVibe components through `omarchy pkg add`, user files under
 must not use APT or Homebrew, install ZSH or Oh My Zsh, replace Omarchy's
 `.bashrc`, `starship.toml` or Tmux configuration, or execute package-removal
 commands.
+
+Omarchy runs the shared Lazy UI and environment-skill helpers and installs
+agent-browser with Chrome for Testing, the official Codex/Claude skill and
+`doctor --offline` validation. Browser libraries, fonts, Xvfb/Xauth, Vulkan,
+missing uv, GitHub CLI and Lazy tools use its native package helper. Reuse
+the user's Node.js 24+ through mise, preserve PATH through sudo, and create,
+download and clean temporary files as the target user. Shared user-space
+installers, including the checksum-verified Pet helper, stay in user directories.
+
+When adding or removing a tool, review all four editions and the product skill's
+availability table. Adapt Omarchy to its native tools and existing configuration;
+document platform exclusions instead of leaving an edition unreviewed.
 
 ### `docs/` Directory
 
