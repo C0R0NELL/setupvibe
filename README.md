@@ -120,7 +120,8 @@ GitHub Copilot, Antigravity CLI, and Amp. It is available across projects under
 each harness's user skill directory, even if the harness is installed later.
 Its tables cover installed utilities for images, browser automation, files,
 containers, diagnostics, sessions, and agent tooling, with practical commands
-and availability by edition. Ordinary language runtimes are omitted.
+and availability by edition. A compact language-runtime table adds version
+checks and guidance to reuse compatible installations and project environments.
 See [installation, locations, and update behavior](docs/en/ENVIRONMENT_SKILL.md).
 
 ### Herdr Plugins

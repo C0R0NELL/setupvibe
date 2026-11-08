@@ -220,7 +220,11 @@ skill installed in Unix Desktop step 13, Server step 7, Omarchy after its AI
 tools, and Windows after Skills CLI installation. Its description identifies
 already-installed tools for fulfilling user requests. Maintain tables of executable commands, practical
 uses, and availability by edition from the installers and documentation;
-omit ordinary language runtimes. Keep executable names distinct from shell
+include a compact runtime table with version checks and edition availability.
+Guide agents to reuse compatible installed runtimes and the project's existing
+environment and version manager before installing another runtime. Distinguish
+Server's isolated Harlequin Python from a system interpreter.
+Keep executable names distinct from shell
 aliases and interactive interfaces. It is separate from this repository's
 Codex/Claude maintenance skills; do not duplicate it into those folders.
 

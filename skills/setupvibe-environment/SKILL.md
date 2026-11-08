@@ -1,13 +1,12 @@
 ---
 name: setupvibe-environment
-description: Consult the tools already installed in this environment to choose suitable commands and carry out tasks according to the user's request.
+description: Consult the tools and runtimes already installed in this environment to choose suitable commands and carry out tasks according to the user's request.
 ---
 
 # SetupVibe Environment
 
 Use this inventory to select an installed tool for the user's task or suggest
-a command they can run. It covers useful utilities supplied by SetupVibe;
-ordinary language runtimes such as Python and Node.js are omitted.
+a command they can run. It covers utilities and language runtimes supplied by SetupVibe.
 
 ## Availability
 
@@ -25,6 +24,25 @@ An installed CLI may still need the user's authentication or service startup.
 Prefer executable names over shell aliases in automation. Commands marked
 **interactive** open a terminal interface and are useful when the user wants
 to work in that interface; use commands that print results for agent inspection.
+
+## Languages and runtimes
+
+Before installing a runtime, check its executable and version. Reuse an existing
+installation when it meets the project's requirements, following the project's
+version files, virtual environment and existing version manager.
+
+| Runtime | Version check | Editions |
+| --- | --- | --- |
+| Node.js / npm | `node --version`; `npm --version` (`npm.cmd` in Windows PowerShell) | D, S, W, O |
+| Bun | `bun --version` | D, O |
+| Python | `python3 --version` on Linux/WSL/Omarchy; `python3.14 --version` on macOS; `python --version` on Windows | D, W, O |
+| PHP / Composer | `php --version`; `composer --version` | D, O |
+| Ruby / RubyGems | `ruby --version`; `gem --version` | D, O |
+| Go | `go version` | D, O |
+| Rust / Cargo | `rustc --version`; `cargo --version` | D, O |
+
+On **S**, Harlequin uses an isolated uv-managed Python 3.14. Check `python3`
+separately before relying on a system interpreter; its version can differ.
 
 ## Images, media and browser tasks
 

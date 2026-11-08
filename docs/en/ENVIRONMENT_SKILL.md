@@ -15,7 +15,11 @@ examples, practical uses, and availability in Unix Desktop, Server, native
 Windows and Omarchy. The Omarchy inventory includes tools provided by its base
 system and the SetupVibe additions. They cover image previews, media, browser automation, file search,
 JSON, GitHub, containers, infrastructure, diagnostics, sessions, and agent
-tooling. Ordinary language runtimes such as Python and Node.js are omitted.
+tooling. A compact runtime table covers Node.js/npm, Bun, Python, PHP/Composer,
+Ruby/RubyGems, Go and Rust/Cargo, with version checks and edition availability.
+Agents check existing runtimes before installing another one and respect the
+project's version files, virtual environment and existing manager. Server's
+isolated Harlequin Python is distinguished from a system interpreter.
 
 The skill prefers the user's existing Herdr workspace within their request
 and authorization. It covers context checks, explicit pane targets, and
