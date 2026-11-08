@@ -70,7 +70,32 @@ Both `desktop.sh` and `server.sh` follow a numbered-step pattern (functions pref
 
 ### Windows Script Structure
 
-`desktop.ps1` contains native Windows utility, Python, Node.js, selected AI CLI, and WSL base logic. It supports local and remote execution, requests standard UAC elevation without changing the UAC policy, requires x64 Windows 11 22H2 build 22621 or later, rejects Windows Server, 32-bit Windows, Windows on ARM, and elevation with credentials for a different administrator account, detects installed components for idempotent reruns, and logs to `C:\ProgramData\SetupVibe\Logs`. Before installation or removal, it lists competing installer processes and asks before stopping them; when accepted, it tries `Stop-Process` normally, forces processes that remain, and always runs `sfc.exe /scannow` afterward. When declined, it waits for ENTER and exits. It also rejects pending CBS or Windows Update restarts, starts required services, checks WSUS policy, validates the component store, and writes dedicated logs. OpenSSH must bypass Windows Features on Demand and the GitHub releases API: resolve the latest release through the official `PowerShell/Win32-OpenSSH` `releases/latest` page, inspect its expanded assets, download only `OpenSSH-Win64-*.msi`, validate its Authenticode signature, install `ADDLOCAL=Client,Server`, force-repair all installed OpenSSH files, prepend its directory to the machine `PATH`, verify `ssh.exe -V`, set `sshd` to automatic startup, start it, and enable the inbound TCP/22 firewall rule while preserving its prior state for removal. Windows helper scripts listed in the installer are copied to `%USERPROFILE%\.setupvibe\bin`, registered in the user `PATH`, and tracked for safe removal. The `ssh_copy_id` helper uses a PowerShell core with a minimal CMD launcher and requires the signed OpenSSH MSI installed by SetupVibe instead of using Windows Features on Demand. Python 3.14 is downloaded directly from `python.org` and installed for all users; Node.js 24 LTS is resolved directly from the official `latest-v24.x` channel on `nodejs.org`, using `curl.exe` with HTTPS-only redirects and retries instead of the release-index API. Neither runtime may use WinGet or Chocolatey. Both installers require valid Authenticode signatures, the Node.js MSI must match the official `SHASUMS256.txt`, their executable directories are prepended to the machine `PATH`, and `python`, `pip`, `node`, `npm`, and `npx` are verified for Claude and Codex. Claude Code must use Anthropic's official native Windows installer, Codex CLI must use OpenAI's official standalone Windows installer, and Antigravity CLI must use Google's official native installer with `--skip-aliases` and `--skip-path`; all three commands are validated after installation. Persistent `PATH` changes must be normalized, deduplicated, broadcast to Windows, and validated against the intended executable. The Windows shell must remain original: do not install Starship or ZSH, do not write PowerShell profile initialization, do not persist execution-policy changes, preserve user PowerShell profile bytes around third-party installers, remove only recognized SetupVibe profile blocks left by earlier Beta versions without re-encoding unrelated content, preserve the user's Starship configuration, and keep zoxide as an uninitialized CLI utility only. Windows Terminal is installed through `Microsoft.WindowsTerminal`, `wt.exe` availability is validated, and its default profile is never changed. It installs WSL without a Linux distribution, makes WSL 2 the default, and configures mirrored VPN/LAN networking, Hyper-V firewall inbound access, DNS tunneling, Windows proxy integration, automatic memory reclaim, and sparse VHDs. Existing `.wslconfig`, optional-feature, and firewall states are backed up before changes; legacy numeric optional-feature state files must also restore safely. The `-Uninstall` mode removes all managed utilities and configurations, restores the previous WSL and OpenSSH firewall states, cleans language ecosystems left by earlier Windows Beta versions, and removes only stale legacy toolchain `PATH` entries whose directories no longer exist while preserving Linux distribution data, active user-managed paths, AI CLI user configuration and credentials, WinGet, Chocolatey, and logs. Python and Node.js are the only installed programming runtimes; it must not install frameworks, runtime managers, other programming languages, other AI CLIs, or a Linux distribution. Installed WSL distributions are configured separately by `desktop.sh`.
+Before changing `desktop.ps1`, read the
+[Windows guide](docs/windows/en/README.md), including servicing and uninstall
+behavior. Keep these edition boundaries:
+
+- Support x64 Windows 11 22H2+ only. Use standard UAC elevation with the same
+  signed-in account and retain the servicing preflight, consent before stopping
+  competing installers, and logs under `C:\ProgramData\SetupVibe\Logs`.
+- Install only Python 3.14 and Node.js 24 LTS as programming runtimes, plus uv
+  solely for Harlequin. Prepare WSL 2 without a Linux distribution; configure
+  installed distributions separately with `desktop.sh`.
+- Use signed official installers for OpenSSH, Python and Node.js. Resolve
+  OpenSSH through its latest release page, without Features on Demand or the
+  releases API; obtain Python from `python.org` and Node.js from the official
+  `latest-v24.x` channel, without WinGet or Chocolatey. Verify Node.js against
+  its official SHA-256 and retain OpenSSH Client/Server repair and validation.
+- Keep Claude Code, Codex CLI and Antigravity CLI on their official native
+  installation paths, with command validation. Antigravity uses
+  `--skip-aliases --skip-path`.
+- Preserve PowerShell profile bytes, execution policy, user Starship settings
+  and Windows Terminal's default profile. Do not install Starship or ZSH;
+  zoxide remains an uninitialized utility. Remove only recognized legacy
+  SetupVibe profile blocks.
+- Track ownership of managed files and environment changes. Normalize,
+  deduplicate, broadcast and validate persistent `PATH` updates. Uninstall must
+  restore prior WSL/firewall states and preserve distributions, credentials,
+  skills, user settings and unrelated files.
 
 This fork is maintained in `C0R0NELL/setupvibe` on `main`. Installation commands,
 configuration downloads, helper scripts, Windows elevation handoff, restart,
@@ -78,203 +103,69 @@ uninstall, and setup aliases must use direct GitHub raw URLs from this fork's
 `main` branch. Use another branch only when explicitly testing that branch.
 Keep the Codex and Claude skills aligned with this source policy.
 
-### `desktop.sh` Steps (20)
+### Tool installation guides
 
-1. Base system & build tools
-2. Homebrew
-3. PHP 8.5 (Composer, Laravel)
-4. Ruby 3.4.10 (rbenv, Rails)
-5. Go 1.26.5, Rust, Python (uv, user-global `qrcode` via pip; Python 3.14 on macOS)
-6. JavaScript (Node, Bun, PNPM)
-7. DevOps (Docker, Ansible, GitHub CLI)
-8. Modern Unix tools via Homebrew, followed by Lazygit/Lazydocker appearance configuration
-9. Network, monitoring & Tailscale
-10. SSH server (Linux only)
-11. ZSH, Oh-My-Zsh, Starship
-12. Tmux & TPM plugins
-13. AI CLI tools
-14. Browser automation (agent-browser, Chrome/Chromium, Linux dependencies and the official Codex/Claude skill)
-15. Standalone Terminal Browser
-16. Harlequin (uv, Python 3.14, PostgreSQL and MySQL adapters)
-17. Pet snippets and fzf through existing Homebrew
-18. Redis TUI
-19. Yazi and ya through existing Homebrew
-20. Finalization & cleanup
+Use the existing shared helpers and read the relevant guide before changing a
+tool. Platform support, installation commands, pinned releases and validation
+details belong in those guides and implementations.
 
-Browser automation is included in both Desktop installers and Omarchy. Install `agent-browser`
-through npm, approve only its own installation script, and validate the native
-CLI, `agent-browser skills get core`, and a real headless launch with
-`agent-browser doctor --offline`. Browser files must belong to the target user.
-Install the official discovery skill globally through Skills CLI for Codex and
-Claude Code; do not copy the usage guide from `node_modules`.
+| Component | Implementation and guide |
+| --- | --- |
+| Browser automation | Edition browser steps; [Agent Browser](docs/en/AGENT_BROWSER.md) |
+| Lazy tool appearance | `utils/configure_lazy_ui.py`; [Desktop step 8](docs/desktop/en/README.md#step-8--modern-unix-tools) |
+| Terminal Browser | `utils/install_terminal_browser.sh`; [guide](docs/en/TERMINAL_BROWSER.md) |
+| Harlequin | `utils/install_harlequin.sh`, `utils/validate_harlequin.py`; [guide](docs/en/HARLEQUIN.md) |
+| Pet snippets | `utils/install_pet.mjs` for Server, Windows and Omarchy; [guide](docs/en/PET.md) |
+| Redis TUI | `utils/install_redis_tui.sh`; [guide](docs/en/REDIS_TUI.md) |
+| Yazi and ya | Edition package-manager steps; [guide](docs/en/YAZI.md) |
 
-On Debian/Ubuntu Linux, install the upstream browser libraries through `sys_do`, resolve
-available `t64` package names after `apt-get update`, and use `--no-remove`.
-Include fonts, Xvfb/Xauth and the Vulkan runtime. Linux ARM64 must download
-Chromium through Playwright's browser downloader because the upstream
-`agent-browser install` rejects Linux ARM64. Link the executable directory
-reported by Playwright into the managed native browser cache; do not guess its
-version-dependent directory layout. Playwright is not installed globally or
-added to a project. Other platforms use `agent-browser install`. Current Chrome
-requires macOS 13+ even though the other Desktop steps support macOS 12.
+Browser automation must validate the native CLI, `agent-browser skills get core`
+and a real headless launch with `agent-browser doctor --offline`. Install the
+official discovery skill for Codex and Claude Code, rather than copying a guide
+from `node_modules`. Linux ARM64 needs the Playwright browser downloader;
+see `DEBIAN.md` for cache discovery and system dependencies.
 
-On Windows, use the execution-policy-safe `agent-browser.cmd` launcher and
-track its npm user `PATH` through the existing ownership mechanism.
-`-Uninstall` removes the CLI before Node.js while preserving browser caches,
-user sessions, credentials, and installed skills. No PowerShell profile or
-execution-policy changes are needed for browser automation.
-
-### Lazy tool appearance
-
-Both Desktop installers and Omarchy run `utils/configure_lazy_ui.py` with the installed
-Python after modern tools are available. The helper uses only the standard
-library and configures installed Lazygit/Lazydocker under the target user's
-native configuration paths. Preserve unrelated settings, UTF-8 BOMs, line
-endings, and the first `config.yml.bak`; skip unconventional YAML and Lazygit
-custom `LG_CONFIG_FILE` lists. Windows installs only Lazygit and configures
-Lazydocker only when already present. Select a Nerd Font in the displaying
-terminal, including the host terminal for WSL or SSH.
-
-### `server.sh` Steps (14)
-
-Subset of desktop steps — no Homebrew or full language ecosystems (PHP, Ruby, Go, Rust). Node.js is installed via NodeSource APT repo; Harlequin uses uv and an isolated Python 3.14 when needed, preserving the system Python. Focus on base tools, Docker, Ansible, shell, tmux, monitoring, AI CLIs, Terminal Browser, Harlequin, Pet, Redis TUI and Yazi. Steps 8–12 install those last five tools, step 13 cleans up, and optional step 14 configures Swarm.
-
-### Standalone Terminal Browser
-
-Unix Desktop step 15, Server step 8 and Omarchy share
-`utils/install_terminal_browser.sh`. Run the official installer as the target
-user with `TERMINAL_BROWSER_SKIP_SETUP=1`, without installing its Herdr plugin.
-Linux resolves available APT `t64` variants of NSS, GTK, ALSA and GBM after an
-index refresh; Server retains lock waiting and retries. Omarchy uses only
-`omarchy pkg add` for system libraries. Reuse working managed installations to
-avoid stopping active browsers. Validate the command, Linux shared libraries
-and bundled runtime without opening an interactive browser. Native Windows
-does not install it; WSL uses the Unix installer. Usage requires a terminal
-with Kitty graphics support. See [the guide](docs/en/TERMINAL_BROWSER.md).
-
-### Harlequin
-
-Unix Desktop step 16, Server step 9, Omarchy and native Windows
-install Harlequin with PostgreSQL and MySQL adapters
-using uv and Python 3.14. Unix shares `utils/install_harlequin.sh`, bootstraps uv
-if missing without changing profiles, and allows uv to download an isolated
-Python 3.14. Omarchy adds uv only through `omarchy pkg add` when missing.
-
-Windows permits uv as an explicit exception to its runtime-manager restriction,
-solely to install Harlequin using the existing signed Python 3.14, with Python
-downloads disabled. Manage uv through WinGet, keep Harlequin's tool root under
-`~/.setupvibe/harlequin-tools`, and expose its CLI through the existing managed
-user bin directory. Restore temporary environment overrides, remove Harlequin
-before Python/uv during uninstall, and preserve database profiles and unrelated
-uv tools. All platforms share `utils/validate_harlequin.py` to validate Python,
-both adapters/drivers and a local in-memory SQL query without external database
-connections. See [the guide](docs/en/HARLEQUIN.md).
-
-### Pet snippets
-
-Desktop step 17 reuses Homebrew with `brew install pet fzf`. Server step 10
-and native Windows share `utils/install_pet.mjs`, using already-installed Node
-to verify pinned official release SHA-256 values and install the native binary
-as the target user. Server reuses APT fzf without adding Homebrew. Omarchy also
-uses the verified release helper and adds fzf through `omarchy pkg add`; do not
-request AUR packages through the repository-only helper. Pet precedes Redis TUI.
-Validate with `pet version` and a temporary `PET_CONFIG_DIR`; normal version
-checks may create configuration/snippet files. Preserve saved snippets, sync
-credentials and shell bindings; Windows removal deletes only managed code.
-See [the guide](docs/en/PET.md).
-
-### Redis TUI
-
-Desktop step 18, Server step 11 and Omarchy share
-`utils/install_redis_tui.sh`. Run the official checksum-verifying Unix
-installer as the target user into a temporary staging directory, then validate
-`--version` and `--help` before installing in `~/.local/bin`. Support macOS
-Intel/Apple Silicon and Linux/WSL x86_64/ARM64 without adding runtimes or taps.
-Native Windows uses the official 1.0.47 x64 ZIP with its pinned SHA-256 and
-the existing managed user bin directory. Reuse working installations, remove
-temporary downloads on success or failure, and preserve connection settings.
-Yazi follows Redis TUI before Unix cleanup. Do not install a Redis
-server or open database connections during validation. Windows removal deletes
-only its managed executable. See [the guide](docs/en/REDIS_TUI.md).
-
-### Yazi
-
-Desktop step 19 reuses Homebrew with `brew install yazi` and validates both
-`yazi` and `ya` as the target user. Server step 12 uses the official Yazi APT
-repository, reuses an existing official source, and otherwise adds the stable
-channel with a key under `/etc/apt/keyrings`. Preserve lock waiting/retries
-and install without recommended packages or removals. Omarchy reuses existing
-commands or adds `yazi` through its package helper. Do not add Homebrew to
-Server or Omarchy.
-
-Native Windows uses WinGet `sxyazi.yazi`, validates both CLIs and uses
-Git for Windows `file.exe`. Preserve a valid `YAZI_FILE_ONE`; otherwise track
-the previous user value in `~/.setupvibe/yazi-environment.json` and restore it
-on removal only while the value remains managed. Preserve Yazi user settings,
-themes, plugins and shell bindings. See [the guide](docs/en/YAZI.md).
+Keep validation isolated from user data and external databases. In particular,
+Pet checks need a temporary `PET_CONFIG_DIR`, since even `pet version` creates
+configuration files. Lazy UI changes must preserve unrelated settings, encoding,
+line endings and the first backup, and skip unsupported YAML layouts.
 
 ### Distributed environment skill
 
 `skills/setupvibe-environment/SKILL.md` is the single source for the product
-skill installed in Unix Desktop step 13, Server step 7, Omarchy after its AI
-tools, and Windows after Skills CLI installation. Its description identifies
-already-installed tools for fulfilling user requests. Maintain tables of executable commands, practical
-uses, and availability by edition from the installers and documentation;
-include a compact runtime table with version checks and edition availability.
-Guide agents to reuse compatible installed runtimes and the project's existing
-environment and version manager before installing another runtime. Distinguish
-Server's isolated Harlequin Python from a system interpreter.
-Keep executable names distinct from shell
-aliases and interactive interfaces. It is separate from this repository's
-Codex/Claude maintenance skills; do not duplicate it into those folders.
+skill shipped by all four editions. Keep its command examples, uses, runtimes
+and edition availability aligned with the installers. Distinguish executables
+from aliases and isolated runtimes from system interpreters.
 
-The product skill prefers the user's existing Herdr workspace for persistent
-sessions within their request and authorization. Pane control requires
-`HERDR_ENV=1` and explicit targets. Preserve running processes and user focus;
-use Tmux when requested, already in use, or Herdr is unavailable.
+This product skill is separate from the repository's maintenance skills; do
+not duplicate it into `.codex/skills` or `.claude/skills`.
 
-Install through Skills CLI with explicit targets: Codex, Claude Code, OpenCode,
-Grok Build, Kimi Code CLI, Gemini CLI, Cursor, GitHub Copilot, Antigravity CLI,
-and Amp. Use `--global --copy --yes --json`; JSON mode must propagate partial
-installation failures. Run as the target user, including when invoked through
-sudo. Use the local skill directory when running a checkout; remote execution
-must use its direct raw URL from this fork's `main` branch. Keep unrelated
-skills and agent configuration unchanged; Windows uninstall preserves skills.
-The shared Node helper also publishes the skill file to documented native
-roots, because Skills CLI routes several harnesses to `.agents/skills`.
-See [the distribution guide](docs/en/ENVIRONMENT_SKILL.md) for paths and sources.
+Distribute through `utils/install_environment_skill.mjs` as the target user,
+using the local source in checkouts and this fork's raw `main` source remotely.
+Preserve unrelated skills and agent configuration, including during Windows
+uninstall. Follow the [distribution guide](docs/en/ENVIRONMENT_SKILL.md) for
+harness targets, native roots, location overrides and partial-failure handling.
 
 ### `omarchy.sh`
 
-Omarchy 4 is an existing Arch-based desktop environment and owns its shell,
-prompt, aliases, Tmux, Docker, mise, runtimes, fonts, modern Unix tools,
-Neovim, Herdr and the main AI CLI set. `omarchy.sh` must only add missing
-SetupVibe components through `omarchy pkg add`, user files under
-`~/.config/setupvibe` and `~/.setupvibe`, and additive shell integration. It
-must not use APT or Homebrew, install ZSH or Oh My Zsh, replace Omarchy's
-`.bashrc`, `starship.toml` or Tmux configuration, or execute package-removal
-commands.
+Omarchy 4 owns the existing shell, prompt, aliases, Tmux, Docker, mise,
+runtimes, fonts, modern Unix tools, Neovim, Herdr and main AI CLIs.
+SetupVibe adds missing components through `omarchy pkg add`, user files under
+`~/.config/setupvibe` and `~/.setupvibe`, and additive shell integration.
+Do not use APT or Homebrew, install ZSH/Oh My Zsh, replace Omarchy configuration
+files, or remove packages.
 
-Omarchy runs the shared Lazy UI and environment-skill helpers and installs
-agent-browser with Chrome for Testing, the official Codex/Claude skill and
-`doctor --offline` validation. Browser libraries, fonts, Xvfb/Xauth, Vulkan,
-missing uv, GitHub CLI and Lazy tools use its native package helper. Reuse
-the user's Node.js 24+ through mise, preserve PATH through sudo, and create,
-download and clean temporary files as the target user. Shared user-space
-installers, including the checksum-verified Pet helper, stay in user directories.
+Reuse the user's mise runtimes and Node.js 24+; preserve the managed PATH
+through sudo. Downloads, temporary files and user-space tools must belong to
+the target user.
 
-When adding or removing a tool, review all four editions and the product skill's
-availability table. Adapt Omarchy to its native tools and existing configuration;
-document platform exclusions instead of leaving an edition unreviewed.
+Docker operations must target a local endpoint and preserve configuration and
+data. Start the native daemon only for its default local socket; preserve
+custom and rootless setups.
 
 `omarchy.sh --repair` runs only PHP ZIP, Ruby/Rails and Docker/Portainer checks.
-ZIP ships in Arch's PHP package; enable it through a dedicated managed INI only
-when needed, preserving php.ini. Recover RubyGems for the active Ruby, use
-`--user-install --bindir ~/.local/bin` for Rails/Bundler, and validate both CLIs.
-For Portainer, inspect the selected Docker endpoint, reject remote endpoints,
-start the native daemon only for its default local socket, and refresh user
-groups in a child process when access requires it. Preserve existing Docker
-configuration and data; do not silently report success when a required step fails.
+Read the [Omarchy guide](docs/omarchy/README.md) for repair behavior and
+configuration ownership.
 
 ### `docs/` Directory
 
@@ -293,31 +184,10 @@ configuration and data; do not silently report success when a required step fail
 
 ### `brand/` Directory
 
-`brand/` is the normative source for the SetupVibe visual and verbal
-identity. It contains light and dark logo variants, PNG fallback, design
-tokens, local webfonts, brand description, voice guide, usage rules, and the
-publication checklist.
-
-| Path | Content |
-| --- | --- |
-| `brand/README.md` | Brand overview and governance |
-| `brand/description.md` | Positioning, promise, tagline, and institutional descriptions |
-| `brand/logo/icon.svg` | Canonical vector symbol |
-| `brand/logo/icon.png` | Raster fallback |
-| `brand/logo/logo-light.svg` | Horizontal signature for light surfaces |
-| `brand/logo/logo-dark.svg` | Horizontal signature for dark surfaces |
-| `brand/logo/logotype.svg` | Compatibility alias for the light signature |
-| `brand/logo/LOGO.md` | Construction and usage contract |
-| `brand/colors/palette.json` | Editable color source |
-| `brand/global.css` | Webfonts and semantic CSS tokens |
-| `brand/tailwind-theme.js` | Tailwind CSS theme extension |
-| `brand/typography/README.md` | Web typography guide |
-| `brand/voice/voice.md` | Operational voice and terminology |
-| `brand/checklist.md` | Brand Gate for publication |
-
-Update the relevant normative file whenever a public asset, tagline,
-description, or voice rule changes. Do not create divergent logo copies inside
-this repository.
+[The brand guide](brand/README.md) is the entry point for normative visual
+assets, tokens, typography and voice. Update the relevant source when a public
+asset or brand rule changes, follow [the publication checklist](brand/checklist.md),
+and do not create divergent logo copies.
 
 ### `conf/` Directory
 
@@ -341,24 +211,21 @@ Executable helper scripts deployed by the installers to `~/.setupvibe/bin`:
 | ------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `ssh_copy_id` | `~/.setupvibe/bin/ssh_copy_id`  | Copies the local public SSH key to a remote server using `--host`, `--user`, and optional `--pass` or hidden password prompt |
 
-## Key Scripting Patterns
+## Development Conventions
 
-**User detection** — scripts handle being run as root, `sudo bash`, or plain user:
-
-```bash
-REAL_USER="${SUDO_USER:-$(whoami)}"
-REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
-```
-
-**APT keyring management** — keyrings go in `/etc/apt/keyrings/`; legacy entries in `/etc/apt/sources.list.d/` are removed before re-adding to avoid signature errors.
-
-**APT lock waiting** — server script polls for APT lock release before running apt commands (needed for cloud VMs with unattended-upgrades running at boot).
-
-**Architecture detection**:
-
-```bash
-ARCH_RAW=$(dpkg --print-architecture)  # amd64 or arm64
-```
+- Resolve the target user and home independently of the process UID. Use
+  `user_do` for that user's files and commands and `sys_do` only for privileged
+  operations. Preserve access to managed commands through sudo.
+- For user-space tools, keep downloads and temporary files owned by the target
+  user, verify published checksums, and validate commands in that user's environment.
+- APT keys go in `/etc/apt/keyrings/`. Remove only recognized legacy SetupVibe
+  sources before adding replacements; retain Server's lock waiting and retries.
+- Approve only the necessary npm installation scripts, rather than enabling all
+  dependency scripts.
+- Preserve user data and unrelated configuration during installation, reruns
+  and removal. Required failures must propagate instead of reporting success.
+- When adding or removing a tool, review all four editions, their guides and
+  the product skill's availability table. Document platform exclusions.
 
 ## Versioning
 
@@ -390,6 +257,10 @@ Use the `/markdown-format` skill to verify and apply these rules across all Mark
 ### Context Rule
 
 Whenever either file is modified — to add a new convention, update architecture information, change a rule, or correct an error — the **same shared change must be applied to the other file** before the task is considered complete.
+
+Keep recurring maintenance rules and documentation pointers here. Record
+corrections in the changelog and implementation details in code, tests and
+focused guides.
 
 ### Skill Rule
 

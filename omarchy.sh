@@ -440,7 +440,7 @@ write_starship_config() {
         else
             safe_download "$SETUPVIBE_RAW/conf/starship.toml" "$starship_config"
         fi
-        user_do sed -i 's/╭/┌/g; s/╰/└/g; s///g; s///g' "$starship_config"
+        user_do sed -i 's/╭/┌/g; s/╰/└/g' "$starship_config"
     else
         echo "Configuração Starship do SetupVibe já existe; mantendo personalizações."
     fi

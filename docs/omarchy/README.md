@@ -127,7 +127,7 @@ executa `pacman -R`. Os itens adicionados são:
 
 Os arquivos de configuração adicionados ficam em `~/.config/setupvibe/`:
 
-- `starship.toml`: [configuração Gruvbox Rainbow compartilhada](../../conf/starship.toml) com `user@hostname` por SSH, independente do arquivo do Omarchy. Configurações existentes são preservadas.
+- `starship.toml`: [configuração Gruvbox Rainbow compartilhada](../../conf/starship.toml) com pontas arredondadas e `user@hostname` por SSH, independente do arquivo do Omarchy. Configurações existentes são preservadas.
 - `aliases.bash`: aliases e funções adicionais, carregados depois dos aliases
   do Omarchy e protegidos contra colisões.
 

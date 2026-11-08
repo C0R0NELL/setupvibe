@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+import tomllib
 import unittest
 
 
@@ -237,6 +238,10 @@ install_pet
         config = self.home / ".config/setupvibe/starship.toml"
         self.require_success(self.run_shell("write_starship_config\n"))
         self.assertIn("$hostname", config.read_text())
+        prompt_format = tomllib.loads(config.read_text())["format"]
+        self.assertTrue(prompt_format.startswith("[](color_orange)"))
+        self.assertIn("[ ](fg:color_bg1)", prompt_format)
+        self.assertIn("[](bg:color_yellow fg:color_orange)", prompt_format)
         config.write_text("# user customization\n")
         self.require_success(self.run_shell("write_starship_config\n"))
         self.assertEqual(config.read_text(), "# user customization\n")

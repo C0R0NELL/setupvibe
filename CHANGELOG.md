@@ -22,6 +22,7 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ### Changed
 
+- Consolidated Codex and Claude maintenance contexts around edition boundaries, shared conventions and links to existing guides, removing duplicated installation procedures.
 - Local fork: versioned the shared Gruvbox Rainbow Starship configuration in `conf/starship.toml` for Unix Desktop, Server and new Omarchy configurations. Username has no trailing space and hostname follows as `@hostname` only over SSH, using the same orange segment. Local checkouts use the local template; remote runs download it from this fork's main branch.
 - Local fork: commented out automatic demonstration cron job creation in Unix Desktop on macOS, Linux, and WSL, preserving existing schedules and cron service activation. Server, native Windows, and Omarchy already do not create these jobs; Server keeps its existing legacy-example cleanup.
 - Local fork: replaced Herdr Shepherd with `C0R0NELL/herdr-agents-sidebar` in the manual plugin notes, including its Linux requirements, installation command, and activation through **Apply sidebar**.
@@ -29,6 +30,7 @@ All notable changes to **SetupVibe** are documented in this file.
 
 ### Fixed
 
+- Fixed rounded opening and closing caps in new Omarchy Starship configurations, preserving internal separators and existing user files.
 - Fixed Omarchy PHP, Rails and Portainer gaps reported during a real TryOmarchy run: removed requests for bundled PHP ZIP/Intl packages, enabled ZIP with a dedicated INI, recovered RubyGems for the active Ruby and installed Rails/Bundler in user paths. Portainer now checks the selected local Docker endpoint, starts the native daemon when needed, refreshes Docker group access for child commands and propagates failures. Added `--repair` to run only these checks, plus isolated regression coverage; remote contexts and incomplete custom Ruby installations are preserved with an explicit error.
 - Fixed Omarchy downloads and temporary-file cleanup to run as the target user, preserved the managed PATH through sudo, and installed uv through the native package helper. Pet now uses the existing verified-release helper instead of requesting an AUR package through the repository-only package helper. Aligned Omarchy's version label with v0.41.11.
 - Fixed Unix Desktop stopping silently after browser automation during `curl | bash` installation. Each automated step now receives an empty standard input, preventing Skills CLI's terminal UI from consuming the remaining installer. Explicit input pipes and `/dev/tty` prompts remain available. Added isolated regression checks for subsequent steps, the final summary and failure reporting.
